@@ -24,7 +24,7 @@ def login_required(func):
         return func(current_user, *args, **kwargs)
 
     func_wrapper.__name__ = func.__name__
-    return _func_wrapper
+    return func_wrapper
 
 
 @app.route('/register', methods=['POST'])
