@@ -1,32 +1,29 @@
 # DeepSeek
-### Development Environment
-To start the development environment, first install
-[Docker](https://www.docker.com/), start it,
-then run (in the project directory) the command
-```
-docker compose up
-```
-To stop it, use Ctrl-C, and then run
-```
-docker compose down
-```
-If any changes are made to `requirements.txt` or `Dockerfile`,
-then remove the image before rebuilding it by using
-```
-docker image rm IMAGE_NAME
-```
-You can get a list of all images by running
-```
-docker image ls
-```
-and a list of all containers by running
-```
-docker ps -a
-```
-You can clear all containers and images by running
-```
-docker system prune -af
-```
-This is useful if you want to clean and restart the environment.
 
-All of these commands may have to be run using `sudo` in Linux.
+### Development Environment
+
+- **About**
+
+    The dev environment uses [Docker Compose](https://docs.docker.com/compose/)
+    to start a python server, javascript frontend, and mongodb database.
+    It creates Docker containers and installs the required packages into
+    those containers so that all developers will be using the same versions.
+
+- **Setup**
+1. Install [Docker](https://docs.docker.com/engine/install/)
+
+2. Clone the repository and navigate to the project directory
+
+3. Run the command `docker-compose up`
+
+4. To stop the environment press `Ctrl-C` in the terminal
+
+5. To clean the environment run the command `docker system prune -af`
+
+    - Do this to fix any environment issues or after changing package requirements
+
+- **Resources**
+
+    - [Docker guide](https://docs.docker.com/get-started/docker-overview/)
+
+    - [React guide](https://react.dev/)
