@@ -1,38 +1,119 @@
-.App {
+/* General container styles */
+.app-container {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  padding: 50px;
+  background-color: #b3efb2;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+/* Header styling */
+.app-header {
+  margin-bottom: 30px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app-title {
+  font-size: 3rem;
+  color: #31493c;
+  margin: 0;
+}
+
+.app-tagline {
+  font-size: 1.5rem;
+  color: #001a23;
+  margin: 10px 0;
+}
+
+/* Button container */
+.button-container {
+  display: flex;
+  gap: 20px;
+}
+
+/* Button styling */
+.auth-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Login button specific styling */
+.login-button {
+  background-color: #7a9e7e;
+  color: black;
+}
+
+.login-button:hover {
+  background-color: #856181;
+}
+
+/* Register button specific styling */
+.register-button {
+  background-color: #97b49b;
+  color: black;
+}
+
+.register-button:hover {
+  background-color: #684b64;
+}
+
+/* Form group styling */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Label styling */
+.form-label {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Input field styling */
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+/* Button styling */
+.form-button-login {
+  background-color: #7a9e7e;
+  color: black;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-button-login:hover {
+  background-color: #856181;
+}
+
+/* Button styling */
+.form-button-register {
+  background-color: #97b49b;
+  color: black;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-button-register:hover {
+  background-color: #684b64;
 }
