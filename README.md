@@ -12,7 +12,7 @@
 - **Setup**
 1. Install and start [Docker](https://docs.docker.com/engine/install/)
 
-2. Clone the repository and navigate to the project directory
+2. Clone the repository and and navigate to the project directory
 
 3. Run the command `docker-compose up`
 
@@ -27,6 +27,9 @@
     - [Docker guide](https://docs.docker.com/get-started/docker-overview/)
 
     - [React guide](https://react.dev/)
+
+
+this is a merge conflict
 
 
 this is a merge conflict
