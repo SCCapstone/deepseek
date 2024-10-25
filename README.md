@@ -10,9 +10,9 @@
     those containers so that all developers will be using the same versions.
 
 - **Setup**
-1. Install [Docker](https://docs.docker.com/engine/install/)
+1. Install the docker thingy[Docker](https://docs.docker.com/engine/install/)
 
-2. Clone the repository and navigate to the project directory
+2. Clone the repository and and navigate to the project directory
 
 3. Run the command `docker-compose up`
 
