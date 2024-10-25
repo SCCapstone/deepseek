@@ -10,7 +10,7 @@
     those containers so that all developers will be using the same versions.
 
 - **Setup**
-1. Install [Docker](https://docs.docker.com/engine/install/)
+1. Install and start [Docker](https://docs.docker.com/engine/install/)
 
 2. Clone the repository and navigate to the project directory
 
