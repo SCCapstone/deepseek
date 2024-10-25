@@ -27,3 +27,6 @@
     - [Docker guide](https://docs.docker.com/get-started/docker-overview/)
 
     - [React guide](https://react.dev/)
+
+
+this is a merge conflict
