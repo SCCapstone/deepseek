@@ -12,7 +12,7 @@
 - **Setup**
 1. Install [Docker](https://docs.docker.com/engine/install/), then start it
 
-2. Clone the repository and navigate to the project directory
+2. Clone the repository and navigate to the project root directory
 
 3. Run the command `docker-compose up`
 
