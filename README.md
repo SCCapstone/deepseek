@@ -30,6 +30,6 @@
 
 
 
-- **Authors**
-Name: Tristan Shillingford
-Email: trshillingford@gmail.com
+- **Authors**                  
+Name: Tristan Shillingford               
+Email: trshillingford@gmail.com                  
