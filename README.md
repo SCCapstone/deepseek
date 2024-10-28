@@ -37,5 +37,5 @@ Name: Tristan Shillingford
 Email: trshillingford@gmail.com  
 Name: Jacob Robertson  
 Email: jacobr10183@gmail.com     
-Name: Dominic Colin Gaines
+Name: Dominic Colin Gaines  
 Email: dcolingaines@gmail.com
