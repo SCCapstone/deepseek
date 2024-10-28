@@ -34,4 +34,6 @@ CalendarMedia is a sort of social web app designed to help users connect through
 
 - **Authors**                  
 Name: Tristan Shillingford               
-Email: trshillingford@gmail.com                  
+Email: trshillingford@gmail.com
+Name: Jacob Robertson
+Email: jacobr10183@gmail.com     
