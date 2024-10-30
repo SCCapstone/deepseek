@@ -7,7 +7,7 @@ function Home() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1 className="app-title">Calendar App</h1>
+        <h1 className="app-title">CalendarMedia</h1>
         <p className="app-tagline">Look at what other people are doing!</p>
       </header>
       <div className="button-container">
