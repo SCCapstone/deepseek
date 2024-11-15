@@ -3,6 +3,7 @@ import uuid
 import pymongo
 import secrets
 from flask import Flask, request, make_response, jsonify, redirect
+from bson.json_util import dumps
 from flask_cors import CORS
 
 from database import *
@@ -88,3 +89,10 @@ def login():
     res = make_response({'message': 'User authenticated'})
     res.set_cookie('auth_token', auth_token)
     return res
+
+@app.route('/myprofile', methods=['GET'])
+@login_required
+def get_user(current_user):
+    user = db.get_user(username=current_user['username'])
+    user_json = dumps(user)
+    return make_response(user_json)
