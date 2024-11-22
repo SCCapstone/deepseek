@@ -2,17 +2,32 @@ import hashlib
 import uuid
 import pymongo
 import secrets
-from flask import Flask, request, make_response, jsonify, redirect
+from flask import Flask, request, make_response, jsonify, redirect, session
+from flask_session import Session
 from bson.json_util import dumps
 from flask_cors import CORS
 
 from database import *
+from gacc import *
 
 TOKEN_SIZE_BYTES = 32
 
-app = Flask(__name__)
-CORS(app, supports_credentials=True)
 db = Database()
+
+app = Flask(__name__)
+app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_MONGODB"] = db.client
+app.config["SESSION_MONGODB_DB"] = "appdb"
+app.config["SESSION_MONGODB_COLLECTION"] = "sessions"
+Session(app)
+app.secret_key = secrets.token_bytes(TOKEN_SIZE_BYTES)
+CORS(app, supports_credentials=True)
+
+googlecalendar = GoogleCalendar(
+    client_secrets_file="googlesecret.json",
+    scopes=["https://www.googleapis.com/auth/calendar.readonly"],
+    redirect_uri="http://localhost:5000/googlecallback",
+)
 
 
 def login_required(func):
@@ -96,3 +111,21 @@ def get_user(current_user):
     user = db.get_user(username=current_user['username'])
     user_json = dumps(user)
     return make_response(user_json)
+
+# TODO: add these frontend routes, really just needs to be a login with google button somewhere
+# need to add frontent routes and save to database but this is working from hitting the backend routes
+@app.route('/googlelogin')
+def google_login():
+    auth_url = googlecalendar.get_authorization_url(session)
+    return redirect(auth_url)
+
+@app.route('/googlecallback')
+def google_callback():
+    credentials = googlecalendar.exchange_code_for_credentials(session, request.url)
+    return jsonify(credentials)
+
+# TODO store these in the database intsead of just returning the credientials
+@app.route('/googleevents')
+def get_google_events():
+    events = googlecalendar.fetch_calendar_events(session)
+    return jsonify(events)
