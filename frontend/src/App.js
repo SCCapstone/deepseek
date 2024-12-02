@@ -5,6 +5,7 @@ import Login from './Login'
 import Register from './Register';
 import Home from './Home';
 import Profile from './Profile';
+import Calendar from './Calendar';
 export default function App() {
   return (
     <Routes>
@@ -12,6 +13,7 @@ export default function App() {
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/profile' element={<Profile/>} />
+      <Route path='/calendar' element={<Calendar/>} />
     </Routes>
   
   );
