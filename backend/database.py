@@ -1,6 +1,7 @@
 import pymongo
 import uuid
 from typing import List
+from bson.objectid import ObjectId
 
 
 class Database:
@@ -88,7 +89,31 @@ class Database:
          - visibility : whether the event is visible to others or not
          - comments : a list of comments on the event
         """
+        if comments is None:
+            comments = []
+        
+        if start_time >= end_time:
+            raise ValueError("start_time must be earlier than end_time.")
+        
         event_doc = {'user_id' : user_id,'title' : title, 'description' : description,
                      'start_time' : start_time, 'end_time' : end_time,
                      'visibility' : visibility, 'comments' : comments}
-        return self.db.events.insert_one(event_doc)
+        result = self.db.events.insert_one(event_doc)
+
+        event_id = str(result.inserted_id)
+
+        return event_id
+    
+    def get_events(self, user_id : str) -> List:
+        """
+        returns a list of events for a given user
+         - user_id : the id of the user who created the event
+        """
+        return list(self.db.events.find({'user_id' : user_id}))
+    
+    def get_event(self, event_id : str) -> dict:
+        """
+        returns a single event for a given event id
+         - event_id : the id of the event to retrieve
+        """
+        return self.db.events.find_one({'_id' : ObjectId(event_id)})
