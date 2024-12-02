@@ -173,6 +173,8 @@ def get_events(current_user):
         user_id = str(current_user['_id'])
         events = db.get_events(user_id=user_id)
         events_json = loads(dumps(events))
+        for event in events_json:
+            event['_id'] = str(event['_id'])
 
         return make_response(
             jsonify({"message": "Events retrieved successfully", 
