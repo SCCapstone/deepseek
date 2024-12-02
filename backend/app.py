@@ -163,13 +163,14 @@ def add_event():
                                       "event": event}), 201)
 
     except Exception as e:
+
         return make_response(jsonify({"error": str(e)}), 500)
     
 @app.route('/getevents', methods=['GET'])
 @login_required
 def get_events(current_user):
     try:
-        user_id = current_user.id
+        user_id = current_user['_id']
         events = db.get_events(user_id=user_id)
         events_json = dumps(events)
 
