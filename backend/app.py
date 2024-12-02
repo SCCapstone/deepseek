@@ -170,7 +170,7 @@ def add_event():
 @login_required
 def get_events(current_user):
     try:
-        user_id = current_user['_id']
+        user_id = str(current_user['_id'])
         events = db.get_events(user_id=user_id)
         events_json = loads(dumps(events))
 
