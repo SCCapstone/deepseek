@@ -5,6 +5,7 @@ import secrets
 from flask import Flask, request, make_response, jsonify, redirect, session
 from flask_session import Session
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 from flask_cors import CORS
 
 from database import *
@@ -20,6 +21,7 @@ app.config["SESSION_MONGODB"] = db.client
 app.config["SESSION_MONGODB_DB"] = "appdb"
 app.config["SESSION_MONGODB_COLLECTION"] = "sessions"
 Session(app)
+
 app.secret_key = secrets.token_bytes(TOKEN_SIZE_BYTES)
 CORS(app, supports_credentials=True)
 
@@ -128,4 +130,64 @@ def google_callback():
 @app.route('/googleevents')
 def get_google_events():
     events = googlecalendar.fetch_calendar_events(session)
+    for event in events:
+        event_data = {
+            # parse here
+            # db.add_event(user_id, title, description, start_time, end_time, visibility, comments)
+        }
     return jsonify(events)
+
+@app.route('/addevent', methods=['POST'])
+def add_event():
+    try:
+        event_data = request.json
+
+        # neccessary fields, if not in the payload, return an error
+        event_fields = ["user_id", "title", "description", "start_time", "end_time"]
+        for field in event_fields:
+            if field not in event_data:
+                return make_response(jsonify({"error": f"Missing field: {field}"}), 400)
+
+        # add event to database
+        event = db.add_event(
+            user_id=event_data["user_id"],
+            title=event_data["title"],
+            description=event_data["description"],
+            start_time=event_data["start_time"],
+            end_time=event_data["end_time"],
+            visibility=event_data.get("visibility", False),
+            comments=event_data.get("comments", [])
+        )
+        
+        return make_response(jsonify({"message": "Event added successfully", 
+                                      "event": event}), 201)
+
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+    
+@app.route('/getevents', methods=['GET'])
+@login_required
+def get_events(current_user):
+    try:
+        user_id = current_user.id
+        events = db.get_events(user_id=user_id)
+        events_json = dumps(events)
+
+        return make_response(
+            jsonify({"message": "Events retrieved successfully", 
+                     "events": events_json}), 200)
+
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+    
+@app.route('/events/<event_id>', methods=['GET'])
+def get_event(event_id):
+    try:
+        event = db.get_event(event_id=event_id)
+        if not event:
+            return jsonify({"error": "Event not found"}), 404
+        event_json = dumps(event)
+        return jsonify(event_json), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
