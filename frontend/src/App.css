@@ -3,12 +3,17 @@
 .app-container {
   text-align: center;
   padding: 50px;
-  background-color: #b3efb2;
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+body.light{
+  background-color: #b3efb2;
+}
+body.dark{
+  background-color: #333;
 }
 
 /* Header styling */

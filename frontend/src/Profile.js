@@ -1,6 +1,7 @@
 import React,{ useState, useEffect } from 'react';
 import ProfileCard from './ProfileCard';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from "./ThemeContext";
 import './App.css';
 
 
@@ -9,6 +10,14 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme, toggleTheme } = useTheme();
+
+  
+
+  // Update the body class when the theme changes
+  useEffect(() => {
+    document.body.className = theme; // Add the theme class to the body
+  }, [theme]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -46,7 +55,13 @@ export default function Profile() {
     <div className="app-container">
       <h1>User Profile</h1>
       {userData ? <ProfileCard userData={userData} /> : <p>Loading user data...</p>}
+      <footer>
+        <button onClick={toggleTheme}>
+          Switch to {theme === "light" ? "Dark" : "Light"} Mode
+        </button>
+      </footer>
     </div>
+
   );
 }
 
