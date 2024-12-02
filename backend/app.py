@@ -4,7 +4,7 @@ import pymongo
 import secrets
 from flask import Flask, request, make_response, jsonify, redirect, session
 from flask_session import Session
-from bson.json_util import dumps
+from bson.json_util import dumps, loads
 from bson.objectid import ObjectId
 from flask_cors import CORS
 
@@ -172,7 +172,7 @@ def get_events(current_user):
     try:
         user_id = current_user['_id']
         events = db.get_events(user_id=user_id)
-        events_json = dumps(events)
+        events_json = loads(dumps(events))
 
         return make_response(
             jsonify({"message": "Events retrieved successfully", 
