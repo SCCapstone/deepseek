@@ -7,7 +7,7 @@ import './App.css';
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece,ValuePiece];
 
-export default function Calendar() {
+export default function CalendarPage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,8 +50,8 @@ export default function Calendar() {
   
   return (
     <div>
-      <Calendar onChange={onChange} value={userData.events.start_time} />
-    <div>
+      <Calendar />
+    </div>
   );
 
 }
