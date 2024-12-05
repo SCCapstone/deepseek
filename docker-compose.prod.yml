@@ -4,8 +4,6 @@ services:
             context: backend
             dockerfile: Dockerfile.prod
         restart: on-failure
-        volumes:
-            - ./backend:/app:ro
         links:
             - mongo:mongo
         ports:
@@ -13,13 +11,12 @@ services:
         environment:
             FLASK_RUN_PORT: 5000
     frontend:
-        build: frontend
+        build:
+            context: frontend
+            dockerfile: Dockerfile.prod
         restart: on-failure
-        volumes:
-            - ./frontend/src:/app/src:ro
-            - ./frontend/public:/app/public:ro
         ports:
-            - 4000:4000
+            - 4000:80
         environment:
             PORT: 4000
             REACT_APP_API_URL: ${API_URL}
