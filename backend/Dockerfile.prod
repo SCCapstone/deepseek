@@ -4,6 +4,8 @@ WORKDIR /app
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY . .
+
 # CHANGE THIS WHEN DEPLOYING PLS
 ENV OAUTHLIB_INSECURE_TRANSPORT=1
 
