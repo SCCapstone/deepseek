@@ -22,7 +22,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/myprofile', {
+        const response = await fetch(process.env.REACT_APP_API_URL + '/myprofile', {
           credentials: 'include',  // Include cookies for session-based authentication
         });
 

@@ -1,0 +1,32 @@
+services:
+    backend:
+        build:
+            context: backend
+            dockerfile: Dockerfile.prod
+        restart: on-failure
+        volumes:
+            - ./backend:/app:ro
+        links:
+            - mongo:mongo
+        ports:
+            - 5000:5000
+        environment:
+            FLASK_RUN_PORT: 5000
+    frontend:
+        build: frontend
+        restart: on-failure
+        volumes:
+            - ./frontend/src:/app/src:ro
+            - ./frontend/public:/app/public:ro
+        ports:
+            - 4000:4000
+        environment:
+            PORT: 4000
+            REACT_APP_API_URL: ${API_URL}
+    mongo:
+        image: mongo
+        restart: on-failure
+        ports:
+            - 27017:27017
+        volumes:
+            - ./data/db:/data/db:rw

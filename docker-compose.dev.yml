@@ -1,6 +1,8 @@
 services:
     backend:
-        build: backend
+        build:
+            context: backend
+            dockerfile: Dockerfile.dev
         restart: on-failure
         volumes:
             - ./backend:/app:ro
@@ -20,6 +22,7 @@ services:
             - 4000:4000
         environment:
             PORT: 4000
+            REACT_APP_API_URL: 'http://localhost:5000'
     mongo:
         image: mongo
         restart: on-failure
