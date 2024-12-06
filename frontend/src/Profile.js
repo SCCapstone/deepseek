@@ -2,6 +2,7 @@ import React,{ useState, useEffect } from 'react';
 import ProfileCard from './ProfileCard';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from "./ThemeContext";
+import GoogleLoginButton from "./GoogleLoginButton";
 import './App.css';
 
 
@@ -59,6 +60,7 @@ export default function Profile() {
         <button onClick={toggleTheme}>
           Switch to {theme === "light" ? "Dark" : "Light"} Mode
         </button>
+        <GoogleLoginButton/>
       </footer>
     </div>
 
