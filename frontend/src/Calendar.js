@@ -65,22 +65,29 @@ const CalendarPage = ({ userId }) => {
       />
       <h2>Events for {selectedDate.toDateString()}</h2>
       <ul>
-        {events.length === 0 ? (
-          <li>No events for this day.</li>
-        ) : (
-          events.map((event) => (
-            <li key={event._id}>
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <p>
-                {new Date(event.start_time).toLocaleTimeString()} -{' '}
-                {new Date(event.end_time).toLocaleTimeString()}
-              </p>
-              //<p>Visibility: {event.visibility}</p>
-              <p>Comments: {event.comments.join(', ')}</p>
-            </li>
-          ))
-        )}
+      {events.filter(event => {
+    const eventDate = new Date(event.start_time).toDateString();
+    return eventDate === selectedDate.toDateString();
+  }).length === 0 ? (
+    <li>No events for this day.</li>
+  ) : (
+    events
+      .filter(event => {
+        const eventDate = new Date(event.start_time).toDateString();
+        return eventDate === selectedDate.toDateString();
+      })
+      .map(event => (
+        <li key={event._id}>
+          <h3>{event.title}</h3>
+          <p>{event.description}</p>
+          <p>
+            {new Date(event.start_time).toLocaleTimeString()} -{' '}
+            {new Date(event.end_time).toLocaleTimeString()}
+          </p>
+          <p>Comments: {event.comments.join(', ')}</p>
+        </li>
+      ))
+  )}
       </ul>
     </div>
   );
