@@ -10,7 +10,7 @@ export default function Register() {
     e.preventDefault();
     const user = { password, username };
     try {
-      const response = await fetch("http://localhost:5000/register", {
+      const response = await fetch(process.env.REACT_APP_API_URL + '/register', {
         method: "POST",
         mode: 'cors',
         credentials: 'include',

@@ -22,7 +22,7 @@ const CalendarPage = ({ userId }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://localhost:5000/getevents', {
+        const response = await fetch(process.env.REACT_APP_API_URL + '/getevents', {
           credentials: 'include',  // Include cookies for session-based authentication
         });
 

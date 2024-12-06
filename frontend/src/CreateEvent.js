@@ -26,7 +26,7 @@ const CreateEvent = () => {
     const end = new Date(eventDetails.day + ' ' + eventDetails.endTime);
     console.log(start);
     e.preventDefault();
-    const res = await fetch('http://localhost:5000/addevent', {
+    const res = await fetch(process.env.REACT_APP_API_URL + '/addevent', {
       method: 'post',
       mdoe: 'cors',
       credentials: 'include',
