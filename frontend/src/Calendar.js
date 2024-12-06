@@ -22,7 +22,7 @@ const CalendarPage = ({ userId }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`/events?user_id=${userId}&date=${selectedDate.toISOString().split('T')[0]}`, {
+        const response = await fetch('http://localhost:5000/getevents', {
           credentials: 'include',  // Include cookies for session-based authentication
         });
 
@@ -32,7 +32,7 @@ const CalendarPage = ({ userId }) => {
 
         const data = await response.json();  // Parse the JSON response
         console.log('Fetched events', data);
-        setEvents(data);
+        setEvents(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (err) {
         setError(err.message);
