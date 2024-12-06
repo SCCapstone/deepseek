@@ -2,6 +2,8 @@ import React,{ useState, useEffect } from 'react';
 import ProfileCard from './ProfileCard';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from "./ThemeContext";
+import GoogleLoginButton from "./GoogleLoginButton";
+import NavBar from './NavBar';
 import './App.css';
 
 
@@ -54,11 +56,21 @@ export default function Profile() {
   return (
     <div className="app-container">
       <h1>User Profile</h1>
+      <NavBar/>
+      <div className="profile-section">
+        {/* Placeholder profile picture */}
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+          alt="Profile Placeholder"
+          className="profile-pic"
+        />
+      </div>
       {userData ? <ProfileCard userData={userData} /> : <p>Loading user data...</p>}
       <footer>
         <button onClick={toggleTheme}>
           Switch to {theme === "light" ? "Dark" : "Light"} Mode
         </button>
+        <GoogleLoginButton/>
       </footer>
     </div>
 

@@ -1,0 +1,53 @@
+/* General navbar styles */
+.navbar {
+    position: fixed; /* Sticks the navbar to the top */
+    top: 0; /* Positions it at the very top of the screen */
+    left: 0; /* Aligns it to the left edge */
+    width: 100%; /* Makes it span the full width of the screen */
+    background-color: #333; /* Background color */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Space inside the navbar */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000; /* Ensures the navbar stays above other elements */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adds a shadow for better visibility */
+  }
+  
+  /* Logo styles */
+  .navbar-logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+  }
+  
+  /* Links container */
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Individual links */
+  .navbar-links li {
+    display: inline;
+  }
+  
+  .navbar-links a {
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s;
+  }
+  
+  .navbar-links a:hover {
+    color: #00bcd4; /* Highlight on hover */
+  }
+  
+  /* Add margin to the content below the navbar to prevent overlap */
+  body {
+    padding-top: 60px; /* Adjust based on the navbar height */
+  }
+  

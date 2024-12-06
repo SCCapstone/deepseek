@@ -2,14 +2,16 @@ import React, { useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from "./ThemeContext";
 import Calendar from 'react-calendar';
+import NavBar from "./NavBar";
 import './App.css';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece,ValuePiece];
 
-export default function CalendarPage() {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+const CalendarPage = ({ userId }) => {
+  const [events, setEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { theme, toggleTheme } = useTheme();
 
@@ -18,7 +20,7 @@ export default function CalendarPage() {
   }, [theme]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchEvents = async () => {
       try {
         const response = await fetch(process.env.REACT_APP_API_URL + '/getevents', {
           credentials: 'include',  // Include cookies for session-based authentication
@@ -29,8 +31,8 @@ export default function CalendarPage() {
         }
 
         const data = await response.json();  // Parse the JSON response
-        console.log('Fetched user data:', data);
-        setUserData(data);
+        console.log('Fetched events', data);
+        setEvents(data.events);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -38,20 +40,58 @@ export default function CalendarPage() {
       }
     };
     
-    fetchUserData();
-  }, []);  // Empty dependency array to run only on component mount
+    fetchEvents();
+  }, [selectedDate, userId]);
+  
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  }
   
   useEffect(() => {
-    console.log('User data state updated:', userData);
-  }, [userData]);
+    console.log('Events state updated:', events);
+  }, [events]);
   
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   
   return (
     <div>
-      <Calendar />
+      <NavBar/>
+      <h1>Your Calendar</h1>
+      <Calendar 
+        onChange={handleDateChange}
+        value={selectedDate}
+        view="month"
+      />
+      <h2>Events for {selectedDate.toDateString()}</h2>
+      <ul>
+      {events.filter(event => {
+    const eventDate = new Date(event.start_time).toDateString();
+    return eventDate === selectedDate.toDateString();
+  }).length === 0 ? (
+    <li>No events for this day.</li>
+  ) : (
+    events
+      .filter(event => {
+        const eventDate = new Date(event.start_time).toDateString();
+        return eventDate === selectedDate.toDateString();
+      })
+      .map(event => (
+        <li key={event._id}>
+          <h3>{event.title}</h3>
+          <p>{event.description}</p>
+          <p>
+            {new Date(event.start_time).toLocaleTimeString()} -{' '}
+            {new Date(event.end_time).toLocaleTimeString()}
+          </p>
+          <p>Comments: {event.comments.join(', ')}</p>
+        </li>
+      ))
+  )}
+      </ul>
     </div>
   );
 
 }
+
+export default CalendarPage;

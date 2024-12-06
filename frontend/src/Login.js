@@ -22,7 +22,7 @@ export default function Login() {
                 body: JSON.stringify(user),
             });
             if (response.ok) {
-                navigate('/');
+                navigate('/calendar');
             }
             else {
                 alert('Invalid username or password');

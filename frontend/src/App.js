@@ -6,6 +6,8 @@ import Register from './Register';
 import Home from './Home';
 import Profile from './Profile';
 import Calendar from './Calendar';
+import CreateEvent from './CreateEvent';
+
 export default function App() {
   return (
     <Routes>
@@ -14,9 +16,8 @@ export default function App() {
       <Route path='/register' element={<Register />} />
       <Route path='/profile' element={<Profile/>} />
       <Route path='/calendar' element={<Calendar/>} />
+      <Route path='/create-event' element={<CreateEvent />} />
     </Routes>
   
   );
 }
-
-//hello

@@ -12,7 +12,6 @@ function ProfileCard({ userData }) {
     <div className="profile-card">
       <p>User: {userData.username}</p>
       <p>Email: {userData.email}</p>
-      <p>Password: {userData.hashed_password}</p>
     </div>
   );
 }
