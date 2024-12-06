@@ -8,7 +8,7 @@ import './App.css';
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece,ValuePiece];
 
-export default function CalendarPage = ({ userId }) => {
+const CalendarPage = ({ userId }) => {
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
@@ -48,8 +48,8 @@ export default function CalendarPage = ({ userId }) => {
   }
   
   useEffect(() => {
-    console.log('Events state updated:', Events);
-  }, [Events]);
+    console.log('Events state updated:', events);
+  }, [events]);
   
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -86,3 +86,5 @@ export default function CalendarPage = ({ userId }) => {
   );
 
 }
+
+export default CalendarPage;
