@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import NavBar from './NavBar';
 import './App.css';
 
 const CreateEvent = () => {
@@ -40,6 +41,7 @@ const CreateEvent = () => {
   return (
     <div className="create-event-container">
       <h1>Create an Event</h1>
+      <NavBar/>
       <form onSubmit={handleSubmit} className="event-form">
         <div className="form-group">
           <label htmlFor="title">Title:</label>

@@ -121,3 +121,16 @@ body.dark{
   background-color: #f9f9f9;
   text-align: left;
 }
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%; /* Makes it a circle */
+  margin-bottom: 20px; /* Space between the picture and the card */
+}
