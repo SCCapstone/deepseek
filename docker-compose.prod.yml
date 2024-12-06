@@ -17,9 +17,6 @@ services:
         restart: on-failure
         ports:
             - 4000:80
-        environment:
-            PORT: 4000
-            REACT_APP_API_URL: ${API_URL}
     mongo:
         image: mongo
         restart: on-failure
