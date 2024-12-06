@@ -21,9 +21,34 @@ const CreateEvent = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    const start = new Date(eventDetails.day + ' ' + eventDetails.startTime);
+    const end = new Date(eventDetails.day + ' ' + eventDetails.endTime);
+    console.log(start);
     e.preventDefault();
-    console.log('Event Details:', eventDetails);
+    const res = await fetch('http://localhost:5000/addevent', {
+      method: 'post',
+      mdoe: 'cors',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: eventDetails.title,
+        description: eventDetails.description,
+        start_time: start.toISOString(),
+        end_time: end.toISOString(),
+        reminder: eventDetails.reminder,
+      })
+    });
+
+    if (!res.ok) {
+      // do something with error
+      alert('Could not create event');
+    }
+    else {
+      alert('Event created!');
+    }
   };
 
   const handleCancel = () => {

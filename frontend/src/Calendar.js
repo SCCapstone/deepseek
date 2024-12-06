@@ -32,7 +32,7 @@ const CalendarPage = ({ userId }) => {
 
         const data = await response.json();  // Parse the JSON response
         console.log('Fetched events', data);
-        setEvents(Array.isArray(data) ? data : []);
+        setEvents(data.events);
         setLoading(false);
       } catch (err) {
         setError(err.message);

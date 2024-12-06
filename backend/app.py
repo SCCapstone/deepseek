@@ -1,3 +1,4 @@
+import sys
 import hashlib
 import uuid
 import pymongo
@@ -138,24 +139,24 @@ def get_google_events():
     return jsonify(events)
 
 @app.route('/addevent', methods=['POST'])
-def add_event():
+@login_required
+def add_event(current_user):
     try:
         event_data = request.json
-
         # neccessary fields, if not in the payload, return an error
-        event_fields = ["user_id", "title", "description", "start_time", "end_time"]
+        event_fields = ["title", "description", "start_time", "end_time"]
         for field in event_fields:
             if field not in event_data:
                 return make_response(jsonify({"error": f"Missing field: {field}"}), 400)
 
         # add event to database
         event = db.add_event(
-            user_id=event_data["user_id"],
+            user_id=str(current_user['_id']),
             title=event_data["title"],
             description=event_data["description"],
             start_time=event_data["start_time"],
             end_time=event_data["end_time"],
-            visibility=event_data.get("visibility", False),
+            visibility=event_data.get("visibility", True),
             comments=event_data.get("comments", [])
         )
         
@@ -163,7 +164,7 @@ def add_event():
                                       "event": event}), 201)
 
     except Exception as e:
-
+        print(e, file=sys.stderr)
         return make_response(jsonify({"error": str(e)}), 500)
     
 @app.route('/getevents', methods=['GET'])
@@ -174,7 +175,7 @@ def get_events(current_user):
         events = db.get_events(user_id=user_id)
         events_json = loads(dumps(events))
         for event in events_json:
-            event['_id'] = str(event['_id'])
+            event['_id'] = str(event['_id']) 
 
         return make_response(
             jsonify({"message": "Events retrieved successfully", 
