@@ -2,6 +2,7 @@ import React, { useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from "./ThemeContext";
 import Calendar from 'react-calendar';
+import NavBar from "./NavBar";
 import './App.css';
 
 type ValuePiece = Date | null;
@@ -50,6 +51,7 @@ export default function CalendarPage() {
   
   return (
     <div>
+      <NavBar/>
       <Calendar />
     </div>
   );
