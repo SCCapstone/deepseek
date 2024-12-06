@@ -8,9 +8,10 @@ import './App.css';
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece,ValuePiece];
 
-export default function CalendarPage() {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function CalendarPage = ({ userId }) => {
+  const [events, setEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { theme, toggleTheme } = useTheme();
 
@@ -19,9 +20,9 @@ export default function CalendarPage() {
   }, [theme]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchEvents = async () => {
       try {
-        const response = await fetch('http://localhost:5000/getevents', {
+        const response = await fetch(`/events?user_id=${userId}&date=${selectedDate.toISOString().split('T')[0]}`, {
           credentials: 'include',  // Include cookies for session-based authentication
         });
 
@@ -30,8 +31,8 @@ export default function CalendarPage() {
         }
 
         const data = await response.json();  // Parse the JSON response
-        console.log('Fetched user data:', data);
-        setUserData(data);
+        console.log('Fetched events', data);
+        setEvents(data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -39,12 +40,16 @@ export default function CalendarPage() {
       }
     };
     
-    fetchUserData();
-  }, []);  // Empty dependency array to run only on component mount
+    fetchEvents();
+  }, [selectedDate, userId]);
+  
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  }
   
   useEffect(() => {
-    console.log('User data state updated:', userData);
-  }, [userData]);
+    console.log('Events state updated:', Events);
+  }, [Events]);
   
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -52,7 +57,31 @@ export default function CalendarPage() {
   return (
     <div>
       <NavBar/>
-      <Calendar />
+      <h1>Your Calendar</h1>
+      <Calendar 
+        onChange={handleDateChange}
+        value={selectedDate}
+        view="month"
+      />
+      <h2>Events for {selectedDate.toDateString()}</h2>
+      <ul>
+        {events.length === 0 ? (
+          <li>No events for this day.</li>
+        ) : (
+          events.map((event) => (
+            <li key={event._id}>
+              <h3>{event.title}</h3>
+              <p>{event.description}</p>
+              <p>
+                {new Date(event.start_time).toLocaleTimeString()} -{' '}
+                {new Date(event.end_time).toLocaleTimeString()}
+              </p>
+              //<p>Visibility: {event.visibility}</p>
+              <p>Comments: {event.comments.join(', ')}</p>
+            </li>
+          ))
+        )}
+      </ul>
     </div>
   );
 
