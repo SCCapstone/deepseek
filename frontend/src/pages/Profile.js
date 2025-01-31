@@ -1,11 +1,11 @@
 import React,{ useState, useEffect } from 'react';
-import ProfileCard from './ProfileCard';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from "./ThemeContext";
-import GoogleLoginButton from "./GoogleLoginButton";
-import NavBar from './NavBar';
-import './App.css';
+import { useTheme } from "../lib/ThemeContext";
 
+import ProfileCard from '../components/ProfileCard';
+import GoogleLoginButton from "../components/GoogleLoginButton";
+import NavBar from '../components/NavBar';
+import '../App.css';
 
 
 export default function Profile() {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from "./ThemeContext";
+import { useTheme } from "../lib/ThemeContext";
 import Calendar from 'react-calendar';
-import NavBar from "./NavBar";
-import './App.css';
+import NavBar from "../components/NavBar";
+import '../App.css';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece,ValuePiece];

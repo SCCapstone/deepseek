@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import NavBar from './NavBar';
-import './App.css';
+import NavBar from '../components/NavBar';
+import '../App.css';
 
 const CreateEvent = () => {
   const [eventDetails, setEventDetails] = useState({

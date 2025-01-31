@@ -1,5 +1,6 @@
 import React from 'react';
-import './App.css'; // CSS for styling
+
+import '../App.css';
 
 function ProfileCard({ userData }) {
   console.log('ProfileCard received userData:', userData)
