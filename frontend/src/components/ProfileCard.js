@@ -1,6 +1,5 @@
 import React from 'react';
 
-import '../App.css';
 
 function ProfileCard({ userData }) {
   if (!userData) {
