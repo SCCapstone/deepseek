@@ -1,60 +1,73 @@
-import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../App.css";
+import { useNavigate, Link } from "react-router-dom";
+import { registerUser } from '../lib/api.js';
+
+
 export default function Register() {
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const nav = useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const user = { password, username };
-    try {
-      const response = await fetch(process.env.REACT_APP_API_URL + '/register', {
-        method: "POST",
-        mode: 'cors',
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-      if (response.status === 200) {
-        nav('/login')
-      } else {
-        return alert("Error registering user, user may already exist");
-      }
-    } catch (error) {
-      return alert("Error registering user" + error.message);
+    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const navigate = useNavigate();
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const { user, error } = await registerUser(email, username, password);
+        if (error) {
+            // handle error here
+        }
+        else {
+            navigate('/calendar');
+        }
     }
-};
-  return (
-    <div className="app-container">
-      <form className="register-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">Username:</label>
-          <input
-            className="form-input"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+
+    return (
+        <div style={{height: '100vh'}} className='d-flex align-items-center justify-content-center'>
+            <form
+            className='p-3 d-flex flex-column align-items-center
+            border border-black rounded-lg shadow'
+            onSubmit={handleSubmit}>
+                <h3 className='h3'>Register</h3>
+                <div className='mb-3'>
+                    <div className='mb-1'>
+                        <label className='m-0'>Email</label>
+                        <input
+                            className='form-control'
+                            placeholder='EMAIL'
+                            type='email'
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className='mb-1'>
+                        <label className='m-0'>Username</label>
+                        <input
+                            className='form-control'
+                            placeholder='USERNAME'
+                            type='text'
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className='mb-1'>
+                        <label className='m-0'>Password</label>
+                        <input
+                            className='form-control'
+                            type='password'
+                            placeholder='PASSWORD'
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                </div>
+                <button
+                onClick={handleSubmit}
+                className='btn btn-primary mb-3'
+                type='submit'>Register</button>
+                <Link className='' to='/login'>Login</Link>
+            </form>
         </div>
-        <div className="form-group">
-          <label className="form-label">Password</label>
-          <input
-            className="form-input"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button className="form-button-register" type="submit">
-          Register
-        </button>
-      </form>
-    </div>
-  );
+    );
 };

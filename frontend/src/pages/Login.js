@@ -1,66 +1,61 @@
-// login page
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../App.css';
+import { useNavigate, Link } from 'react-router-dom';
+import { authUser } from '../lib/api.js';
+
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const user = { username, password };
-        try {
-            const response = await fetch(process.env.REACT_APP_API_URL + '/login', {
-                method: 'POST',
-                mode: 'cors',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(user),
-            });
-            if (response.ok) {
-                navigate('/calendar');
-            }
-            else {
-                alert('Invalid username or password');
-            }
-        } catch (error) {
-            alert('Error: ' + error.message);
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const { user, error } = await authUser(username, password);
+        if (error) {
+            // handle error here
         }
-      };
+        else {
+            navigate('/calendar');
+        }
+    };
 
     return (
-        <div className='app-container'>
-          <form className='login-form' onSubmit={handleSubmit}>
-            <div className='form-group'>
-              <label className='form-label'>Username</label>
-              <input
-                className='form-input'
-                placeholder='USERNAME'
-                type='text'
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className='form-group'>
-              <label className='form-label'>Password</label>
-              <input
-                className='form-input'
-                type='password'
-                placeholder='PASSWORD'
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button className='form-button-login' type='submit'>
-              Login
-            </button>
-          </form>
+        <div style={{height: '100vh'}} className='d-flex align-items-center justify-content-center'>
+            <form
+            className='p-3 d-flex flex-column align-items-center
+            border border-black rounded-lg shadow'
+            onSubmit={handleSubmit}>
+                <h3 className='h3'>Login</h3>
+                <div className='mb-3'>
+                    <div className='mb-1'>
+                        <label className='m-0'>Username</label>
+                        <input
+                            className='form-control'
+                            placeholder='USERNAME'
+                            type='text'
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className='mb-1'>
+                        <label className='m-0'>Password</label>
+                        <input
+                            className='form-control'
+                            type='password'
+                            placeholder='PASSWORD'
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                </div>
+                <button
+                onClick={handleSubmit}
+                className='btn btn-primary mb-3'
+                type='submit'>Login</button>
+                <Link className='' to='/register'>Register</Link>
+            </form>
         </div>
     );
 }
