@@ -6,7 +6,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# CHANGE THIS WHEN DEPLOYING PLS
-ENV OAUTHLIB_INSECURE_TRANSPORT=1
-
 CMD waitress-serve --host='0.0.0.0' --port=5000 app:app

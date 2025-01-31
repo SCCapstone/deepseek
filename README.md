@@ -12,7 +12,7 @@ CalendarMedia is a unique social web app designed to help users connect through 
     those containers so that all developers will be using the same versions.
 
 - **Setup**
-1. Make sure to Install and start [Docker](https://docs.docker.com/engine/install/)
+1. Install and start [Docker](https://docs.docker.com/engine/install/)
         
 2. Clone the repository and navigate to the project directory
 
@@ -39,3 +39,5 @@ Name: Jacob Robertson
 Email: jacobr10183@gmail.com     
 Name: Dominic Colin Gaines  
 Email: dcolingaines@gmail.com
+Name: Ian Turner
+Email: i.r.turner55@gmail.com
