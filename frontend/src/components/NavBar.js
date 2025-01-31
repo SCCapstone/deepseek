@@ -1,31 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './NavBar.css'; // Optional: Add styles here
 
-const NavBar = () => {
-  return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          CalendarMedia
-        </Link>
-        <ul className="navbar-links">
-          <li>
-            <Link to="/">Login</Link>
-          </li>
-          <li>
-            <Link to="/profile">Profile</Link>
-          </li>
-          <li>
-            <Link to="/calendar">Calendar</Link>
-          </li>
-          <li>
-            <Link to="/create-event">Create Event</Link>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  );
+
+export default function NavBar() {
+    return (
+        <header className='d-flex flex-row p-2 shadow-sm'>
+            <Link to='/' className='p-2 text-dark font-weight-bold'>CalendarMedia</Link>
+            <Link to='/profile' className='p-2 text-dark'>Profile</Link>
+            <Link to='/calendar' className='p-2 text-dark'>Calendar</Link>
+            <Link to='/create-event' className='p-2 text-dark'>Create Event</Link>
+        </header>
+    );
 };
-
-export default NavBar;
