@@ -1,53 +1,22 @@
-export async function loginUser(username, password) {
-    const res = await fetch(process.env.REACT_APP_API_URL + '/login', {
-        method: 'POST',
-        mode: 'cors',
+const api = async (method, url, variables = null) => {
+    const res = await fetch(process.env.REACT_APP_API_URL + url, {
+        method: method,
         credentials: 'include',
-        headers: {
+        headers: (method === 'post' ? {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+        } : {}),
+        body: (method === 'post' ? JSON.stringify(variables) : null),
     });
-
     if (res.ok) {
         const data = await res.json();
-        return { error: null, user: data.user }
+        return { data, error: null }
     }
     else {
-        return { error: 'Could not authenticate user', user: null }
+        return { error: res.statusText, data: null }
     }
 }
 
-export async function registerUser(email, username, password) {
-    const res = await fetch(process.env.REACT_APP_API_URL + '/register', {
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password, email }),
-    });
-
-    if (res.ok) {
-        const data = await res.json();
-        return { error: null, user: data.user }
-    }
-    else {
-        return { error: 'Could not authenticate user', user: null }
-    }
-}
-
-export async function getProfile() {
-    const res = await fetch(process.env.REACT_APP_API_URL + '/myprofile', {
-        credentials: 'include',
-    });
-
-    if (res.ok) {
-        const data = await res.json();
-        return { error: null, user: data.user }
-    }
-    else {
-        return { error: 'Could not fetch profile', data: null }
-    }
+export default {
+    get: (url) => api('get', url),
+    post: (url, variables) => api('post', url, variables),
 }

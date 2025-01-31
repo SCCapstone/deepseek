@@ -5,7 +5,7 @@ import NavBar from '../components/NavBar.js';
 import '../App.css';
 
 
-export default function CalendarPage({ userId }) {
+export default function CalendarPage() {
     const [events, setEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [loading, setLoading] = useState(false);
@@ -33,7 +33,7 @@ export default function CalendarPage({ userId }) {
         };
       
         fetchEvents();
-    }, [selectedDate, userId]);
+    }, [selectedDate]);
   
     const handleDateChange = (date) => {
       setSelectedDate(date);

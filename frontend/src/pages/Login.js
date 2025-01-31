@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import * as api from '../lib/api.js';
+import api from '../lib/api.js';
 
 
 export default function Login() {
@@ -10,7 +10,8 @@ export default function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        const { user, error } = await api.loginUser(username, password);
+        // const { user, error } = await api.loginUser(username, password);
+        const { error } = api.post('/login', { username, password });
         if (error) {
             // handle error here
         }

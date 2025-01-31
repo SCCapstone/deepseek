@@ -10,7 +10,7 @@ import ProfileCard from '../components/ProfileCard';
 import GoogleLoginButton from "../components/GoogleLoginButton";
 import '../App.css';
 import NavBar from '../components/NavBar.js';
-import * as api from '../lib/api.js';
+import api from '../lib/api.js';
 
 
 export default function Profile() {
@@ -20,13 +20,13 @@ export default function Profile() {
     const context = useContext(AppContext);
 
     async function getData() {
-        const { user, error } = await api.getProfile();
+        const { data, error } = await api.get('/myprofile');
         if (error) {
             // handle error here
             setError(error);
         }
         else {
-            setUserData(user);
+            setUserData(data.user);
             setLoading(false);
         }
     }
