@@ -1,4 +1,4 @@
-export async function authUser(username, password) {
+export async function loginUser(username, password) {
     const res = await fetch(process.env.REACT_APP_API_URL + '/login', {
         method: 'POST',
         mode: 'cors',
@@ -11,7 +11,6 @@ export async function authUser(username, password) {
 
     if (res.ok) {
         const data = await res.json();
-        localStorage.setItem('auth_token', data.token);
         return { error: null, user: data.user }
     }
     else {
@@ -32,10 +31,23 @@ export async function registerUser(email, username, password) {
 
     if (res.ok) {
         const data = await res.json();
-        localStorage.setItem('auth_token', data.token);
         return { error: null, user: data.user }
     }
     else {
         return { error: 'Could not authenticate user', user: null }
+    }
+}
+
+export async function getProfile() {
+    const res = await fetch(process.env.REACT_APP_API_URL + '/myprofile', {
+        credentials: 'include',
+    });
+
+    if (res.ok) {
+        const data = await res.json();
+        return { error: null, user: data.user }
+    }
+    else {
+        return { error: 'Could not fetch profile', data: null }
     }
 }

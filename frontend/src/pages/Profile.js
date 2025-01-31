@@ -10,6 +10,7 @@ import ProfileCard from '../components/ProfileCard';
 import GoogleLoginButton from "../components/GoogleLoginButton";
 import '../App.css';
 import NavBar from '../components/NavBar.js';
+import * as api from '../lib/api.js';
 
 
 export default function Profile() {
@@ -18,51 +19,74 @@ export default function Profile() {
     const [error, setError] = useState(null);
     const context = useContext(AppContext);
 
+    async function getData() {
+        const { user, error } = await api.getProfile();
+        if (error) {
+            // handle error here
+            setError(error);
+        }
+        else {
+            setUserData(user);
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch(process.env.REACT_APP_API_URL + '/myprofile', {
-                    credentials: 'include',  // Include cookies for session-based authentication
-                });
-
-                if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-                }
-
-                const data = await response.json();  // Parse the JSON response
-                setUserData(data);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
-        fetchUserData();
+        getData();
     }, []);  // Empty dependency array to run only on component mount
 
-    if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
         <div>
             <NavBar/>
-            <h1>User Profile</h1>
-            <div className="profile-section">
-                {/* Placeholder profile picture */}
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                    alt="Profile Placeholder"
-                    className="profile-pic"
-                />
-            </div>
-            {userData ? <ProfileCard userData={userData} /> : <p>Loading user data...</p>}
-            <footer>
-                <button onClick={() => context.toggleTheme()}>
-                    Switch to {context.theme === 'light' ? 'dark' : 'light'} Mode
-                </button>
-                <GoogleLoginButton/>
-            </footer>
+            {loading ? <p>Loading...</p> :
+                <>
+                    <div className='container p-3 shadow rounded-lg mt-5'>
+                        <h1 className='h1'>User Profile</h1>
+                        <img
+                        style={{
+                            width: '100px',
+                            borderRadius: 1000,
+                        }}
+                        className='mb-3'
+                        src='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
+                        alt='Profile Placeholder'/>
+                        <div className='mb-3'>
+                            <label>Username</label>
+                            <input
+                            type='text'
+                            className='form-control'
+                            value={userData.username}
+                            onChange={() => {}}/>
+                        </div>
+                        <div className='mb-3'>
+                            <label>Email</label>
+                            <input
+                            type='text'
+                            className='form-control'
+                            value={userData.email}
+                            onChange={() => {}}/>
+                        </div>
+                        <div className='mb-3'>
+                            <label>Password</label>
+                            <input
+                            type='password'
+                            className='form-control'
+                            value={'xxxxxxxx'}
+                            onChange={() => {}}/>
+                        </div>
+                    </div>
+                    <div className='container p-3 shadow rounded-lg mt-5'>
+                        <h1 className='h1'>Settings</h1>
+                        <button
+                            className='btn btn-primary'
+                            onClick={context.toggleTheme}>
+                            Switch to {context.theme === 'light' ? 'dark' : 'light'} mode
+                        </button>
+                    </div>
+                </>
+            }
         </div>
     );
 }

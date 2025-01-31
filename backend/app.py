@@ -117,7 +117,7 @@ def login():
 @login_required
 def get_user(current_user):
     user = db.get_user(username=current_user['username'])
-    user_json = dumps(user)
+    user_json = dumps({'user': user})
     return make_response(user_json)
 
 # TODO: add these frontend routes, really just needs to be a login with google button somewhere

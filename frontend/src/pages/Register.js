@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { registerUser } from '../lib/api.js';
+import * as api from '../lib/api.js';
 
 
 export default function Register() {
@@ -11,7 +11,7 @@ export default function Register() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        const { user, error } = await registerUser(email, username, password);
+        const { user, error } = await api.registerUser(email, username, password);
         if (error) {
             // handle error here
         }
