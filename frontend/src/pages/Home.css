@@ -1,0 +1,136 @@
+
+/* General container styles */
+.app-container {
+    text-align: center;
+    padding: 50px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  body.light{
+    background-color: #b3efb2;
+  }
+  body.dark{
+    background-color: #333;
+  }
+  
+  /* Header styling */
+  .app-header {
+    margin-bottom: 30px;
+  }
+  
+  .app-title {
+    font-size: 3rem;
+    color: #31493c;
+    margin: 0;
+  }
+  
+  .app-tagline {
+    font-size: 1.5rem;
+    color: #001a23;
+    margin: 10px 0;
+  }
+  /* Button container */
+  .button-container {
+    display: flex;
+    gap: 20px;
+  }
+  /* Button styling */
+  .auth-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  /* Login button specific styling */
+  .login-button {
+    background-color: #7a9e7e;
+    color: black;
+  }
+  .login-button:hover {
+    background-color: #856181;
+  }
+  /* Register button specific styling */
+  .register-button {
+    background-color: #97b49b;
+    color: black;
+  }
+  .register-button:hover {
+    background-color: #684b64;
+  }
+  /* Form group styling */
+  .form-group {
+    margin-bottom: 15px;
+  }
+  /* Label styling */
+  .form-label {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+    display: block;
+  }
+  /* Input field styling */
+  .form-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  /* Button styling */
+  .form-button-login {
+    background-color: #7a9e7e;
+    color: black;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .form-button-login:hover {
+    background-color: #856181;
+  }
+  
+  /* Button styling */
+  .form-button-register {
+    background-color: #97b49b;
+    color: black;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .form-button-register:hover {
+    background-color: #684b64;
+  }
+  .profile-card {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    text-align: left;
+  }
+  
+  .profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; /* Makes it a circle */
+    margin-bottom: 20px; /* Space between the picture and the card */
+  }

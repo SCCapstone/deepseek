@@ -1,31 +1,18 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import "../App.css";
+import { Link } from "react-router-dom";
 
 function Home() {
-  // for navigation
-  const navigate = useNavigate();
-  return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1 className="app-title">CalendarMedia</h1>
-        <p className="app-tagline">Look at what other people are doing!</p>
-      </header>
-      <div className="button-container">
-        <button
-          className="auth-button login-button"
-          onClick={() => navigate("/login")}
-        >
-          Login
-        </button>
-        <button
-          className="auth-button register-button"
-          onClick={() => navigate("/register")}
-        >
-          Register
-        </button>
-      </div>
-    </div>
-  );
+    return (
+        <div style={{height: '100vh'}} className='d-flex justify-content-center align-items-center'>
+            <div className='d-flex flex-column align-items-center'>
+                <h1 className='h1'>CalendarMedia</h1>
+                <p>Look at what other people are doing!</p>
+                <div>
+                    <Link className='btn btn-primary mr-3' to='/login'>Login</Link>
+                    <Link className='btn btn-secondary' to='/register'>Register</Link>
+                </div>
+            </div>
+        </div>
+    );
 }
 export default Home;

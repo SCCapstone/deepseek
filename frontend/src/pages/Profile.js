@@ -5,10 +5,9 @@ import React, {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AppContext } from '../lib/AppContext.js';
+import { AppContext } from '../lib/context.js';
 import ProfileCard from '../components/ProfileCard';
 import GoogleLoginButton from "../components/GoogleLoginButton";
-import '../App.css';
 import NavBar from '../components/NavBar.js';
 import api from '../lib/api.js';
 
