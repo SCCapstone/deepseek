@@ -5,7 +5,8 @@ import {
 import {
     useNavigate,
 } from 'react-router-dom';
-import Calendar from 'react-calendar';
+// import Calendar from 'react-calendar';
+import Calendar from '../components/Calendar';
 import 'react-calendar/dist/Calendar.css';
 
 import NavBar from '../components/NavBar';
@@ -58,12 +59,18 @@ export default function CalendarPage() {
             {loading ? <div>Loading...</div> :
                 <div className='flex-grow-1 d-flex flex-row align-items-stretch'>
                     <div className='flex-grow-1 d-flex flex-column'>
-                        <Calendar
+                        {/* <Calendar
                             className='w-100 h-100'
                             style={styles.calendar}
                             onChange={handleDateChange}
                             value={selectedDate}
-                            view='month'/>
+                            view='month'/> */}
+                        <Calendar
+                            className='w-100 h-100'
+                            style={styles.calendar}
+                            onChange={handleDateChange}
+                            selectedDate={selectedDate}
+                            setSelectedDate={setSelectedDate}/>
                     </div>
                     <EventList
                         events={events.filter(event => {

@@ -1,0 +1,124 @@
+import {
+    useState,
+} from 'react';
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import { useAppContext } from '../lib/context';
+
+
+const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+];
+
+export default function Calendar({ onChange, selectedDate, setSelectedDate }) {
+    const today = new Date();
+    const context = useAppContext();
+
+    const styles = {
+        calendarHeader: {
+            color: context.colorScheme.textColor,
+        },
+        calendar: {
+
+        },
+        arrow: {
+            color: context.colorScheme.textColor,
+        },
+        weekDays: {
+            color: context.colorScheme.textColor,
+            backgroundColor: context.colorScheme.accentColor,
+        },
+        calendarGrid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+        },
+        day: {
+            color: context.colorScheme.textColor,
+        }
+    }
+
+    function lastMonth() {
+        const newDate = new Date(selectedDate);
+        newDate.setMonth(selectedDate.getMonth() - 1);
+        newDate.setDate(1);
+        setSelectedDate(newDate);
+    }
+
+    function nextMonth() {
+        const newDate = new Date(selectedDate);
+        newDate.setMonth(selectedDate.getMonth() + 1);
+        newDate.setDate(1);
+        setSelectedDate(newDate);
+    }
+
+    // getting the Sunday of the first week of the month
+    let startDate = new Date(selectedDate);
+    while (
+        (startDate.getMonth() == selectedDate.getMonth() && startDate.getDate() > 1) || (startDate.getDay() > 0)
+    )
+        startDate.setDate(startDate.getDate() - 1);
+
+    // getting 7 * 5 = 35 days from there
+    let days = [];
+    let current = startDate;
+    for (let i=0; i<7*5; i++) {
+        days.push({'date': new Date(current)});
+        current.setDate(current.getDate() + 1);
+    }
+
+    return (
+        <div className='d-flex flex-column w-100 h-100'>
+            <div className='d-flex flex-row p-3' style={styles.calendarHeader}>
+                <button
+                    onClick={() => setSelectedDate(new Date())}
+                    className='btn btn-primary shadow-none mr-1'>
+                    Today</button>
+                <button
+                    onClick={lastMonth}
+                    className='btn d-flex justify-content-center align-items-center shadow-none'>
+                    <AiFillCaretLeft size={20} style={styles.arrow}/>
+                </button>
+                <button
+                    onClick={nextMonth}
+                    className='btn d-flex justify-content-center align-items-center shadow-none mr-1'>
+                    <AiFillCaretRight size={20} style={styles.arrow}/>
+                </button>
+                <h3 className='h3 mb-0'>{monthNames[selectedDate.getMonth()]}</h3>
+            </div>
+            <div style={styles.calendar} className='h-100 d-flex flex-column'>
+                <div style={styles.weekDays} className='d-flex flex-row justify-content-between'>
+                    <div className='p-1 flex-grow-1 text-center'>Sunday</div>
+                    <div className='p-1 flex-grow-1 text-center'>Monday</div>
+                    <div className='p-1 flex-grow-1 text-center'>Tuesday</div>
+                    <div className='p-1 flex-grow-1 text-center'>Wednesday</div>
+                    <div className='p-1 flex-grow-1 text-center'>Thursday</div>
+                    <div className='p-1 flex-grow-1 text-center'>Friday</div>
+                    <div className='p-1 flex-grow-1 text-center'>Saturday</div>
+                </div>
+                <div style={styles.calendarGrid} className='flex-grow-1'>
+                    {days.map((day, i) =>
+                        <div
+                            key={i}
+                            style={styles.day}
+                            className={'border p-1 ' +
+                            (selectedDate.toDateString() === day.date.toDateString() ?
+                                'bg-primary' : day.date.toDateString() === today.toDateString() ?
+                                'bg-secondary' : null)}
+                            onClick={() => setSelectedDate(day.date)}>
+                            {day.date.getDate()}</div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}

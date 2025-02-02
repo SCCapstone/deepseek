@@ -13,10 +13,13 @@ export default function EventList({ events, date }) {
     const MIN_SIDEBAR_WIDTH = 200;
     const MAX_SIDEBAR_WIDTH = 500;
     const DEFAULT_SIDEBAR_WIDTH = 300;
+
     const context = useAppContext();
     const sidebarRef = useRef(null);
-    const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
     const [isResizing, setIsResizing] = useState(false);
+    const [sidebarWidth, setSidebarWidth] = useState(
+        localStorage.getItem('events_sidebar_width') || DEFAULT_SIDEBAR_WIDTH
+    );
 
     const styles = {
         container: {
@@ -35,8 +38,10 @@ export default function EventList({ events, date }) {
     const resize = useCallback((event) => {
         if (isResizing) {
             const newWidth = sidebarRef.current.getBoundingClientRect().right - event.clientX;
-            if (newWidth >= MIN_SIDEBAR_WIDTH && newWidth <= MAX_SIDEBAR_WIDTH)
+            if (newWidth >= MIN_SIDEBAR_WIDTH && newWidth <= MAX_SIDEBAR_WIDTH) {
                 setSidebarWidth(newWidth);
+                localStorage.setItem('events_sidebar_width', newWidth);
+            }
         }
     }, [isResizing]);
 
