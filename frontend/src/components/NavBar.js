@@ -22,7 +22,7 @@ export default function NavBar() {
 
     return (
         <header
-            className='d-flex flex-row p-2 shadow-sm align-items-center justify-content-between'
+            className='d-flex flex-row p-2 align-items-center justify-content-between'
             style={styles.header}>
             <div className='d-flex flex-row'>
                 <Link style={styles.link} to='/' className='p-2 font-weight-bold'>CalendarMedia</Link>

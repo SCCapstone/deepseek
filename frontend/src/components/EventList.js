@@ -67,7 +67,7 @@ export default function EventList({ events, date }) {
         <div
             ref={sidebarRef}
             style={{ width: sidebarWidth }}
-            className='d-flex flex-row justify-content-start shadow-sm'>
+            className='d-flex flex-row justify-content-start'>
             <div className='h-100' style={styles.border} onMouseDown={startResizing}></div>
             <div className='p-3 d-flex flex-column w-100'>
                 <h3 className='h3' style={styles.text}>{date.toDateString()}</h3>

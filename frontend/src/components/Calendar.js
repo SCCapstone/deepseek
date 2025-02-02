@@ -37,6 +37,8 @@ export default function Calendar({ onChange, selectedDate }) {
         weekDays: {
             color: context.colorScheme.textColor,
             backgroundColor: context.colorScheme.accentColor,
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
         },
         calendarGrid: {
             display: 'grid',
@@ -96,14 +98,28 @@ export default function Calendar({ onChange, selectedDate }) {
                 <h3 className='h3 mb-0'>{monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}</h3>
             </div>
             <div style={styles.calendar} className='h-100 d-flex flex-column'>
-                <div style={styles.weekDays} className='d-flex flex-row justify-content-between'>
-                    <div className='p-1 flex-grow-1 text-center'>Sunday</div>
-                    <div className='p-1 flex-grow-1 text-center'>Monday</div>
-                    <div className='p-1 flex-grow-1 text-center'>Tuesday</div>
-                    <div className='p-1 flex-grow-1 text-center'>Wednesday</div>
-                    <div className='p-1 flex-grow-1 text-center'>Thursday</div>
-                    <div className='p-1 flex-grow-1 text-center'>Friday</div>
-                    <div className='p-1 flex-grow-1 text-center'>Saturday</div>
+                <div style={styles.weekDays}>
+                    <div className='d-flex justify-content-center align-items-center p-1'>
+                        <p className='mb-0'>Sunday</p>
+                    </div>
+                    <div className='d-flex justify-content-center align-items-center p-1'>
+                        <p className='mb-0'>Monday</p>
+                    </div>
+                    <div className='d-flex justify-content-center align-items-center p-1'>
+                        <p className='mb-0'>Tuesday</p>
+                    </div>
+                    <div className='d-flex justify-content-center align-items-center p-1'>
+                        <p className='mb-0'>Wednesday</p>
+                    </div>
+                    <div className='d-flex justify-content-center align-items-center p-1'>
+                        <p className='mb-0'>Thursday</p>
+                    </div>
+                    <div className='d-flex justify-content-center align-items-center p-1'>
+                        <p className='mb-0'>Friday</p>
+                    </div>
+                    <div className='d-flex justify-content-center align-items-center p-1'>
+                        <p className='mb-0'>Saturday</p>
+                    </div>
                 </div>
                 <div style={styles.calendarGrid} className='flex-grow-1'>
                     {days.map((day, i) =>
