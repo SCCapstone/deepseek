@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Home() {
+export default function Home() {
     return (
         <div style={{height: '100vh'}} className='d-flex justify-content-center align-items-center'>
             <div className='d-flex flex-column align-items-center'>
@@ -15,4 +15,3 @@ function Home() {
         </div>
     );
 }
-export default Home;

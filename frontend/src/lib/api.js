@@ -2,9 +2,7 @@ const api = async (method, url, variables = null) => {
     const res = await fetch(process.env.REACT_APP_API_URL + url, {
         method: method,
         credentials: 'include',
-        headers: (method === 'post' ? {
-            'Content-Type': 'application/json',
-        } : {}),
+        headers: (method === 'post' ? {'Content-Type': 'application/json'} : {}),
         body: (method === 'post' ? JSON.stringify(variables) : null),
     });
     if (res.ok) {

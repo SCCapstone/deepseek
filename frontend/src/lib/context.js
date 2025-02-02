@@ -3,9 +3,12 @@ import {
     createContext,
     useState,
 } from 'react';
+import { Themes } from './themes';
 
 
 export const AppContext = createContext(null);
+
+export const useAppContext = () => useContext(AppContext);
 
 export function AppContextProvider({ children }) {
     const [theme, setTheme] = useState(() => {
@@ -13,13 +16,18 @@ export function AppContextProvider({ children }) {
     });
 
     const toggleTheme = () => {
-        setTheme(theme === 'light' ? 'dark' : 'light');
+        const newTheme = theme === 'light' ? 'dark' : 'light'
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
     }
+    
+    const colorScheme = Themes[theme];
 
     return (
         <AppContext.Provider value={{
             theme,
             toggleTheme,
+            colorScheme,
         }}>
             {children}
         </AppContext.Provider>

@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import {
+    useState,
+    useContext,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar.js';
-import api from '../lib/api.js';
+import NavBar from '../components/NavBar';
+import api from '../lib/api';
+import { useAppContext } from '../lib/context';
 
 
 export default function CreateEvent() {
     const navigate = useNavigate();
+    const context = useAppContext();
+
     const [eventDetails, setEventDetails] = useState({
         title: '',
         description: '',
@@ -58,13 +64,32 @@ export default function CreateEvent() {
         });
     };
 
+    const styles = {
+        page: {
+            height: '100vh',
+            backgroundColor: context.colorScheme.backgroundColor,
+        },
+        section: {
+            backgroundColor: context.colorScheme.accentColor,
+        },
+        sectionTitle: {
+            color: context.colorScheme.textColor,
+        },
+        label: {
+            color: context.colorScheme.textColor,
+        }
+    }
+
     return (
-        <div>
+        <div style={styles.page}>
             <NavBar/>
-            <form onSubmit={handleSubmit} className='container shadow rounded-lg mt-5 p-3'>
-                <h1>Create an Event</h1>
+            <form
+                onSubmit={handleSubmit}
+                className='container shadow rounded-lg mt-5 p-3'
+                style={styles.section}>
+                <h1 style={styles.sectionTitle}>Create an Event</h1>
                 <div className='mb-3'>
-                    <label htmlFor="title">Title</label>
+                    <label htmlFor="title" style={styles.label}>Title</label>
                     <input
                         className='form-control'
                         type="text"
@@ -76,7 +101,7 @@ export default function CreateEvent() {
                     />
                 </div>
                 <div className='mb-3'>
-                    <label htmlFor="description">Description:</label>
+                    <label htmlFor="description" style={styles.label}>Description</label>
                     <textarea
                         className='form-control'
                         id="description"
@@ -87,7 +112,7 @@ export default function CreateEvent() {
                     ></textarea>
                 </div>
                 <div className='mb-3'>
-                    <label htmlFor="location">Location:</label>
+                    <label htmlFor="location" style={styles.label}>Location</label>
                     <input
                         className='form-control'
                         type="text"
@@ -100,7 +125,7 @@ export default function CreateEvent() {
                 </div>
                 <div className='d-flex flex-row justify-content-start mb-3'>
                     <div className='mr-3'>
-                        <label htmlFor="day">Day:</label>
+                        <label htmlFor="day" style={styles.label}>Day</label>
                         <input
                             className='form-control'
                             type="date"
@@ -112,7 +137,7 @@ export default function CreateEvent() {
                         />
                     </div>
                     <div className='mr-3'>
-                        <label htmlFor="startTime">Start Time:</label>
+                        <label htmlFor="startTime" style={styles.label}>Start Time</label>
                         <input
                             className='form-control'
                             type="time"
@@ -124,7 +149,7 @@ export default function CreateEvent() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="endTime">End Time:</label>
+                        <label htmlFor="endTime" style={styles.label}>End Time</label>
                         <input
                             className='form-control'
                             type="time"
@@ -137,14 +162,15 @@ export default function CreateEvent() {
                     </div>
                 </div>
                 <div className='mb-3'>
-                    <label className='form-control'>
+                    <label className='form-control d-flex flex-row'>
                         <input
+                            className='mr-1'
                             type="checkbox"
                             name="reminder"
                             checked={eventDetails.reminder}
                             onChange={handleChange}
                         />
-                        Set Reminder
+                        <div>Set Reminder</div>
                     </label>
                 </div>
                 <div>
