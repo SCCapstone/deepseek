@@ -2,7 +2,9 @@ import {
     useState,
     useEffect,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+    useNavigate,
+} from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
@@ -51,7 +53,7 @@ export default function CalendarPage() {
     if (error) return <div>Error: {error}</div>;
   
     return (
-        <div style={styles.page} className='d-flex flex-column justify-content-center'>
+        <div style={styles.page} className='d-flex flex-column justify-content-start'>
             <NavBar/>
             {loading ? <div>Loading...</div> :
                 <div className='flex-grow-1 d-flex flex-row align-items-stretch'>

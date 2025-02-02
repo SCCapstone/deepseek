@@ -8,5 +8,5 @@ export const Themes = {
         backgroundColor: '#222',
         accentColor: '#444',
         textColor: '#fff',
-    }
+    },
 }

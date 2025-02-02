@@ -5,11 +5,10 @@ import React, {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppContext } from '../lib/context.js';
-import ProfileCard from '../components/ProfileCard';
 import GoogleLoginButton from "../components/GoogleLoginButton";
-import NavBar from '../components/NavBar.js';
-import api from '../lib/api.js';
+import NavBar from '../components/NavBar';
+import { useAppContext } from '../lib/context';
+import api from '../lib/api';
 
 
 export default function Profile() {
