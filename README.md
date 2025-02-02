@@ -37,3 +37,9 @@ CalendarMedia is a unique social web app designed to help users connect through 
   - Jacob Robertson (jacobr10183@gmail.com)
   - Dominic Colin Gaines (dcolingaines@gmail.com)
   - Ian Turner (i.r.turner55@gmail.com)
+- **Testing**
+  1. Make sure docker container is running.
+  2. Enter the command `docker ps` to get the container id of the container you wish to test.
+  3. Enter the command `docker exec -it <container_name_or_id> npm test`
+  4. Testing folder is located at frontend/src/__tests__
+
