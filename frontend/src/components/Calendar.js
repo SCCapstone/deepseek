@@ -93,7 +93,7 @@ export default function Calendar({ onChange, selectedDate, setSelectedDate }) {
                     className='btn d-flex justify-content-center align-items-center shadow-none mr-1'>
                     <AiFillCaretRight size={20} style={styles.arrow}/>
                 </button>
-                <h3 className='h3 mb-0'>{monthNames[selectedDate.getMonth()]}</h3>
+                <h3 className='h3 mb-0'>{monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}</h3>
             </div>
             <div style={styles.calendar} className='h-100 d-flex flex-column'>
                 <div style={styles.weekDays} className='d-flex flex-row justify-content-between'>
