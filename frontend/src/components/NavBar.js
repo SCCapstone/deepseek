@@ -1,31 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './NavBar.css'; // Optional: Add styles here
+import { useContext } from 'react';
+import { AppContext } from '../lib/context';
 
-const NavBar = () => {
-  return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          CalendarMedia
-        </Link>
-        <ul className="navbar-links">
-          <li>
-            <Link to="/">Login</Link>
-          </li>
-          <li>
-            <Link to="/profile">Profile</Link>
-          </li>
-          <li>
-            <Link to="/calendar">Calendar</Link>
-          </li>
-          <li>
-            <Link to="/create-event">Create Event</Link>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  );
+
+export default function NavBar() {
+    const context = useContext(AppContext);
+
+    const styles = {
+        header: {
+            backgroundColor: context.colorScheme.accentColor,
+        },
+        link: {
+            color: context.colorScheme.textColor,
+        },
+    }
+
+    return (
+        <header className='d-flex flex-row p-2 shadow-sm' style={styles.header}>
+            <Link style={styles.link} to='/' className='p-2 font-weight-bold'>CalendarMedia</Link>
+            <Link style={styles.link} to='/profile' className='p-2'>Profile</Link>
+            <Link style={styles.link} to='/calendar' className='p-2'>Calendar</Link>
+            <Link style={styles.link} to='/create-event' className='p-2'>Create Event</Link>
+        </header>
+    );
 };
-
-export default NavBar;

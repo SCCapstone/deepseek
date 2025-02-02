@@ -1,10 +1,7 @@
 import React from 'react';
 
-import '../App.css';
 
 function ProfileCard({ userData }) {
-  console.log('ProfileCard received userData:', userData)
-
   if (!userData) {
     return <p>Loading user data...</p>;  // Or show a loading indicator
   }

@@ -74,7 +74,9 @@ def register():
     if not new_user:
         return make_response({'message': 'Error registering user'}, 400)
     # returning result to user
-    res = make_response({'message': 'User registered'}, 200)
+    res = make_response({'message': 'User registered', 'user': {
+        'username': new_user['username'],
+    }}, 200)
     res.set_cookie('auth_token', auth_token)
     return res
 
@@ -104,7 +106,10 @@ def login():
     db.add_auth_token(user['_id'], auth_token)
 
     # returning result to user
-    res = make_response({'message': 'User authenticated'})
+    app.logger.info(user)
+    res = make_response({'message': 'User authenticated', 'user': {
+        'username': user['username'],
+    }})
     res.set_cookie('auth_token', auth_token)
     return res
 
@@ -112,7 +117,7 @@ def login():
 @login_required
 def get_user(current_user):
     user = db.get_user(username=current_user['username'])
-    user_json = dumps(user)
+    user_json = dumps({'user': user})
     return make_response(user_json)
 
 # TODO: add these frontend routes, really just needs to be a login with google button somewhere

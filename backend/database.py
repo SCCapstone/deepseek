@@ -34,10 +34,19 @@ class Database:
          - auth_tokens : list of authentication tokens for the user
         """
 
-        user_doc = {'name' : name, 'username' : username, 'hashed_password' : password, 'bio' : bio,
-                     'events' : events, 'default_event_visibility' : default_event_visibility, 'followers' : followers, 
-                     'following' : following, 'auth_tokens' : auth_tokens}
-        return self.db.users.insert_one(user_doc)
+        user_doc = {
+            'name' : name,
+            'username' : username, 
+            'hashed_password' : password,
+            'bio' : bio,
+            'events' : events,
+            'default_event_visibility' : default_event_visibility,
+            'followers' : followers, 
+            'following' : following,
+            'auth_tokens' : auth_tokens
+        }
+        self.db.users.insert_one(user_doc)
+        return self.db.users.find_one({'username': username})
 
     def get_user(
         self,
@@ -48,11 +57,9 @@ class Database:
         returns the user with the given username and password
         if no password given, just searches and returns based on the username
         """
-        if not password == None:
-            return self.db.users.find_one({'username': username},
-                                    {'hashed_password' : password})
+        if password:
+            return self.db.users.find_one({'username': username, 'hashed_password' : password})
         
-        # idk why this says it's unreachable, pylance tripping because it is reachable..
         return self.db.users.find_one({'username': username})
 
     def get_token_user(
