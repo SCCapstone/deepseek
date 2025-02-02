@@ -20,7 +20,7 @@ const monthNames = [
     'December',
 ];
 
-export default function Calendar({ onChange, selectedDate, setSelectedDate }) {
+export default function Calendar({ onChange, selectedDate }) {
     const today = new Date();
     const context = useAppContext();
 
@@ -51,14 +51,14 @@ export default function Calendar({ onChange, selectedDate, setSelectedDate }) {
         const newDate = new Date(selectedDate);
         newDate.setMonth(selectedDate.getMonth() - 1);
         newDate.setDate(1);
-        setSelectedDate(newDate);
+        onChange(newDate);
     }
 
     function nextMonth() {
         const newDate = new Date(selectedDate);
         newDate.setMonth(selectedDate.getMonth() + 1);
         newDate.setDate(1);
-        setSelectedDate(newDate);
+        onChange(newDate);
     }
 
     // getting the Sunday of the first week of the month
@@ -80,7 +80,7 @@ export default function Calendar({ onChange, selectedDate, setSelectedDate }) {
         <div className='d-flex flex-column w-100 h-100'>
             <div className='d-flex flex-row p-3' style={styles.calendarHeader}>
                 <button
-                    onClick={() => setSelectedDate(new Date())}
+                    onClick={() => onChange(new Date())}
                     className='btn btn-primary shadow-none mr-1'>
                     Today</button>
                 <button
@@ -114,7 +114,7 @@ export default function Calendar({ onChange, selectedDate, setSelectedDate }) {
                             (selectedDate.toDateString() === day.date.toDateString() ?
                                 'bg-primary' : day.date.toDateString() === today.toDateString() ?
                                 'bg-secondary' : null)}
-                            onClick={() => setSelectedDate(day.date)}>
+                            onClick={() => onChange(day.date)}>
                             {day.date.getDate()}</div>
                     )}
                 </div>
