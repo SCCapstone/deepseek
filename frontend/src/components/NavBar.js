@@ -34,9 +34,9 @@ export default function NavBar() {
                 className='btn d-flex justify-content-center align-items-center shadow-none'
                 onClick={context.toggleTheme}>
                 {context.theme === 'light' ?
-                    <AiFillSun size={20} style={styles.themeIcon}/>
-                :
                     <AiFillMoon size={20} style={styles.themeIcon}/>
+                :
+                    <AiFillSun size={20} style={styles.themeIcon}/>
                 }
             </button>
         </header>
