@@ -12,17 +12,17 @@ CalendarMedia is a unique social web app designed to help users connect through 
     those containers so that all developers will be using the same versions.
 
 - **Setup**
-1. Install and start [Docker](https://docs.docker.com/engine/install/)
-        
-2. Clone the repository and navigate to the project directory
+  1. Install and start [Docker](https://docs.docker.com/engine/install/)
+          
+  2. Clone the repository and navigate to the project directory
 
-3. Run the command `docker-compose up`
+  3. Run the command `docker-compose up`
 
-4. To stop the environment press `Ctrl-C` in the terminal
+  4. To stop the environment press `Ctrl-C` in the terminal
 
-5. To clean the environment run the command `docker system prune -af`
+  5. To clean the environment run the command `docker system prune -af`
 
-    - Do this to fix any environment issues or after changing package requirements
+      - Do this to fix any environment issues or after changing package requirements
 
 - **Resources**
 
@@ -33,11 +33,7 @@ CalendarMedia is a unique social web app designed to help users connect through 
 
 
 - **Authors**                  
-Name: Tristan Shillingford               
-Email: trshillingford@gmail.com  
-Name: Jacob Robertson  
-Email: jacobr10183@gmail.com     
-Name: Dominic Colin Gaines  
-Email: dcolingaines@gmail.com
-Name: Ian Turner
-Email: i.r.turner55@gmail.com
+  - Tristan Shillingford (trshillingford@gmail.com)
+  - Jacob Robertson (jacobr10183@gmail.com)
+  - Dominic Colin Gaines (dcolingaines@gmail.com)
+  - Ian Turner (i.r.turner55@gmail.com)

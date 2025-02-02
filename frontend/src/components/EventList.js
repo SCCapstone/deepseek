@@ -12,7 +12,7 @@ import { useAppContext } from '../lib/context';
 export default function EventList({ events, date }) {
     const MIN_SIDEBAR_WIDTH = 200;
     const MAX_SIDEBAR_WIDTH = 500;
-    const DEFAULT_SIDEBAR_WIDTH = 400;
+    const DEFAULT_SIDEBAR_WIDTH = 300;
     const context = useAppContext();
     const sidebarRef = useRef(null);
     const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
