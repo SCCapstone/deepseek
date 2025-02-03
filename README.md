@@ -23,10 +23,12 @@ those containers so that all developers will be using the same versions.
 1. Make sure docker container is running
 2. Enter the command `docker exec -it deepseek-frontend npm test` to test the frontend
     - Testing folder is located at frontend/src/\_\_tests\_\_
+3. Enter the command `docker exec -it deepseek-backend pytest` to test the backend
 
 ### Resources
 - [Docker guide](https://docs.docker.com/get-started/docker-overview/)
 - [React guide](https://react.dev/)
+- [Unit testing in Flask](https://www.digitalocean.com/community/tutorials/unit-test-in-flask)
 
 ## Authors
 - Tristan Shillingford (trshillingford@gmail.com)

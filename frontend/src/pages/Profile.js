@@ -35,7 +35,7 @@ export default function Profile() {
 
     const styles = {
         page: {
-            height: '100vh',
+            minHeight: '100vh',
             backgroundColor: context.colorScheme.backgroundColor,
         },
         section: {

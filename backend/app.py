@@ -38,7 +38,7 @@ def login_required(func):
         auth_token = request.cookies.get('auth_token')
         current_user = db.get_token_user(auth_token)
         if not current_user:
-            return make_response({'message': 'Invalid credentials'}, 400)
+            return make_response({'message': 'Invalid credentials'}, 401)
 
         return func(current_user, *args, **kwargs)
 
