@@ -8,3 +8,4 @@ google-auth-httplib2==0.1.0
 google-api-python-client==2.103.0
 waitress==3.0.2
 pytest==8.3.4
+selenium==4.19.0
