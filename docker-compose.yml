@@ -6,7 +6,7 @@ services:
             dockerfile: Dockerfile.dev
         restart: on-failure
         volumes:
-            - ./backend:/app:ro
+            - ./backend:/app
         links:
             - mongo:mongo
         ports:
