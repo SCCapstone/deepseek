@@ -11,15 +11,24 @@ import { useAppContext } from '../lib/context';
 
 export default function EventList({ events, date }) {
     const MIN_SIDEBAR_WIDTH = 200;
-    const MAX_SIDEBAR_WIDTH = 500;
+    const MAX_SIDEBAR_WIDTH = 600;
     const DEFAULT_SIDEBAR_WIDTH = 300;
 
     const context = useAppContext();
     const sidebarRef = useRef(null);
     const [isResizing, setIsResizing] = useState(false);
-    const [sidebarWidth, setSidebarWidth] = useState(
-        localStorage.getItem('events_sidebar_width') || DEFAULT_SIDEBAR_WIDTH
-    );
+    const [sidebarWidth, sidebarWidthSetter] = useState(() => {
+        const savedWidth = localStorage.getItem('events_sidebar_width');
+        if (savedWidth)
+            return parseInt(savedWidth);
+        return DEFAULT_SIDEBAR_WIDTH;
+    });
+    const setSidebarWidth = useCallback((value) => {
+        sidebarWidthSetter(() => {
+            localStorage.setItem('events_sidebar_width', value);
+            return value;
+        });
+    }, [sidebarWidthSetter]);
 
     const styles = {
         container: {
@@ -29,7 +38,7 @@ export default function EventList({ events, date }) {
             color: context.colorScheme.textColor,
         },
         border: {
-            width: 2,
+            width: 4,
             backgroundColor: context.colorScheme.accentColor,
             cursor: 'ew-resize',
         },
@@ -40,7 +49,6 @@ export default function EventList({ events, date }) {
             const newWidth = sidebarRef.current.getBoundingClientRect().right - event.clientX;
             if (newWidth >= MIN_SIDEBAR_WIDTH && newWidth <= MAX_SIDEBAR_WIDTH) {
                 setSidebarWidth(newWidth);
-                localStorage.setItem('events_sidebar_width', newWidth);
             }
         }
     }, [isResizing]);
@@ -66,8 +74,8 @@ export default function EventList({ events, date }) {
     return (
         <div
             ref={sidebarRef}
-            style={{ width: sidebarWidth }}
-            className='d-flex flex-row justify-content-start'>
+            className='d-flex flex-row justify-content-start'
+            style={styles.container}>
             <div className='h-100' style={styles.border} onMouseDown={startResizing}></div>
             <div className='p-3 d-flex flex-column w-100'>
                 <h3 className='h3' style={styles.text}>{date.toDateString()}</h3>
