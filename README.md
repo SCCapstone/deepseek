@@ -24,6 +24,9 @@ those containers so that all developers will be using the same versions.
 2. Enter the command `docker exec -it deepseek-frontend npm test` to test the frontend
     - Testing folder is located at frontend/src/\_\_tests\_\_
 3. Enter the command `docker exec -it deepseek-backend pytest` to test the backend
+4. Navigate to http://localhost:4000 and run selenium IDE
+    - Download tests under /testing directory
+    - Run tests through selenium IDE
 
 ### Resources
 - [Docker guide](https://docs.docker.com/get-started/docker-overview/)
