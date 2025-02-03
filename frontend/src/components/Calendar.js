@@ -1,7 +1,7 @@
 import {
     useState,
 } from 'react';
-import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import { useAppContext } from '../lib/context';
 
 
@@ -20,9 +20,16 @@ const monthNames = [
     'December',
 ];
 
+const views = [
+    'Month',
+    'Week',
+    'Day',
+];
+
 export default function Calendar({ onChange, selectedDate }) {
     const today = new Date();
     const context = useAppContext();
+    const [view, setView] = useState(0);
 
     const styles = {
         calendarHeader: {
@@ -73,10 +80,13 @@ export default function Calendar({ onChange, selectedDate }) {
     // getting 7 * 5 = 35 days from there
     let days = [];
     let current = startDate;
-    for (let i=0; i<7*5; i++) {
+    for (;;) {
+        if (current.getDay() === 0 && (current.getMonth() > selectedDate.getMonth()))
+            break
         days.push({'date': new Date(current)});
         current.setDate(current.getDate() + 1);
     }
+    console.log(days)
 
     return (
         <div className='d-flex flex-column w-100 h-100'>
@@ -85,6 +95,21 @@ export default function Calendar({ onChange, selectedDate }) {
                     onClick={() => onChange(new Date())}
                     className='btn btn-primary shadow-none mr-1'>
                     Today</button>
+                    <div className='dropdown'>
+                        <button
+                            className='btn btn-secondary dropdown-toggle mr-1 shadow-none'
+                            type='button'
+                            id='dropdownMenuButton'
+                            data-toggle='dropdown'
+                            aria-haspopup='true'
+                            aria-expanded='false'>
+                            {views[view]}</button>
+                        <div className='dropdown-menu' aria-labelledby='dropdownMenuButton'>
+                            <button onClick={() => setView(0)} className='dropdown-item'>Month</button>
+                            <button onClick={() => setView(1)} className='dropdown-item'>Week</button>
+                            <button onClick={() => setView(2)} className='dropdown-item'>Day</button>
+                        </div>
+                    </div>
                 <button
                     onClick={lastMonth}
                     className='btn d-flex justify-content-center align-items-center shadow-none'>
