@@ -67,16 +67,18 @@ export default function Profile() {
                         src='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
                         alt='Profile Placeholder'/>
                         <div className='mb-3'>
-                            <label style={styles.label}>Username</label>
+                            <label htmlFor='username' style={styles.label}>Username</label>
                             <input
+                            id='username'
                             type='text'
                             className='form-control'
                             value={userData.username}
                             onChange={() => {}}/>
                         </div>
                         <div className='mb-3'>
-                            <label style={styles.label}>Email</label>
+                            <label htmlFor='email' style={styles.label}>Email</label>
                             <input
+                            id='email'
                             type='text'
                             className='form-control'
                             value={userData.email}
