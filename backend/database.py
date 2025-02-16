@@ -4,6 +4,7 @@ from typing import List
 from bson.objectid import ObjectId
 
 
+# most definitely need to implement some error handling and some point
 class Database:
     def __init__(self):
         self.client = pymongo.MongoClient('mongo', 27017)
@@ -73,3 +74,9 @@ class Database:
     
     def get_event(self, event_id: str) -> dict:
         return self.db.events.find_one({'_id' : ObjectId(event_id)})
+    
+    def delete_event(self, event_id: str):
+        return self.db.events.delete_one({'_id' : ObjectId(event_id)})
+    
+    def edit_event(self, event_id: str, **kwargs):
+        return self.db.events.update_one({'_id' : ObjectId(event_id)}, {'$set' : kwargs})
