@@ -10,7 +10,13 @@ const api = async (method, url, variables = null) => {
         return { data, error: null }
     }
     else {
-        return { error: res.statusText, data: null }
+        try {
+            const data = await res.json();
+            return { error: data.message, data: null }
+        }
+        catch (e) {
+            return { error: res.statusText, data: null }
+        }
     }
 }
 
