@@ -6,6 +6,7 @@ import secrets
 from flask import Flask, request, make_response, jsonify, redirect, session
 from flask_session import Session
 from bson.json_util import dumps, loads
+from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from flask_cors import CORS
 
@@ -177,25 +178,79 @@ def get_events(current_user):
     try:
         user_id = str(current_user['_id'])
         events = db.get_events(user_id=user_id)
-        events_json = loads(dumps(events))
-        for event in events_json:
-            event['_id'] = str(event['_id']) 
+
+        # Convert ObjectId to string for each event
+        events_json = []
+        for event in events:
+            event['_id'] = str(event['_id'])
+            events_json.append(event)
 
         return make_response(
-            jsonify({"message": "Events retrieved successfully", 
-                     "events": events_json}), 200)
+            jsonify({
+                "message": "Events retrieved successfully",
+                "data": events_json
+            }), 200
+        )
 
     except Exception as e:
-        return make_response(jsonify({"error": str(e)}), 500)
+        return make_response(
+            jsonify({
+                "error": "An error occurred while retrieving events",
+                "details": str(e)
+            }), 500
+        )
     
 @app.route('/events/<event_id>', methods=['GET'])
 def get_event(event_id):
     try:
-        event = db.get_event(event_id=event_id)
+        # Validate event_id
+        if not ObjectId.is_valid(event_id):
+            return jsonify({"error": "Invalid event ID"}), 400
+
+        event = db.get_event(event_id=ObjectId(event_id))
         if not event:
             return jsonify({"error": "Event not found"}), 404
-        event_json = dumps(event)
-        return jsonify(event_json), 200
 
+        # Convert ObjectId to string
+        event['_id'] = str(event['_id'])
+
+        return jsonify({
+            "message": "Event retrieved successfully",
+            "data": event
+        }), 200
+
+    except InvalidId:
+        return jsonify({"error": "Invalid event ID"}), 400
+    except Exception as e:
+        return jsonify({
+            "error": "An error occurred while retrieving the event",
+            "details": str(e)
+        }), 500
+    
+@app.route('/events/<event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    try:
+        success = db.delete_event(event_id=ObjectId(event_id))
+        if not success:
+            return jsonify({"error": "Event not found"}), 404
+
+        return jsonify({"message": "Event deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/events/<event_id>', methods=['PATCH'])
+def edit_event(event_id):
+    try:
+        # Validate event_id
+        event_id = ObjectId(event_id)
+        # Get the JSON data from the request body
+        update_data = request.get_json()
+        if not update_data:
+            return jsonify({"error": "No data provided for update"}), 400
+        # Update the event in the database
+        success = db.edit_event(event_id=event_id, **update_data)
+        if not success:
+            return jsonify({"error": "Event not found"}), 404
+        return jsonify({"message": "Event updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
