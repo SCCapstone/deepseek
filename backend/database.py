@@ -41,6 +41,17 @@ class Database:
             return self.db.users.find_one({'username': username, 'hashed_password' : password})
         
         return self.db.users.find_one({'username': username})
+    
+    def delete_user(self, user_id: str = None):
+        
+        user_id = ObjectId(user_id)
+        result = self.db.users.delete_one({'_id': user_id})
+
+        # Check if any document was deleted
+        if result.deleted_count == 0:
+            return None  # Or you can raise an exception if you prefer
+
+        return True  # Successfully deleted the user
 
     def get_token_user(self, auth_token: str):
         current_user = self.db.users.find_one({'auth_tokens': auth_token})

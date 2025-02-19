@@ -35,8 +35,5 @@ services:
             - 27017:27017
         volumes:
             - ./data/db:/data/db:rw
-    selenium:
-        image: selenium/standalone-chrome
-        
 
     

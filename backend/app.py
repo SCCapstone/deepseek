@@ -12,10 +12,12 @@ from flask_cors import CORS
 
 from database import *
 from gacc import *
+from friend_manager import *
 
 TOKEN_SIZE_BYTES = 32
 
 db = Database()
+friend_manager = FriendManager(db)
 
 app = Flask(__name__)
 app.config["SESSION_TYPE"] = "mongodb"
@@ -76,6 +78,7 @@ def register():
         return make_response({'message': 'Error registering user'}, 400)
     # returning result to user
     res = make_response({'message': 'User registered', 'user': {
+        'id' : str(new_user['_id']),
         'username': new_user['username'],
     }}, 200)
     res.set_cookie('auth_token', auth_token)
@@ -120,6 +123,17 @@ def get_user(current_user):
     user = db.get_user(username=current_user['username'])
     user_json = dumps({'user': user})
     return make_response(user_json)
+
+@app.route('/users/delete/<user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        success = db.delete_user(user_id=user_id)
+        if not success:
+            return jsonify({"error": "user not found"}), 404
+
+        return jsonify({"message": "user deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # TODO: add these frontend routes, really just needs to be a login with google button somewhere
 # need to add frontent routes and save to database but this is working from hitting the backend routes
@@ -253,5 +267,75 @@ def edit_event(event_id):
         if not success:
             return jsonify({"error": "Event not found"}), 404
         return jsonify({"message": "Event updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/friends/add', methods=['POST'])
+def add_friend():
+    try:
+        # Validate JSON payload
+        if not request.json or 'friend_id' not in request.json:
+            return jsonify({"error": "Missing 'friend_id' in request body"}), 400
+
+        # Get user_id and friend_id
+        user_id = request.json.get('user_id')
+        friend_id = request.json.get('friend_id')
+
+        # Validate ObjectIDs
+        if not ObjectId.is_valid(user_id) or not ObjectId.is_valid(friend_id):
+            return jsonify({"error": "Invalid user ID or friend ID"}), 400
+
+        # Add friend
+        success = friend_manager.add_friend(user_id=user_id, friend_id=friend_id)
+        if not success:
+            return jsonify({"error": "Friend relationship already exists or invalid IDs"}), 400
+
+        return jsonify({"message": "Friend added successfully"}), 200
+
+    except InvalidId as e:
+        return jsonify({"error": "Invalid user ID or friend ID"}), 400
+    except Exception as e:
+        return jsonify({"error": "Internal server error"}), 500
+    
+@app.route('/friends/remove', methods=['POST'])
+@login_required
+def remove_friend(current_user):
+    try:
+        user_id = current_user.id
+        friend_id = request.json.get('friend_id')
+
+        # Remove friend
+        success = friend_manager.remove_friend(user_id, friend_id)
+        if not success:
+            return jsonify({"error": "Friend relationship not found or invalid IDs"}), 404
+
+        return jsonify({"message": "Friend removed successfully"}), 200
+
+    except InvalidId:
+        return jsonify({"error": "Invalid user ID or friend ID"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/friends', methods=['GET'])
+@login_required
+def get_friends(current_user):
+    try:
+        user_id = current_user.id
+
+        friends = friend_manager.get_friends(user_id)
+        return jsonify({"message": "Friends retrieved successfully", "friends": friends}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/friends/events', methods=['GET'])
+@login_required
+def get_friends_events(current_user):
+    try:
+        user_id = current_user.id
+
+        events = friend_manager.get_friends_events(user_id)
+        return jsonify({"message": "Friends' events retrieved successfully", "events": events}), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
