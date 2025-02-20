@@ -1,93 +1,19 @@
 import pymongo
-import uuid
-from typing import List
-from bson.objectid import ObjectId
+from pymongo.errors import PyMongoError
+from user_manager import UserManager
+from event_manager import EventManager
+from friend_manager import FriendManager
 
-
-# most definitely need to implement some error handling and some point
+# base class for the database
 class Database:
-    def __init__(self):
-        self.client = pymongo.MongoClient('mongo', 27017)
-        self.db = self.client.appdb
-
-    def add_user(
-        self,
-        username: str,
-        password: str,
-        name: str = None,
-        bio: str = None, 
-        events: List = [],
-        default_event_visibility: bool = False,
-        followers: List = [], 
-        following: List = [],
-        auth_tokens: List = None
-    ):
-        user_doc = {
-            'name' : name,
-            'username' : username, 
-            'hashed_password' : password,
-            'bio' : bio,
-            'events' : events,
-            'default_event_visibility' : default_event_visibility,
-            'followers' : followers, 
-            'following' : following,
-            'auth_tokens' : auth_tokens
-        }
-        self.db.users.insert_one(user_doc)
-        return self.db.users.find_one({'username': username})
-
-    def get_user(self, username : str, password : str = None):
-        if password:
-            return self.db.users.find_one({'username': username, 'hashed_password' : password})
-        
-        return self.db.users.find_one({'username': username})
-    
-    def delete_user(self, user_id: str = None):
-        
-        user_id = ObjectId(user_id)
-        result = self.db.users.delete_one({'_id': user_id})
-
-        # Check if any document was deleted
-        if result.deleted_count == 0:
-            return None  # Or you can raise an exception if you prefer
-
-        return True  # Successfully deleted the user
-
-    def get_token_user(self, auth_token: str):
-        current_user = self.db.users.find_one({'auth_tokens': auth_token})
-        return current_user
-
-    def add_auth_token(self, user_id: int, auth_token: str):
-        self.db.users.update_one({'_id': user_id}, {'$push': {'auth_tokens': auth_token}})
-
-    def add_event(
-        self, 
-        user_id : int, 
-        title : str,
-        description : str,
-        start_time : str,
-        end_time : str,
-        visibility : bool = False,
-        comments : List = []
-    ):
-        if start_time >= end_time:
-            raise ValueError("start_time must be earlier than end_time.")
-        
-        event_doc = {'user_id' : user_id,'title' : title, 'description' : description,
-                     'start_time' : start_time, 'end_time' : end_time,
-                     'visibility' : visibility, 'comments' : comments}
-        result = self.db.events.insert_one(event_doc)
-        event_id = str(result.inserted_id)
-        return event_id
-    
-    def get_events(self, user_id: str) -> List:
-        return list(self.db.events.find({'user_id' : user_id}))
-    
-    def get_event(self, event_id: str) -> dict:
-        return self.db.events.find_one({'_id' : ObjectId(event_id)})
-    
-    def delete_event(self, event_id: str):
-        return self.db.events.delete_one({'_id' : ObjectId(event_id)})
-    
-    def edit_event(self, event_id: str, **kwargs):
-        return self.db.events.update_one({'_id' : ObjectId(event_id)}, {'$set' : kwargs})
+    def __init__(self, host: str = 'mongo', port: int = 27017, db_name: str = 'appdb'):
+        try:
+            self.client = pymongo.MongoClient(host, port)
+            self.db = self.client[db_name]
+            self.friend_manager = FriendManager(self.db)
+            self.user_manager = UserManager(self.db)
+            self.event_manager = EventManager(self.db)
+            print(f"Connected to MongoDB at {host}:{port}")
+        except PyMongoError as e:
+            print(f"Failed to connect to MongoDB: {e}")
+            raise

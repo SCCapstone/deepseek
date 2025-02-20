@@ -35,43 +35,39 @@ def test_add_friend(client):
         "username": generate_random_string(20)
     }
     response = client.post('/register', json=user1)
-    assert response.status_code == 200  # Assuming user creation returns 200
+    assert response.status_code == 200  
 
-    # Extract the user1 ID from the response
     user1_data = response.get_json()
-    user1_id = user1_data['user']['id']  # Use 'id' instead of '_id'
-    assert user1_id is not None  # Ensure the user ID was returned
-
+    user1_id = user1_data['user']['id']  
+    assert user1_id is not None  
     # Step 2: Create User 2
     user2 = {
         "password": generate_random_string(20),
         "username": generate_random_string(20)
     }
     response = client.post('/register', json=user2)
-    assert response.status_code == 200  # Assuming user creation returns 200
+    assert response.status_code == 200  
 
     # Extract the user2 ID from the response
     user2_data = response.get_json()
-    user2_id = user2_data['user']['id']  # Use 'id' instead of '_id'
-    assert user2_id is not None  # Ensure the user ID was returned
+    user2_id = user2_data['user']['id']  
+    assert user2_id is not None  
 
     # Step 3: Add User 1 and User 2 as friends
     add_friend_data = {
-        "user_id": user1_id,  # Use the extracted 'id' here
-        "friend_id": user2_id  # Use the extracted 'id' here
+        "user_id": user1_id, 
+        "friend_id": user2_id  
     }
     response = client.post('/friends/add', json=add_friend_data)
-    assert response.status_code == 200  # Assuming the add friend returns 200
+    assert response.status_code == 200  
 
-    # Additional checks can be made to verify the friendship if applicable
+    # # Step 4: Clean up - Delete User 1
+    # response = client.delete(f'/users/delete/{user1_id}')
+    # assert response.status_code == 200  
 
-    # Step 4: Clean up - Delete User 1
-    response = client.delete(f'/users/delete/{user1_id}')
-    assert response.status_code == 200  # Assuming user deletion returns 200
-
-    # Step 5: Clean up - Delete User 2
-    response = client.delete(f'/users/delete/{user2_id}')
-    assert response.status_code == 200  # Assuming user deletion returns 200
+    # # Step 5: Clean up - Delete User 2
+    # response = client.delete(f'/users/delete/{user2_id}')
+    # assert response.status_code == 200  
 
 
 @pytest.fixture

@@ -1,58 +1,56 @@
 from bson import ObjectId
-import pymongo
 from datetime import datetime
 from typing import List, Dict
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 class FriendManager:
+    # makes a FriendManager object with a connection to the db
     def __init__(self, db):
-        """
-        Initializes the FriendManager with a database connection.
-
-        Args:
-            db: A database connection object (e.g., MongoDB client).
-        """
-        self.client = pymongo.MongoClient('mongo', 27017)
-        self.db = self.client.appdb
+        self.db = db
 
     def add_friend(self, user_id: str, friend_id: str) -> bool:
-        """
-        Adds a friend relationship between two users.
-
-        Args:
-            user_id (str): The ID of the user adding a friend.
-            friend_id (str): The ID of the user being added as a friend.
-
-        Returns:
-            bool: True if the friend was added successfully, False otherwise.
-        """
         try:
             # Validate user_id and friend_id
             if not ObjectId.is_valid(user_id) or not ObjectId.is_valid(friend_id):
                 raise ValueError("Invalid user ID or friend ID")
 
-            # Add the friend relationship
-            self.db.friends.insert_one({
-                "user_id": ObjectId(user_id),
-                "friend_id": ObjectId(friend_id),
+            # Convert IDs to ObjectId
+            user_id_obj = ObjectId(user_id)
+            friend_id_obj = ObjectId(friend_id)
+
+            # Add the friend relationship to the `friends` collection
+            friendship = {
+                "user_id": user_id_obj,
+                "friend_id": friend_id_obj,
                 "created_at": datetime.now()
-            })
+            }
+            friendship_result = self.db.friends.insert_one(friendship)
+
+            if not friendship_result.inserted_id:
+                raise Exception("Failed to create friendship record")
+
+            # Update the `friends` list for both users
+            self.db.users.update_one(
+                {"_id": user_id_obj},
+                {"$addToSet": {"friends": friendship_result.inserted_id}}  # Use $addToSet to avoid duplicates
+            )
+            self.db.users.update_one(
+                {"_id": friend_id_obj},
+                {"$addToSet": {"friends": friendship_result.inserted_id}}  # Use $addToSet to avoid duplicates
+            )
+
+            logger.info(f"Friend relationship added and users updated: {user_id} -> {friend_id}")
             return True
 
         except Exception as e:
-            print(f"Error adding friend: {e}")
+            logger.error(f"Error adding friend: {e}")
             return False
 
     def remove_friend(self, user_id: str, friend_id: str) -> bool:
-        """
-        Removes a friend relationship between two users.
-
-        Args:
-            user_id (str): The ID of the user removing a friend.
-            friend_id (str): The ID of the user being removed as a friend.
-
-        Returns:
-            bool: True if the friend was removed successfully, False otherwise.
-        """
         try:
             # Validate user_id and friend_id
             if not ObjectId.is_valid(user_id) or not ObjectId.is_valid(friend_id):
@@ -63,22 +61,18 @@ class FriendManager:
                 "user_id": ObjectId(user_id),
                 "friend_id": ObjectId(friend_id)
             })
-            return result.deleted_count > 0
+            if result.deleted_count > 0:
+                logger.info(f"Friend relationship removed: {user_id} -> {friend_id}")
+                return True
+            else:
+                logger.warning(f"No friend relationship found: {user_id} -> {friend_id}")
+                return False
 
         except Exception as e:
-            print(f"Error removing friend: {e}")
+            logger.error(f"Error removing friend: {e}")
             return False
 
     def get_friends(self, user_id: str) -> List[Dict]:
-        """
-        Retrieves a list of friends for a given user.
-
-        Args:
-            user_id (str): The ID of the user whose friends are being retrieved.
-
-        Returns:
-            List[Dict]: A list of friend objects, each containing friend details.
-        """
         try:
             # Validate user_id
             if not ObjectId.is_valid(user_id):
@@ -89,19 +83,10 @@ class FriendManager:
             return [{"friend_id": str(friend["friend_id"]), "created_at": friend["created_at"]} for friend in friends]
 
         except Exception as e:
-            print(f"Error fetching friends: {e}")
+            logger.error(f"Error fetching friends: {e}")
             return []
 
     def get_friends_events(self, user_id: str) -> List[Dict]:
-        """
-        Retrieves events for all friends of a given user.
-
-        Args:
-            user_id (str): The ID of the user whose friends' events are being retrieved.
-
-        Returns:
-            List[Dict]: A list of events from all friends.
-        """
         try:
             # Validate user_id
             if not ObjectId.is_valid(user_id):
@@ -110,6 +95,7 @@ class FriendManager:
             # Get the user's friends
             friends = self.get_friends(user_id)
             if not friends:
+                logger.info(f"No friends found for user: {user_id}")
                 return []
 
             # Fetch events for each friend
@@ -127,5 +113,5 @@ class FriendManager:
             } for event in events]
 
         except Exception as e:
-            print(f"Error fetching friends' events: {e}")
+            logger.error(f"Error fetching friends' events: {e}")
             return []
