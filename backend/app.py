@@ -109,7 +109,6 @@ def login():
     db.user_manager.add_auth_token(user['_id'], auth_token)
 
     # returning result to user
-    app.logger.info(user)
     res = make_response({'message': 'User authenticated', 'user': {
         'username': user['username'],
     }})
@@ -183,7 +182,7 @@ def add_event(current_user):
                                       "event": event}), 201)
 
     except Exception as e:
-        print(e, file=sys.stderr)
+        app.logger.error('Error: {e}')
         return make_response(jsonify({"error": str(e)}), 500)
     
 @app.route('/getevents', methods=['GET'])

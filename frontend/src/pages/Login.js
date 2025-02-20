@@ -10,10 +10,10 @@ export default function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        // const { user, error } = await api.loginUser(username, password);
-        const { error } = api.post('/login', { username, password });
+        const { error } = await api.post('/login', { username, password });
         if (error) {
             // handle error here
+            alert(error);
         }
         else {
             navigate('/calendar');

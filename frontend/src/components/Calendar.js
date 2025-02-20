@@ -72,21 +72,24 @@ export default function Calendar({ onChange, selectedDate }) {
 
     // getting the Sunday of the first week of the month
     let startDate = new Date(selectedDate);
-    while (
-        (startDate.getMonth() == selectedDate.getMonth() && startDate.getDate() > 1) || (startDate.getDay() > 0)
-    )
+    while ((startDate.getMonth() == selectedDate.getMonth()
+            && startDate.getDate() > 1) || (startDate.getDay() > 0)) {
         startDate.setDate(startDate.getDate() - 1);
-
-    // getting 7 * 5 = 35 days from there
-    let days = [];
-    let current = startDate;
-    for (;;) {
-        if (current.getDay() === 0 && (current.getMonth() > selectedDate.getMonth()))
-            break
-        days.push({'date': new Date(current)});
-        current.setDate(current.getDate() + 1);
     }
-    console.log(days)
+
+    // continuing to get weeks until we get the whole month
+    let days = [];
+    let current = new Date(startDate);
+    while (true) {
+        if ((current.getMonth() > selectedDate.getMonth()
+            && current.getFullYear() === selectedDate.getFullYear())
+            || current.getFullYear() > selectedDate.getFullYear())
+            break
+        for (let i=0; i<7; i++) {
+            days.push({date: new Date(current)});
+            current.setDate(current.getDate() + 1);
+        }
+    }
 
     return (
         <div className='d-flex flex-column w-100 h-100'>
