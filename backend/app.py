@@ -303,7 +303,7 @@ def remove_friend(current_user):
         friend_id = request.json.get('friend_id')
 
         # Remove friend
-        success = friend_manager.remove_friend(user_id, friend_id)
+        success = db.friend_manager.remove_friend(user_id, friend_id)
         if not success:
             return jsonify({"error": "Friend relationship not found or invalid IDs"}), 404
 
@@ -320,7 +320,7 @@ def get_friends(current_user):
     try:
         user_id = current_user.id
 
-        friends = friend_manager.get_friends(user_id)
+        friends = db.friend_manager.get_friends(user_id)
         return jsonify({"message": "Friends retrieved successfully", "friends": friends}), 200
 
     except Exception as e:
@@ -332,7 +332,7 @@ def get_friends_events(current_user):
     try:
         user_id = current_user.id
 
-        events = friend_manager.get_friends_events(user_id)
+        events = db.friend_manager.get_friends_events(user_id)
         return jsonify({"message": "Friends' events retrieved successfully", "events": events}), 200
 
     except Exception as e:
