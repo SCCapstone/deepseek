@@ -12,6 +12,7 @@ from flask_cors import CORS
 
 from database import *
 from gacc import *
+from friend_manager import *
 
 TOKEN_SIZE_BYTES = 32
 
@@ -37,7 +38,7 @@ googlecalendar = GoogleCalendar(
 def login_required(func):
     def func_wrapper(*args, **kwargs):
         auth_token = request.cookies.get('auth_token')
-        current_user = db.get_token_user(auth_token)
+        current_user = db.user_manager.get_token_user(auth_token)
         if not current_user:
             return make_response({'message': 'Invalid credentials'}, 401)
 
@@ -58,7 +59,7 @@ def register():
     password = data['password']
 
     # checking if existing user
-    existing_user = db.get_user(username=username)
+    existing_user = db.user_manager.get_user(username=username)
     if existing_user:
         return make_response({'message': 'Existing username'}, 400)
 
@@ -71,11 +72,12 @@ def register():
     auth_token = secrets.token_hex(TOKEN_SIZE_BYTES)
 
     # inserting into database
-    new_user = db.add_user(username=username, password=hashed_password, auth_tokens=[auth_token])
+    new_user = db.user_manager.add_user(username=username, password=hashed_password, auth_tokens=[auth_token])
     if not new_user:
         return make_response({'message': 'Error registering user'}, 400)
     # returning result to user
     res = make_response({'message': 'User registered', 'user': {
+        'id' : str(new_user['_id']),
         'username': new_user['username'],
     }}, 200)
     res.set_cookie('auth_token', auth_token)
@@ -98,13 +100,13 @@ def login():
     hashed_password = _hash.hexdigest()
 
     # checking against database
-    user = db.get_user(username=username, password=hashed_password)
+    user = db.user_manager.get_user(username=username, password=hashed_password)
     if not user:
         return make_response({'message': 'Invalid username/password'}, 400)
 
     # creating an authentication token
     auth_token = secrets.token_hex(TOKEN_SIZE_BYTES)
-    db.add_auth_token(user['_id'], auth_token)
+    db.user_manager.add_auth_token(user['_id'], auth_token)
 
     # returning result to user
     res = make_response({'message': 'User authenticated', 'user': {
@@ -116,9 +118,20 @@ def login():
 @app.route('/myprofile', methods=['GET'])
 @login_required
 def get_user(current_user):
-    user = db.get_user(username=current_user['username'])
+    user = db.user_manager.get_user(username=current_user['username'])
     user_json = dumps({'user': user})
     return make_response(user_json)
+
+@app.route('/users/delete/<user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        success = db.user_manager.delete_user(user_id=user_id)
+        if not success:
+            return jsonify({"error": "user not found"}), 404
+
+        return jsonify({"message": "user deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # TODO: add these frontend routes, really just needs to be a login with google button somewhere
 # need to add frontent routes and save to database but this is working from hitting the backend routes
@@ -155,7 +168,7 @@ def add_event(current_user):
                 return make_response(jsonify({"error": f"Missing field: {field}"}), 400)
 
         # add event to database
-        event = db.add_event(
+        event = db.event_manager.add_event(
             user_id=str(current_user['_id']),
             title=event_data["title"],
             description=event_data["description"],
@@ -177,7 +190,7 @@ def add_event(current_user):
 def get_events(current_user):
     try:
         user_id = str(current_user['_id'])
-        events = db.get_events(user_id=user_id)
+        events = db.event_manager.get_events(user_id=user_id)
 
         # Convert ObjectId to string for each event
         events_json = []
@@ -207,7 +220,7 @@ def get_event(event_id):
         if not ObjectId.is_valid(event_id):
             return jsonify({"error": "Invalid event ID"}), 400
 
-        event = db.get_event(event_id=ObjectId(event_id))
+        event = db.event_manager.get_event(event_id=ObjectId(event_id))
         if not event:
             return jsonify({"error": "Event not found"}), 404
 
@@ -230,7 +243,7 @@ def get_event(event_id):
 @app.route('/events/<event_id>', methods=['DELETE'])
 def delete_event(event_id):
     try:
-        success = db.delete_event(event_id=ObjectId(event_id))
+        success = db.event_manager.delete_event(event_id=ObjectId(event_id))
         if not success:
             return jsonify({"error": "Event not found"}), 404
 
@@ -248,9 +261,79 @@ def edit_event(event_id):
         if not update_data:
             return jsonify({"error": "No data provided for update"}), 400
         # Update the event in the database
-        success = db.edit_event(event_id=event_id, **update_data)
+        success = db.event_manager.edit_event(event_id=event_id, **update_data)
         if not success:
             return jsonify({"error": "Event not found"}), 404
         return jsonify({"message": "Event updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/friends/add', methods=['POST'])
+def add_friend():
+    try:
+        # Validate JSON payload
+        if not request.json or 'friend_id' not in request.json:
+            return jsonify({"error": "Missing 'friend_id' in request body"}), 400
+
+        # Get user_id and friend_id
+        user_id = request.json.get('user_id')
+        friend_id = request.json.get('friend_id')
+
+        # Validate ObjectIDs
+        if not ObjectId.is_valid(user_id) or not ObjectId.is_valid(friend_id):
+            return jsonify({"error": "Invalid user ID or friend ID"}), 400
+
+        # Add friend
+        success = db.friend_manager.add_friend(user_id=user_id, friend_id=friend_id)
+        if not success:
+            return jsonify({"error": "Friend relationship already exists or invalid IDs"}), 400
+
+        return jsonify({"message": "Friend added successfully"}), 200
+
+    except InvalidId as e:
+        return jsonify({"error": "Invalid user ID or friend ID"}), 400
+    except Exception as e:
+        return jsonify({"error": "Internal server error"}), 500
+    
+@app.route('/friends/remove', methods=['POST'])
+@login_required
+def remove_friend(current_user):
+    try:
+        user_id = current_user.id
+        friend_id = request.json.get('friend_id')
+
+        # Remove friend
+        success = friend_manager.remove_friend(user_id, friend_id)
+        if not success:
+            return jsonify({"error": "Friend relationship not found or invalid IDs"}), 404
+
+        return jsonify({"message": "Friend removed successfully"}), 200
+
+    except InvalidId:
+        return jsonify({"error": "Invalid user ID or friend ID"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/friends', methods=['GET'])
+@login_required
+def get_friends(current_user):
+    try:
+        user_id = current_user.id
+
+        friends = friend_manager.get_friends(user_id)
+        return jsonify({"message": "Friends retrieved successfully", "friends": friends}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/friends/events', methods=['GET'])
+@login_required
+def get_friends_events(current_user):
+    try:
+        user_id = current_user.id
+
+        events = friend_manager.get_friends_events(user_id)
+        return jsonify({"message": "Friends' events retrieved successfully", "events": events}), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500

@@ -1,10 +1,17 @@
 import sys
 import os
 import pytest
+import random
+import string
 from app import app, db
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+def generate_random_string(length=10):
+    """Generate a random username with the given length."""
+    letters_and_digits = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters_and_digits) for i in range(length))
 
 @pytest.fixture
 def client():
@@ -19,6 +26,49 @@ def test_protected_route(client):
     # response should return 401 (unauthorized)
     # since we did not provide auth token
     assert response.status_code == 401
+
+# Test for creating users, adding them as friends, and then deleting them
+def test_add_friend(client):
+    # Step 1: Create User 1
+    user1 = {
+        "password": generate_random_string(20),
+        "username": generate_random_string(20)
+    }
+    response = client.post('/register', json=user1)
+    assert response.status_code == 200  
+
+    user1_data = response.get_json()
+    user1_id = user1_data['user']['id']  
+    assert user1_id is not None  
+    # Step 2: Create User 2
+    user2 = {
+        "password": generate_random_string(20),
+        "username": generate_random_string(20)
+    }
+    response = client.post('/register', json=user2)
+    assert response.status_code == 200  
+
+    # Extract the user2 ID from the response
+    user2_data = response.get_json()
+    user2_id = user2_data['user']['id']  
+    assert user2_id is not None  
+
+    # Step 3: Add User 1 and User 2 as friends
+    add_friend_data = {
+        "user_id": user1_id, 
+        "friend_id": user2_id  
+    }
+    response = client.post('/friends/add', json=add_friend_data)
+    assert response.status_code == 200  
+
+    # # Step 4: Clean up - Delete User 1
+    # response = client.delete(f'/users/delete/{user1_id}')
+    # assert response.status_code == 200  
+
+    # # Step 5: Clean up - Delete User 2
+    # response = client.delete(f'/users/delete/{user2_id}')
+    # assert response.status_code == 200  
+
 
 @pytest.fixture
 def test_event_id():
@@ -62,3 +112,4 @@ def test_edit_event(client, test_event_id):
     # Verify the event is updated
     response = client.get(f'/events/{test_event_id}')
     assert "Updated Event Title" in response.get_data(as_text=True)
+
