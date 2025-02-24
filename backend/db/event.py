@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Dict, Self
 from bson.objectid import ObjectId
 
@@ -13,6 +14,7 @@ class Event:
         description: str,
         start_time: str,
         end_time: str,
+        created_at: datetime,
         public: bool = False,
     ):
         self._id = _id
@@ -21,6 +23,7 @@ class Event:
         self.description = description
         self.start_time = start_time
         self.end_time = end_time
+        self.created_at = created_at
         self.public = public
 
     def dict(self):
@@ -47,6 +50,7 @@ class Event:
                 description=res['description'],
                 start_time=res['start_time'],
                 end_time=res['end_time'],
+                created_at=res['created_at'],
                 public=res['public'],
             )
             events.append(new_event)
@@ -77,6 +81,7 @@ class Event:
             'start_time': start_time,
             'end_time': end_time,
             'public': public,
+            'created_at': datetime.now(),
         }
         db.events.insert_one(event_doc)
         event = Event(**event_doc)

@@ -1,4 +1,5 @@
 import hashlib
+from datetime import datetime
 from secrets import token_hex
 from typing import List, Dict, Self
 from bson.objectid import ObjectId
@@ -67,6 +68,7 @@ class User:
             'username': username,
             'email': email,
             'hashed_password': hashed_password,
+            'created_at': datetime.now(),
         }
         db = get_db()
         db.users.insert_one(new_user_doc)
@@ -126,7 +128,7 @@ class User:
         return {
             'username': self.username,
         }
-        
+
     def new_token(self) -> str:
         # generating a new authentication token and storing in database
         auth_token = token_hex(AUTH_TOKEN_BYTES)
@@ -134,6 +136,7 @@ class User:
         token_doc = {
             'token': auth_token,
             'user_id': self._id,
+            'created_at': datetime.now(),
         }
         db.auth_tokens.insert_one(token_doc)
         return auth_token
