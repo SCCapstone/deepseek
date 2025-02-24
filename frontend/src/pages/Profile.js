@@ -18,7 +18,7 @@ export default function Profile() {
     const context = useAppContext();
 
     async function getData() {
-        const { data, error } = await api.get('/myprofile');
+        const { data, error } = await api.get('/user/get-profile');
         if (error) {
             // handle error here
             setError(error);

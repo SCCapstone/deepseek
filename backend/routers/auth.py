@@ -1,7 +1,7 @@
 from flask import Blueprint, request, make_response
 
 from db import User
-from utils.data_utils import require_data
+from utils.data_utils import *
 
 
 auth_router = Blueprint('auth_router', __name__)

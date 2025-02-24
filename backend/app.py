@@ -1,11 +1,4 @@
-import sys
-import hashlib
-import uuid
-import pymongo
-import secrets
-from json import loads, dumps
 from flask import Flask, request, make_response, jsonify, redirect, session
-from flask_session import Session
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from flask_cors import CORS
@@ -13,82 +6,25 @@ from flask_cors import CORS
 from database import *
 from gacc import *
 from friend_manager import *
-from db import User, Event
 from utils.auth_utils import login_required
 from utils.data_utils import require_data
-from routes import user_router, auth_router
+from routers import user_router, auth_router, event_router
 
-
-TOKEN_SIZE_BYTES = 32
 
 db = Database()
 
 app = Flask(__name__)
 app.register_blueprint(user_router)
 app.register_blueprint(auth_router)
-app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = db.client
-app.config["SESSION_MONGODB_DB"] = "appdb"
-app.config["SESSION_MONGODB_COLLECTION"] = "sessions"
-Session(app)
-
-app.secret_key = secrets.token_bytes(TOKEN_SIZE_BYTES)
+app.register_blueprint(event_router)
 CORS(app, supports_credentials=True)
+
 
 googlecalendar = GoogleCalendar(
     client_secrets_file="googlesecret.json",
     scopes=["https://www.googleapis.com/auth/calendar.readonly"],
     redirect_uri="http://localhost:5000/googlecallback",
 )
-
-
-@app.route('/myprofile', methods=['GET'])
-@login_required
-def get_user(current_user):
-    profile = current_user.profile
-    return jsonify({'user': profile})
-
-
-@app.route('/delete-account', methods=['POST'])
-@login_required
-def delete_account(current_user):
-    current_user.delete()
-    return make_response({'message': 'Account deleted'})
-
-
-@app.route('/addevent', methods=['POST'])
-@login_required
-@require_data('title', 'description', 'start_time', 'end_time')
-def add_event(current_user):
-    event_data = request.json
-    event_data['user_id'] = current_user._id
-    Event.create(**event_data)
-    return make_response({'message': 'Event created'}, 201)
-
-
-@app.route('/get-events', methods=['GET'])
-@login_required
-def get_events(current_user):
-    events = current_user.events
-    event_data = [x.dict() for x in events]
-    return make_response({'message': 'Events retrieved', 'data': event_data})
-
-
-@app.route('/get-event/<event_id>', methods=['GET'])
-@login_required
-def get_event(current_user, event_id):
-    event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
-    return jsonify({'message': 'Event retrieved', 'data': loads(dumps(event))})
-    
-
-@app.route('/update-event/<event_id>', methods=['POST'])
-@login_required
-def update_event(current_user, event_id):
-    data = request.json
-    event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
-    event.update(data)
-    return make_response({'message': 'Event updated'})
-
 
 @app.route('/friends/add', methods=['POST'])
 def add_friend():
