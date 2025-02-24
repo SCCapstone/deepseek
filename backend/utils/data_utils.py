@@ -3,7 +3,9 @@ Miscellaneous functions and middleware related
 to data validation and manipulation
 """
 from typing import List
-from flask import request, make_response
+from flask import request
+
+from .error_utils import InvalidInputError
 
 
 def require_data(*fields: List):
@@ -12,7 +14,8 @@ def require_data(*fields: List):
             data = request.json
             for field in fields:
                 if field not in data:
-                    return make_response({'message': 'Invalid input data'}, 400)
+                    error_message = 'Data must contain fields ' + str(fields)
+                    raise InvalidInputError(error_message)
 
             return func(*args, **kwargs)
         

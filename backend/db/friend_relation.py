@@ -13,6 +13,7 @@ from .user import User
 class FriendRelation:
     def __init__(
         self,
+        _id: ObjectId,
         user1: User,
         user2: User,
         status: str,
@@ -60,18 +61,24 @@ class FriendRelation:
             db.friend_relations.insert_many([relation_doc1, relation_doc2])
 
     @staticmethod
-    def get_status(user1: User, user2: User) -> str:
+    def get_relation(user1: User, user2: User) -> str:
         # searching database
         db = get_db()
         relation = db.friend_relations.find_one(
             { 'user1_id': user1._id, 'user2_id': user2._id },
             { 'sort': { 'created_at': -1 } },
         )
-        if relation:
-            return relation['status']
 
-        return None
-    
+        if not relation:
+            return None
+
+        return FriendRelation(
+            _id=relation['_id'],
+            user1_id=relation['user1_id'],
+            user2_id=relation['user2_id'],
+            status=relation['status'],
+        )
+
     @staticmethod
     def get_friends(user: User) -> List[User]:
         # searching database for friend records
@@ -83,3 +90,10 @@ class FriendRelation:
                 friend = User.find_one(_id=relation['user2_id'])
                 friends.append(friend)
         return friends
+    
+    @staticmethod
+    def delete_relations(user1: User, user2: User):
+        # deleting all relations between users
+        db = get_db()
+        db.delete_many({'user1_id': user1._id, 'user2_id': user2._id})
+        db.delete_many({'user1_id': user2._id, 'user2_id': user1._id})

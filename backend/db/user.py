@@ -128,6 +128,10 @@ class User:
         return Event.find(user_id=self._id)
     
     @property
+    def public_events(self):
+        return Event.find(user_id=self._id, visibility=True)
+    
+    @property
     def profile(self):
         return {
             'username': self.username,

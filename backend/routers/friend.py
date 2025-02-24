@@ -22,7 +22,7 @@ def get_friends(current_user: User):
 
 @friend_router.route('/add/<friend_username>', methods=['POST'])
 @login_required
-def add_friend(current_user: User, friend_username):
+def add_friend(current_user: User, friend_username: str):
     # finding other user in database
     other_user = User.find_one(username=friend_username)
     if not other_user:
@@ -31,3 +31,16 @@ def add_friend(current_user: User, friend_username):
     # accepting or sending request
     FriendRelation.add(current_user, other_user)
     return make_response({'message': 'Success'}, 201)
+
+
+@friend_router.route('/remove/<friend_username>', methods=['POST'])
+@login_required
+def remove_friend(current_user: User, friend_username: str):
+    # finding other user in database
+    other_user = User.find_one(username=friend_username)
+    if not other_user:
+        raise NotFoundError('No user with username `%s`' % friend_username)
+    
+    # deleting friend relation records
+    FriendRelation.delete_relations(current_user, other_user)
+    return make_response({'message': 'Successfuly removed friend'}, 204)
