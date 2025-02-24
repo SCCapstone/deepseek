@@ -1,7 +1,7 @@
 """
 Flask routes for user-related API endpoints
 """
-from flask import Blueprint, request, make_response
+from flask import Blueprint, request, make_response, jsonify
 
 from utils.auth_utils import *
 from utils.data_utils import *
@@ -14,7 +14,7 @@ user_router = Blueprint('user_router', __name__, url_prefix='/user')
 @login_required
 def get_user(current_user):
     profile = current_user.profile
-    return jsonify({'user': profile})
+    return make_response({'user': profile})
 
 
 @user_router.route('/delete-account', methods=['POST'])

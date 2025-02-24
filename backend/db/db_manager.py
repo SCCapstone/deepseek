@@ -1,7 +1,7 @@
 """
 Singleton class that holds global app database connection
 
-Call `get_db` within another module to get use the database
+Call `get_db` within another module to use the database
 """
 import os
 import pymongo
@@ -13,9 +13,6 @@ class DatabaseManager:
         if not hasattr(self, 'instance'):
             # creating new database manager instance
             self.instance = super(DatabaseManager, self).__new__(self)
-
-            # getting connection
-            self.init_db(self)
 
         return self.instance
 
@@ -29,6 +26,11 @@ class DatabaseManager:
         # attempting to connect to database
         client = pymongo.MongoClient(host, port)
         self.db = client[database]
+
+
+def init_db():
+    db = DatabaseManager()
+    db.init_db()
 
 
 def get_db():
