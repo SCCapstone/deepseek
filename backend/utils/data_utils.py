@@ -1,3 +1,7 @@
+"""
+Miscellaneous functions and middleware related
+to data validation and manipulation
+"""
 from typing import List
 from flask import request, make_response
 

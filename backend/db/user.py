@@ -1,9 +1,13 @@
+"""
+Abstraction for user data in database
+"""
 import hashlib
 from datetime import datetime
 from secrets import token_hex
 from typing import List, Dict, Self
 from bson.objectid import ObjectId
 
+from utils.error_utils import *
 from .db_manager import get_db
 from .event import Event
 
@@ -56,9 +60,9 @@ class User:
     def create(username: str, email: str, password: str) -> Self:
         # checking for existing user
         if User.find_one(username=username):
-            raise Exception('Existing account with that username')
+            raise InvalidInputError('Existing account with that username')
         if User.find_one(email=email):
-            raise Exception('Existing account with that email')
+            raise InvalidInputError('Existing account with that email')
 
         # hashing password
         hashed_password = hash_password(password)
@@ -83,18 +87,18 @@ class User:
         if username:
             user = User.find_one(username=username)
             if not user:
-                raise Exception('No account with that username')
+                raise NotFoundError('No account with that username')
         elif email:
             user = User.find_one(email=email)
             if not user:
-                raise Exception('No account with that email')
+                raise NotFoundError('No account with that email')
         else:
-            raise Exception('Please provide either username or email to login')
+            raise InvalidInputError('Please provide either username or email to login')
         
         # checking password
         hashed_password = hash_password(password)
         if user.hashed_password != hashed_password:
-            raise Exception('Invalid password')
+            raise InvalidInputError('Invalid password')
         return user
 
     @staticmethod
@@ -103,12 +107,12 @@ class User:
         db = get_db()
         token_result = db.auth_tokens.find_one({'token': token})
         if not token_result:
-            raise Exception('Could not validate authentication token')
+            raise UnauthorizedError('Could not validate authentication token')
         
         # finding user associated with token
         user_result = db.users.find_one({'_id': token_result['user_id']})
         if not user_result:
-            raise Exception('Could not validate authentication token')
+            raise UnauthorizedError('Could not validate authentication token')
         
         # creating user object to return
         user = User(

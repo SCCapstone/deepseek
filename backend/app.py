@@ -6,9 +6,9 @@ from flask_cors import CORS
 from database import *
 from gacc import *
 from friend_manager import *
-from utils.auth_utils import login_required
-from utils.data_utils import require_data
-from routers import user_router, auth_router, event_router
+from utils.auth_utils import *
+from utils.error_utils import AppError
+from routers import *
 
 
 db = Database()
@@ -18,6 +18,17 @@ app.register_blueprint(user_router)
 app.register_blueprint(auth_router)
 app.register_blueprint(event_router)
 CORS(app, supports_credentials=True)
+
+
+@app.errorhandler(AppError)
+def custom_error_handler(error):
+    return error.handle()
+
+
+@app.errorhandler(Exception)
+def default_error_handler(error):
+    app.logger.error('Unkown internal error: %s' % error.message)
+    return make_response({'message': 'Internal server error'}, 500)
 
 
 googlecalendar = GoogleCalendar(

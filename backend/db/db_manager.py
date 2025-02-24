@@ -1,3 +1,8 @@
+"""
+Singleton class that holds global app database connection
+
+Call `get_db` within another module to get use the database
+"""
 import os
 import pymongo
 

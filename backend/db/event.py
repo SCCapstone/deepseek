@@ -1,7 +1,11 @@
+"""
+Abstraction for event data in database
+"""
 from datetime import datetime
 from typing import List, Dict, Self
 from bson.objectid import ObjectId
 
+from utils.error_utils import *
 from .db_manager import get_db
 
 

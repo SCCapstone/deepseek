@@ -1,3 +1,6 @@
+"""
+Flask routes for user-related API endpoints
+"""
 from flask import Blueprint, request, make_response
 
 from utils.auth_utils import *
