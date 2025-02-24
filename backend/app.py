@@ -14,12 +14,18 @@ from database import *
 from gacc import *
 from friend_manager import *
 from db import User, Event
+from utils.auth_utils import login_required
+from utils.data_utils import require_data
+from routes import user_router, auth_router
+
 
 TOKEN_SIZE_BYTES = 32
 
 db = Database()
 
 app = Flask(__name__)
+app.register_blueprint(user_router)
+app.register_blueprint(auth_router)
 app.config["SESSION_TYPE"] = "mongodb"
 app.config["SESSION_MONGODB"] = db.client
 app.config["SESSION_MONGODB_DB"] = "appdb"
@@ -36,235 +42,45 @@ googlecalendar = GoogleCalendar(
 )
 
 
-def login_required(func):
-    def func_wrapper(*args, **kwargs):
-        auth_token = request.cookies.get('auth_token')
-        # current_user = db.user_manager.get_token_user(auth_token)
-        current_user = User.auth(auth_token)
-        if not current_user:
-            return make_response({'message': 'Invalid credentials'}, 401)
-
-        return func(current_user, *args, **kwargs)
-
-    func_wrapper.__name__ = func.__name__
-    return func_wrapper
-
-
-@app.route('/register', methods=['POST'])
-def register():
-    # getting user data
-    data = request.json
-    if 'username' not in data or 'password' not in data or 'email' not in data:
-        return make_response({'message': 'Invalid input'}, 400)
-
-    username = data['username']
-    email = data['email']
-    password = data['password']
-
-    # # checking if existing user
-    # existing_user = db.user_manager.get_user(username=username)
-    # if existing_user:
-    #     return make_response({'message': 'Existing username'}, 400)
-
-    # # hashing password
-    # _hash = hashlib.sha256()
-    # _hash.update(password.encode())
-    # hashed_password = _hash.hexdigest()
-
-    # # creating an authentication token
-    # auth_token = secrets.token_hex(TOKEN_SIZE_BYTES)
-
-    # # inserting into database
-    # new_user = db.user_manager.add_user(username=username, password=hashed_password, auth_tokens=[auth_token])
-    # if not new_user:
-    #     return make_response({'message': 'Error registering user'}, 400)
-
-    new_user = User.create(username=username, email=email, password=password)
-    auth_token = new_user.new_token()
-
-    # returning result to user
-    res = make_response({'message': 'User registered', 'user': {
-        'id' : str(new_user.object_id),
-        'username': new_user.username,
-    }}, 200)
-    res.set_cookie('auth_token', auth_token)
-    return res
-
-
-@app.route('/login', methods=['POST'])
-def login():
-    # getting user data
-    data = request.json
-    if 'username' not in data or 'password' not in data:
-        return make_response({'message': 'Invalid input'}, 400)
-
-    username = data['username']
-    password = data['password']
-
-    # # hashing password
-    # _hash = hashlib.sha256()
-    # _hash.update(password.encode())
-    # hashed_password = _hash.hexdigest()
-
-    # # checking against database
-    # user = db.user_manager.get_user(username=username, password=hashed_password)
-    # if not user:
-    #     return make_response({'message': 'Invalid username/password'}, 400)
-
-    # # creating an authentication token
-    # auth_token = secrets.token_hex(TOKEN_SIZE_BYTES)
-    # db.user_manager.add_auth_token(user['_id'], auth_token)
-
-    user = User.login(username=username, password=password)
-    if not user:
-        return make_response({'message': 'Could not authenticate'})
-    auth_token = user.new_token()
-
-    # returning result to user
-    res = make_response({'message': 'User authenticated', 'user': {
-        'username': user.username,
-    }})
-    res.set_cookie('auth_token', auth_token)
-    return res
-
 @app.route('/myprofile', methods=['GET'])
 @login_required
 def get_user(current_user):
-    # user = db.user_manager.get_user(username=current_user['username'])
-    # user_json = dumps({'user': user})
-    # return make_response(user_json)
     profile = current_user.profile
     return jsonify({'user': profile})
 
-@app.route('/users/delete/<user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    try:
-        success = db.user_manager.delete_user(user_id=user_id)
-        if not success:
-            return jsonify({"error": "user not found"}), 404
 
-        return jsonify({"message": "user deleted successfully"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@app.route('/delete-account', methods=['POST'])
+@login_required
+def delete_account(current_user):
+    current_user.delete()
+    return make_response({'message': 'Account deleted'})
 
-# TODO: add these frontend routes, really just needs to be a login with google button somewhere
-# need to add frontent routes and save to database but this is working from hitting the backend routes
-@app.route('/googlelogin')
-def google_login():
-    auth_url = googlecalendar.get_authorization_url(session)
-    return redirect(auth_url)
-
-@app.route('/googlecallback')
-def google_callback():
-    credentials = googlecalendar.exchange_code_for_credentials(session, request.url)
-    return jsonify(credentials)
-
-# TODO store these in the database intsead of just returning the credientials
-@app.route('/googleevents')
-def get_google_events():
-    events = googlecalendar.fetch_calendar_events(session)
-    for event in events:
-        event_data = {
-            # parse here
-            # db.add_event(user_id, title, description, start_time, end_time, visibility, comments)
-        }
-    return jsonify(events)
 
 @app.route('/addevent', methods=['POST'])
 @login_required
+@require_data('title', 'description', 'start_time', 'end_time')
 def add_event(current_user):
-    # try:
-    #     event_data = request.json
-    #     # neccessary fields, if not in the payload, return an error
-    #     event_fields = ["title", "description", "start_time", "end_time"]
-    #     for field in event_fields:
-    #         if field not in event_data:
-    #             return make_response(jsonify({"error": f"Missing field: {field}"}), 400)
-
-    #     # add event to database
-    #     event = db.event_manager.add_event(
-    #         user_id=str(current_user['_id']),
-    #         title=event_data["title"],
-    #         description=event_data["description"],
-    #         start_time=event_data["start_time"],
-    #         end_time=event_data["end_time"],
-    #         visibility=event_data.get("visibility", True),
-    #         comments=event_data.get("comments", [])
-    #     )
-        
-    #     return make_response(jsonify({"message": "Event added successfully", 
-    #                                   "event": event}), 201)
-
-    # except Exception as e:
-    #     app.logger.error('Error: {e}')
-    #     return make_response(jsonify({"error": str(e)}), 500)
     event_data = request.json
     event_data['user_id'] = current_user._id
     Event.create(**event_data)
     return make_response({'message': 'Event created'}, 201)
-    
+
+
 @app.route('/get-events', methods=['GET'])
 @login_required
 def get_events(current_user):
-    # try:
-    #     user_id = str(current_user['_id'])
-    #     events = db.event_manager.get_events(user_id=user_id)
-
-    #     # Convert ObjectId to string for each event
-    #     events_json = []
-    #     for event in events:
-    #         event['_id'] = str(event['_id'])
-    #         events_json.append(event)
-
-    #     return make_response(
-    #         jsonify({
-    #             "message": "Events retrieved successfully",
-    #             "data": events_json
-    #         }), 200
-    #     )
-
-    # except Exception as e:
-    #     return make_response(
-    #         jsonify({
-    #             "error": "An error occurred while retrieving events",
-    #             "details": str(e)
-    #         }), 500
-    #     )
     events = current_user.events
     event_data = [x.dict() for x in events]
     return make_response({'message': 'Events retrieved', 'data': event_data})
 
+
 @app.route('/get-event/<event_id>', methods=['GET'])
 @login_required
 def get_event(current_user, event_id):
-    # try:
-    #     # Validate event_id
-    #     if not ObjectId.is_valid(event_id):
-    #         return jsonify({"error": "Invalid event ID"}), 400
-
-    #     event = db.event_manager.get_event(event_id=ObjectId(event_id))
-    #     if not event:
-    #         return jsonify({"error": "Event not found"}), 404
-
-    #     # Convert ObjectId to string
-    #     event['_id'] = str(event['_id'])
-
-    #     return jsonify({
-    #         "message": "Event retrieved successfully",
-    #         "data": event
-    #     }), 200
-
-    # except InvalidId:
-    #     return jsonify({"error": "Invalid event ID"}), 400
-    # except Exception as e:
-    #     return jsonify({
-    #         "error": "An error occurred while retrieving the event",
-    #         "details": str(e)
-    #     }), 500
-    if request.method == 'GET':
-        event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
-        return jsonify({'message': 'Event retrieved', 'data': loads(dumps(event))})
+    event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
+    return jsonify({'message': 'Event retrieved', 'data': loads(dumps(event))})
     
+
 @app.route('/update-event/<event_id>', methods=['POST'])
 @login_required
 def update_event(current_user, event_id):
@@ -272,35 +88,8 @@ def update_event(current_user, event_id):
     event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
     event.update(data)
     return make_response({'message': 'Event updated'})
-    
-# @app.route('/events/<event_id>', methods=['DELETE'])
-# def delete_event(event_id):
-#     try:
-#         success = db.event_manager.delete_event(event_id=ObjectId(event_id))
-#         if not success:
-#             return jsonify({"error": "Event not found"}), 404
 
-#         return jsonify({"message": "Event deleted successfully"}), 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-    
-# @app.route('/events/<event_id>', methods=['PATCH'])
-# def edit_event(event_id):
-#     try:
-#         # Validate event_id
-#         event_id = ObjectId(event_id)
-#         # Get the JSON data from the request body
-#         update_data = request.get_json()
-#         if not update_data:
-#             return jsonify({"error": "No data provided for update"}), 400
-#         # Update the event in the database
-#         success = db.event_manager.edit_event(event_id=event_id, **update_data)
-#         if not success:
-#             return jsonify({"error": "Event not found"}), 404
-#         return jsonify({"message": "Event updated successfully"}), 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-    
+
 @app.route('/friends/add', methods=['POST'])
 def add_friend():
     try:
@@ -370,3 +159,27 @@ def get_friends_events(current_user):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# TODO: add these frontend routes, really just needs to be a login with google button somewhere
+# need to add frontent routes and save to database but this is working from hitting the backend routes
+@app.route('/googlelogin')
+def google_login():
+    auth_url = googlecalendar.get_authorization_url(session)
+    return redirect(auth_url)
+
+@app.route('/googlecallback')
+def google_callback():
+    credentials = googlecalendar.exchange_code_for_credentials(session, request.url)
+    return jsonify(credentials)
+
+# TODO store these in the database intsead of just returning the credientials
+@app.route('/googleevents')
+def get_google_events():
+    events = googlecalendar.fetch_calendar_events(session)
+    for event in events:
+        event_data = {
+            # parse here
+            # db.add_event(user_id, title, description, start_time, end_time, visibility, comments)
+        }
+    return jsonify(events)

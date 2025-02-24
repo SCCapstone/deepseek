@@ -1,7 +1,7 @@
 from typing import List, Dict, Self
 from bson.objectid import ObjectId
 
-from .db_utils import get_db
+from .db_manager import get_db
 
 
 class Event:
