@@ -19,8 +19,7 @@ export default function EventCard({ event }) {
                 {event.description}
             </div>
             <div style={styles.text}>
-                {(new Date(event.start_time)).toLocaleTimeString()
-                + ' - ' + (new Date(event.end_time)).toLocaleTimeString()}
+                {event.formattedTime}
             </div>
         </div>
     );

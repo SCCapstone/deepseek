@@ -1,6 +1,7 @@
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
+from datetime import datetime
 
 # TODO find a better way to store the google secret file, kinda just chilling in a JSON in the app directory
 class GoogleCalendar:
@@ -56,17 +57,45 @@ class GoogleCalendar:
         session["credentials"] = self._credentials_to_dict(credentials)
         return self._credentials_to_dict(credentials)
 
+    def parse_calendar_event(self, event):
+        """Parse Google Calendar event into our app's format."""
+        try:
+            # Get start and end times, handling both dateTime and date formats
+            start = event.get('start', {})
+            end = event.get('end', {})
+            
+            start_time = start.get('dateTime') or start.get('date')
+            end_time = end.get('dateTime') or end.get('date')
+
+            # If datetime includes seconds, strip them and adjust time (-1 hour)
+            if start_time and 'T' in start_time:
+                dt = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+                start_time = dt.strftime('%Y-%m-%dT%H:%M')
+
+            if end_time and 'T' in end_time:
+                dt = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
+                end_time = dt.strftime('%Y-%m-%dT%H:%M')
+
+            event_data = {
+                "title": event.get('summary', 'Untitled Event'),
+                "description": event.get('description', ''),
+                "start_time": start_time,
+                "end_time": end_time,
+                "visibility": event.get('visibility', 'default') == 'public'
+            }
+            
+            return event_data
+        except Exception as e:
+            print(f"Error parsing event: {e}")
+            return None
+
     def fetch_calendar_events(self, session, max_results=10):
         """
-        Fetches events from the user's primary Google Calendar. The credentials are stored in the session.
-            session (dict): The Flask session object containing OAuth credentials.
-            max_results (int): The maximum number of events to fetch (default is 10).
-        Returns:
-            list: A list of events from the user's Google Calendar.
+        Fetches and parses events from the user's primary Google Calendar.
         """
         if "credentials" not in session:
             raise ValueError("Missing credentials in session.")
-            
+        
         credentials = Credentials(**session["credentials"])
         service = build("calendar", "v3", credentials=credentials)
 
@@ -77,7 +106,15 @@ class GoogleCalendar:
             orderBy="startTime",
         ).execute()
 
-        return events_result.get("items", [])
+        events = events_result.get("items", [])
+        parsed_events = []
+        
+        for event in events:
+            parsed_event = self.parse_calendar_event(event)
+            if parsed_event:
+                parsed_events.append(parsed_event)
+            
+        return parsed_events
 
     @staticmethod
     def _credentials_to_dict(credentials):
@@ -95,3 +132,51 @@ class GoogleCalendar:
             "client_secret": credentials.client_secret,
             "scopes": credentials.scopes,
         }
+
+    def handle_callback(self, session, request_url, auth_token, user_manager, event_manager):
+        """Handle the OAuth callback and event import."""
+        try:
+            credentials = self.exchange_code_for_credentials(session, request_url)
+            events = self.fetch_calendar_events(session)
+            
+            # Get current user
+            current_user = user_manager.get_token_user(auth_token)
+            if not current_user or not events:
+                return None, "Failed to import events"
+            
+            # Import events
+            events_added = self.import_events(events, current_user, event_manager)
+            return events_added, None
+            
+        except Exception as e:
+            print(f"Error in Google callback: {e}")
+            return None, str(e)
+
+    def import_events(self, events, current_user, event_manager):
+        """Import Google Calendar events for a user."""
+        # Get existing event titles
+        existing_events = event_manager.get_events(user_id=str(current_user['_id']))
+        existing_titles = {event['title'] for event in existing_events}
+        
+        events_added = 0
+        for event in events:
+            title = event['title']
+            if title in existing_titles:
+                continue
+
+            event_data = {
+                "title": title,
+                "description": event['description'],
+                "start_time": event['start_time'],
+                "end_time": event['end_time'],
+                "visibility": False
+            }
+            
+            event_manager.add_event(
+                user_id=str(current_user['_id']),
+                **event_data
+            )
+            events_added += 1
+            existing_titles.add(title)
+            
+        return events_added

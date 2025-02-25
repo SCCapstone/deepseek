@@ -27,7 +27,7 @@ export default function CalendarPage() {
             setError(error);
         }
         else {
-            setEvents(data.data);
+            setEvents(data);
             setLoading(false);
         }
     }

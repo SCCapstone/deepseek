@@ -1,5 +1,6 @@
 import pymongo
 from pymongo.errors import PyMongoError
+from bson.objectid import ObjectId
 from user_manager import UserManager
 from event_manager import EventManager
 from friend_manager import FriendManager
@@ -17,3 +18,11 @@ class Database:
         except PyMongoError as e:
             print(f"Failed to connect to MongoDB: {e}")
             raise
+
+    def serialize_mongo_doc(self, doc):
+        """Convert MongoDB document to JSON-serializable format."""
+        if isinstance(doc, dict):
+            for k, v in doc.items():
+                if isinstance(v, ObjectId):
+                    doc[k] = str(v)
+        return doc

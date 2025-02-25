@@ -16,8 +16,10 @@ class UserManager:
         self,
         username: str,
         password: str,
+        email: str,
         name: Optional[str] = None,
         bio: Optional[str] = None,
+        profile_picture: Optional[str] = None,  # URL to profile picture
         events: Optional[List] = None,
         default_event_visibility: bool = False,
         friends: Optional[List] = None,
@@ -27,8 +29,10 @@ class UserManager:
         user_doc = {
             'name': name,
             'username': username,
+            'email': email,
             'hashed_password': password,
             'bio': bio,
+            'profile_picture': profile_picture or 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
             'events': events or [],
             'default_event_visibility': default_event_visibility,
             'followers': friends or [],
@@ -42,15 +46,24 @@ class UserManager:
             logger.error(f"Failed to add user: {e}")
         return None
 
-    def get_user(self, username: str, password: Optional[str] = None) -> Optional[Dict[str, Any]]:
-        query = {'username': username}
-        if password:
-            query['hashed_password'] = password
+    def get_user(self, username: Optional[str] = None, password: Optional[str] = None, email: Optional[str] = None) -> Optional[Dict[str, Any]]:
         try:
+            # Build query based on provided parameters
+            query = {}
+            if username:
+                query['username'] = username
+            if email:
+                query['email'] = email
+            if password:
+                query['hashed_password'] = password
+            
+            if not query:  # If no parameters provided
+                return None
+            
             return self.db.users.find_one(query)
         except PyMongoError as e:
             logger.error(f"Failed to retrieve user: {e}")
-        return None
+            return None
 
     def delete_user(self, user_id: str) -> bool:
         try:
@@ -78,3 +91,33 @@ class UserManager:
         except PyMongoError as e:
             logger.error(f"Failed to add auth token: {e}")
         return False
+
+    def update_profile_picture(self, user_id: str, profile_picture_url: str) -> bool:
+        """Update user's profile picture URL."""
+        try:
+            result = self.db.users.update_one(
+                {'_id': ObjectId(user_id)},
+                {'$set': {'profile_picture': profile_picture_url}}
+            )
+            return result.modified_count > 0
+        except PyMongoError as e:
+            logger.error(f"Failed to update profile picture: {e}")
+            return False
+
+    def update_user_profile(self, user_id: str, **update_fields) -> bool:
+        """Update user profile fields."""
+        try:
+            allowed_fields = {'name', 'bio', 'profile_picture', 'email', 'default_event_visibility'}
+            update_data = {k: v for k, v in update_fields.items() if k in allowed_fields}
+            
+            if not update_data:
+                return False
+            
+            result = self.db.users.update_one(
+                {'_id': ObjectId(user_id)},
+                {'$set': update_data}
+            )
+            return result.modified_count > 0
+        except PyMongoError as e:
+            logger.error(f"Failed to update user profile: {e}")
+            return False
