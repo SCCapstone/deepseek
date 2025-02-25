@@ -115,3 +115,22 @@ class FriendManager:
         except Exception as e:
             logger.error(f"Error fetching friends' events: {e}")
             return []
+
+    def are_friends(self, user_id: str, friend_id: str) -> bool:
+        try:
+            if not ObjectId.is_valid(user_id) or not ObjectId.is_valid(friend_id):
+                return False
+
+            # check both directions 
+            friendship = self.db.friends.find_one({
+                "$or": [
+                    {"user_id": ObjectId(user_id), "friend_id": ObjectId(friend_id)},
+                    {"user_id": ObjectId(friend_id), "friend_id": ObjectId(user_id)}
+                ]
+            })
+            
+            return friendship is not None
+
+        except Exception as e:
+            logger.error(f"Error checking friendship status: {e}")
+            return False

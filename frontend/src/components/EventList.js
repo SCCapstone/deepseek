@@ -8,6 +8,18 @@ import {
 import EventCard from './EventCard.js';
 import { useAppContext } from '../lib/context';
 
+function formatTimeRange(startTime, endTime) {
+    const formatTime = (isoString) => {
+        const date = new Date(isoString);
+        return date.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        })
+    };
+
+    return `${formatTime(startTime)} - ${formatTime(endTime)}`;
+}
 
 export default function EventList({ events, date }) {
     const MIN_SIDEBAR_WIDTH = 200;
@@ -71,6 +83,11 @@ export default function EventList({ events, date }) {
         }
     }, [resize, stopResizing]);
 
+    // Sort events by start time
+    const sortedEvents = [...events].sort((a, b) => 
+        new Date(a.start_time) - new Date(b.start_time)
+    );
+
     return (
         <div
             ref={sidebarRef}
@@ -79,8 +96,14 @@ export default function EventList({ events, date }) {
             <div className='h-100' style={styles.border} onMouseDown={startResizing}></div>
             <div className='p-3 d-flex flex-column w-100'>
                 <h3 className='h3' style={styles.text}>{date.toDateString()}</h3>
-                {events.map((event, i) =>
-                    <EventCard key={i} event={event}/>
+                {sortedEvents.map((event, i) =>
+                    <EventCard 
+                        key={i} 
+                        event={{
+                            ...event,
+                            formattedTime: formatTimeRange(event.start_time, event.end_time)
+                        }}
+                    />
                 )}
             </div>
         </div>

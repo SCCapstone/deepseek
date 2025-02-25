@@ -1,26 +1,45 @@
 const api = async (method, url, variables = null) => {
-    const res = await fetch(process.env.REACT_APP_API_URL + url, {
-        method: method,
+    const options = {
+        method: method.toUpperCase(),
         credentials: 'include',
-        headers: (method === 'post' ? {'Content-Type': 'application/json'} : {}),
-        body: (method === 'post' ? JSON.stringify(variables) : null),
-    });
-    if (res.ok) {
+        headers: {},
+    };
+
+    // Add Content-Type header and body for methods that send data
+    if (['POST', 'PATCH', 'PUT'].includes(options.method) && variables) {
+        options.headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(variables);
+    }
+
+    try {
+        const res = await fetch(process.env.REACT_APP_API_URL + url, options);
         const data = await res.json();
-        return { data, error: null }
-    }
-    else {
-        try {
-            const data = await res.json();
-            return { error: data.message, data: null }
+
+        if (res.ok) {
+            return { 
+                data: data.data || [], // Ensure we return an empty array if no data
+                message: data.message,
+                error: null 
+            };
+        } else {
+            return { 
+                error: data.error || 'An error occurred', 
+                data: [], // Return empty array on error
+                message: null
+            };
         }
-        catch (e) {
-            return { error: res.statusText, data: null }
-        }
+    } catch (e) {
+        return { 
+            error: 'Network or server error',
+            data: [], // Return empty array on network error
+            message: null
+        };
     }
-}
+};
 
 export default {
-    get: (url) => api('get', url),
-    post: (url, variables) => api('post', url, variables),
-}
+    get: (url) => api('GET', url),
+    post: (url, variables) => api('POST', url, variables),
+    patch: (url, variables) => api('PATCH', url, variables),
+    delete: (url) => api('DELETE', url),
+};
