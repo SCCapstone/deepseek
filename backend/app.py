@@ -290,19 +290,28 @@ def edit_event(_current_user, event_id):
 def update_profile(current_user):
     try:
         update_data = request.json
-        success = db.user_manager.update_user_profile(
-            user_id=str(current_user['_id']),
-            **update_data
-        )
-        if not success:
-            return jsonify({'error': 'Failed to update profile'}), 400
+        existing_user = db.user_manager.get_user(username=current_user['username'])
 
-        # Get updated user data
-        updated_user = db.user_manager.get_user(username=current_user['username'])
-        return jsonify({
-            'message': 'Profile updated successfully',
-            'data': db.serialize_mongo_doc(updated_user)
-        }), 200
+        # Convert the _id field to a string
+        existing_user['_id'] = str(existing_user['_id'])
+        update_data['_id'] = str(update_data['_id'])
+
+        if existing_user != update_data:
+            success = db.user_manager.update_user_profile(
+                user_id=str(current_user['_id']),
+                **update_data
+            )
+            if not success:
+                return jsonify({'error': 'Failed to update profile'}), 400
+
+            # Get updated user data
+            updated_user = db.user_manager.get_user(username=current_user['username'])
+            return jsonify({
+                'message': 'Profile updated successfully',
+                'data': db.serialize_mongo_doc(updated_user)
+            }), 200
+        else:
+            return jsonify({'message': 'No changes made'}), 200
     except Exception as e:
         return jsonify({'error': 'Failed to update profile'}), 500
 
