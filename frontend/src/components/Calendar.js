@@ -93,7 +93,7 @@ export default function Calendar({ onChange, selectedDate }) {
 
     return (
         <div className='d-flex flex-column w-100 h-100'>
-            <div className='d-flex flex-row p-3' style={styles.calendarHeader}>
+            <div className='d-flex flex-row p-2' style={styles.calendarHeader}>
                 <button
                     onClick={() => onChange(new Date())}
                     className='btn btn-primary shadow-none mr-1'>

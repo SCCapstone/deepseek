@@ -28,11 +28,14 @@ class User:
         username: str,
         email: str,
         hashed_password: str,
+        profile_picture: str,
+        created_at: datetime,
     ):
         self._id = _id
         self.username = username
         self.email = email
         self.hashed_password = hashed_password
+        self.profile_picture = profile_picture
 
     @staticmethod
     def find(**kwargs) -> Self:
@@ -44,7 +47,9 @@ class User:
                 _id=res['_id'],
                 username=res['username'],
                 email=res['email'],
+                created_at=res['created_at'],
                 hashed_password=res['hashed_password'],
+                profile_picture=res['profile_picture'],
             )
             users.append(new_user)
         return users
@@ -57,7 +62,12 @@ class User:
         return None
 
     @staticmethod
-    def create(username: str, email: str, password: str) -> Self:
+    def create(
+        username: str,
+        email: str,
+        password: str,
+        profile_picture: str = None,
+    ) -> Self:
         # checking for existing user
         if User.find_one(username=username):
             raise InvalidInputError('Existing account with that username')
@@ -72,6 +82,7 @@ class User:
             'username': username,
             'email': email,
             'hashed_password': hashed_password,
+            'profile_picture': profile_picture,
             'created_at': datetime.now(),
         }
         db = get_db()
@@ -120,6 +131,8 @@ class User:
             username=user_result['username'],
             email=user_result['email'],
             hashed_password=user_result['hashed_password'],
+            profile_picture=user_result['profile_picture'],
+            created_at=user_result['created_at'],
         )
         return user
     
@@ -135,6 +148,7 @@ class User:
     def profile(self):
         return {
             'username': self.username,
+            'profile_picture': self.profile_picture,
         }
 
     def new_token(self) -> str:
