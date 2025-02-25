@@ -42,8 +42,20 @@ export default function Friends() {
             setAddInput('');
         }
     }
+    
+    const handleRemoveFriend = async (username) => {
+        const { data, error } = await api.post('/friends/remove/' + username);
+        if (error) {
+            alert(error);
+        }
+        else {
+            alert(data.message);
+            getData();
+        }
+    }
 
     const getData = async () => {
+        setLoading(true);
         const { data, error } = await api.get('/friends/get-friends');
         if (error) {
             // handle error here
@@ -51,6 +63,7 @@ export default function Friends() {
         }
         else {
             setFriends(data.friends);
+            setLoading(false);
         }
     }
 
@@ -79,7 +92,24 @@ export default function Friends() {
                 </form>
                 <div className='p-3 bg-white rounded'>
                     {friends.map((friend, i) =>
-                        <div key={i}>@{friend.username}</div>
+                        <div
+                            key={i}
+                            className='p-1 rounded d-flex flex-row justify-content-between align-items-center'>
+                            <div className='d-flex flex-row justify-content-start align-items-center'>
+                                <img
+                                    className='mr-3'
+                                    src={context.user.profile_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'}
+                                    style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        borderRadius: 1000,
+                                    }}/>
+                                <p className='m-0'>{friend.username}</p>
+                            </div>
+                            <button onClick={() => handleRemoveFriend(friend.username)} className='btn btn-danger'>
+                                Remove
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

@@ -43,4 +43,4 @@ def remove_friend(current_user: User, friend_username: str):
     
     # deleting friend relation records
     FriendRelation.delete_relations(current_user, other_user)
-    return make_response({'message': 'Successfuly removed friend'}, 204)
+    return make_response({'message': 'Successfuly removed friend'})

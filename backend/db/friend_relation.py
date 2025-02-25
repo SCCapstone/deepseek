@@ -95,5 +95,5 @@ class FriendRelation:
     def delete_relations(user1: User, user2: User):
         # deleting all relations between users
         db = get_db()
-        db.delete_many({'user1_id': user1._id, 'user2_id': user2._id})
-        db.delete_many({'user1_id': user2._id, 'user2_id': user1._id})
+        db.friend_relations.delete_many({'user1_id': user1._id, 'user2_id': user2._id})
+        db.friend_relations.delete_many({'user1_id': user2._id, 'user2_id': user1._id})

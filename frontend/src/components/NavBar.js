@@ -20,8 +20,6 @@ export default function NavBar() {
         },
     }
 
-    console.log(context.user)
-
     return (
         <header
             className='d-flex flex-row p-2 align-items-center justify-content-between'
@@ -50,7 +48,7 @@ export default function NavBar() {
                             height: '40px',
                             borderRadius: 1000,
                         }}
-                        src='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'/>
+                        src={context.user.profile_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'}/>
                 </Link>
             </div>
         </header>
