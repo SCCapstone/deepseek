@@ -21,7 +21,7 @@ export default function Profile() {
     const context = useAppContext();
 
     async function getData() {
-        const { data, error } = await api.get('/myprofile');
+        const { data, error } = await api.get('/get-profile');
         console.log('Profile data received:', data); // Debug log
         if (error) {
             console.error('Profile error:', error); // Debug log
@@ -62,7 +62,7 @@ export default function Profile() {
     };
 
     const handleSave = async () => {
-        const { error } = await api.patch('/updateprofile', editedData);
+        const { error } = await api.patch('/update-profile', editedData);
         if (error) {
             setError(error);
         } else {

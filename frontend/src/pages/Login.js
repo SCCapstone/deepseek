@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../lib/api';
+import { useAppContext } from '../lib/context';
 
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const context = useAppContext();
 
     async function handleSubmit(event) {
         event.preventDefault();
-        const { error } = await api.post('/login', { username, password });
+        const { data, error } = await api.post('/login', { username, password });
         if (error) {
             // handle error here
             alert(error);
         }
         else {
+            // getting profile data
+            context.setUser(data.user);
             navigate('/calendar');
         }
     };

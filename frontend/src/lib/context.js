@@ -22,12 +22,24 @@ export function AppContextProvider({ children }) {
     }
     
     const colorScheme = Themes[theme];
+    const [user, _setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser)
+            return JSON.parse(savedUser);
+        return null;
+    })
+    const setUser = (_user) => {
+        localStorage.setItem('user', JSON.stringify(_user));
+        _setUser(_user);
+    }
 
     return (
         <AppContext.Provider value={{
             theme,
             toggleTheme,
             colorScheme,
+            user,
+            setUser,
         }}>
             {children}
         </AppContext.Provider>
