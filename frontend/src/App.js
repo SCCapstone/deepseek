@@ -7,6 +7,8 @@ import Home from './pages/Home.js';
 import Profile from './pages/Profile';
 import Calendar from './pages/Calendar.js';
 import CreateEvent from './pages/CreateEvent';
+import Friends from './pages/Friends';
+
 
 export default function App() {
     return (
@@ -16,6 +18,7 @@ export default function App() {
                 <Route path='/login' element={<Login />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/profile' element={<Profile/>} />
+                <Route path='/friends' element={<Friends/>} />
                 <Route path='/calendar' element={<Calendar/>} />
                 <Route path='/create-event' element={<CreateEvent />} />
             </Routes>
