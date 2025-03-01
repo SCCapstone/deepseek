@@ -33,35 +33,36 @@ export default function Friends() {
             alert('Please enter username');
             return;
         }
-        const { data, error } = await api.post('/friends/add/' + addInput, {});
+        const { data, error, message } = await api.post('/friends/add/' + addInput, {});
         if (error) {
             alert(error);
         }
         else {
-            alert(data.message);
+            alert(message);
             setAddInput('');
         }
     }
     
     const handleRemoveFriend = async (username) => {
-        const { data, error } = await api.post('/friends/remove/' + username);
+        const { data, error, message } = await api.post('/friends/remove/' + username);
         if (error) {
             alert(error);
         }
         else {
-            alert(data.message);
+            alert(message);
             getData();
         }
     }
 
     const getData = async () => {
         setLoading(true);
-        const { data, error } = await api.get('/friends/get-friends');
+        const { data, error, message } = await api.get('/friends/get-friends');
         if (error) {
             // handle error here
             setError(error);
         }
         else {
+            console.log(data.friends)
             setFriends(data.friends);
             setLoading(false);
         }

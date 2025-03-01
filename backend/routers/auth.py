@@ -12,7 +12,11 @@ auth_router = Blueprint('auth_router', __name__)
 
 
 @auth_router.route('/register', methods=['POST'])
-@require_data('username', 'email', 'password')
+@data_filter({
+    'username': {'type': str, 'required': True},
+    'email': {'type': str, 'required': True},
+    'password': {'type': str, 'required': True}
+})
 def register():
     # getting user data
     data = request.json
@@ -21,17 +25,21 @@ def register():
     password = data['password']
 
     # creating new user
-    new_user = User.create(username=username, email=email, password=password)
+    new_user = User.register(username=username, email=email, password=password)
     auth_token = new_user.new_token()
 
     # returning result to user
-    res = make_response({'message': 'User registered', 'user': new_user.profile}, 201)
+    profile = new_user.profile
+    res = make_response({'message': 'User registered', 'data': {'user': profile}}, 201)
     res.set_cookie('auth_token', auth_token)
     return res
 
 
 @auth_router.route('/login', methods=['POST'])
-@require_data('username', 'password')
+@data_filter({
+    'username': {'type': str, 'required': True},
+    'password': {'type': str, 'required': True}
+})
 def login():
     # getting user data
     data = request.json
@@ -45,6 +53,7 @@ def login():
 
     # returning response to user with token as cookie
     auth_token = user.new_token()
-    res = make_response({'message': 'User authenticated', 'user': user.profile})
+    profile = user.profile
+    res = make_response({'message': 'User authenticated', 'data': {'user': profile}})
     res.set_cookie('auth_token', auth_token)
     return res

@@ -2,72 +2,45 @@
 Abstraction for user data in database
 """
 import hashlib
+import logging
 from datetime import datetime
 from secrets import token_hex
-from typing import List, Dict, Self
+from typing import List, Dict, Self, Union
 from bson.objectid import ObjectId
 
 from utils.error_utils import *
-from .database import Database
+from .database import DatabaseObject
 from .event import Event
+from .friend_relation import FriendRelation
 
 AUTH_TOKEN_BYTES = 32
+logger = logging.getLogger(__name__)
 
 
-def hash_password(password: str) -> str:
-    _hash = hashlib.sha256()
-    _hash.update(password.encode())
-    hashed_password = _hash.hexdigest()
-    return hashed_password
+class AuthToken(DatabaseObject):
+    schema = {
+        '_id': {'type': ObjectId, 'required': True, 'unique': True},
+        'user_id': {'type': ObjectId, 'required': True},
+        'token': {'type': str, 'required': True, 'unique': True},
+        'created_at': {'type': datetime},
+    }
 
 
-class User:
-    def __init__(
-        self,
-        _id: ObjectId,
-        username: str,
-        email: str,
-        hashed_password: str,
-        profile_picture: str,
-        created_at: datetime,
-    ):
-        self._id = _id
-        self.username = username
-        self.email = email
-        self.hashed_password = hashed_password
-        self.profile_picture = profile_picture
-
-    @staticmethod
-    def find(**kwargs) -> Self:
-        db = Database()
-        results = db.users.find(kwargs)
-        users = []
-        for res in results:
-            new_user = User(
-                _id=res['_id'],
-                username=res['username'],
-                email=res['email'],
-                created_at=res['created_at'],
-                hashed_password=res['hashed_password'],
-                profile_picture=res['profile_picture'],
-            )
-            users.append(new_user)
-        return users
+class User(DatabaseObject):
+    schema = {
+        '_id': {'type': ObjectId, 'required': True, 'unique': True},
+        'username': {'type': str, 'required': True, 'unique': True},
+        'email': {'type': str, 'required': True, 'unique': True},
+        'profile_picture': {'type': Union[str, None]},
+        'hashed_password': {'type': str, 'required': True},
+        'name': {'type': Union[str, None]},
+        'bio': {'type': Union[str, None]},
+        'default_event_visibility': {'type': bool, 'default': False},
+        'created_at': {'type': datetime},
+    }
 
     @staticmethod
-    def find_one(**kwargs) -> List[Self]:
-        users = User.find(**kwargs)
-        if len(users) > 0:
-            return users[0]
-        return None
-
-    @staticmethod
-    def create(
-        username: str,
-        email: str,
-        password: str,
-        profile_picture: str = None,
-    ) -> Self:
+    def register(username: str, email: str, password: str) -> Self:
         # checking for existing user
         if User.find_one(username=username):
             raise InvalidInputError('Existing account with that username')
@@ -76,24 +49,15 @@ class User:
 
         # hashing password
         hashed_password = hash_password(password)
-
-        # inserting into database
-        new_user_doc = {
-            'username': username,
-            'email': email,
-            'hashed_password': hashed_password,
-            'profile_picture': profile_picture,
-            'created_at': datetime.now(),
-        }
-        db = Database()
-        db.users.insert_one(new_user_doc)
-        
-        # creating user object to return
-        new_user = User(**new_user_doc)
+        new_user = User.create(
+            username=username,
+            email=email,
+            hashed_password=hashed_password,
+        )
         return new_user
 
     @staticmethod
-    def login(password: str, username: str = None, email: str = None) -> str:
+    def login(password: str, username: str = None, email: str = None) -> Self:
         # finding user in database
         if username:
             user = User.find_one(username=username)
@@ -114,54 +78,106 @@ class User:
 
     @staticmethod
     def auth(token: str) -> Self:
-        # searching database for token
-        db = Database()
-        token_result = db.auth_tokens.find_one({'token': token})
-        if not token_result:
+        # search for auth token in database
+        auth_token = AuthToken.find_one(token=token)
+        if not auth_token:
+            raise UnauthorizedError('Invalid authentication token')
+        
+        # make sure user exists
+        user = User.find_one(_id=auth_token.user_id)
+        if not user:
             raise UnauthorizedError('Could not validate authentication token')
         
-        # finding user associated with token
-        user_result = db.users.find_one({'_id': token_result['user_id']})
-        if not user_result:
-            raise UnauthorizedError('Could not validate authentication token')
-        
-        # creating user object to return
-        user = User(
-            _id=user_result['_id'],
-            username=user_result['username'],
-            email=user_result['email'],
-            hashed_password=user_result['hashed_password'],
-            profile_picture=user_result['profile_picture'],
-            created_at=user_result['created_at'],
-        )
         return user
-    
-    @property
-    def events(self):
-        return Event.find(user_id=self._id)
-    
-    @property
-    def public_events(self):
-        return Event.find(user_id=self._id, visibility=True)
-    
-    @property
-    def profile(self):
-        return {
-            'username': self.username,
-            'profile_picture': self.profile_picture,
-        }
 
     def new_token(self) -> str:
         # generating a new authentication token and storing in database
-        auth_token = token_hex(AUTH_TOKEN_BYTES)
-        db = Database()
-        token_doc = {
-            'token': auth_token,
-            'user_id': self._id,
-            'created_at': datetime.now(),
+        token = token_hex(AUTH_TOKEN_BYTES)
+        AuthToken.create(user_id=self._id, token=token, created_at=datetime.now())
+        return token
+    
+    @property
+    def profile(self) -> Dict:
+        return {
+            'username': self.username,
+            'profile_picture': self.profile_picture,
+            'bio': self.bio,
+            'default_event_visibility': self.default_event_visibility,
+            'email': self.email,
+            'name': self.name,
         }
-        db.auth_tokens.insert_one(token_doc)
-        return auth_token
+    
+    @property
+    def events(self) -> List[Event]:
+        return Event.find(user_id=self._id)
+    
+    @property
+    def public_events(self) -> List[Event]:
+        return Event.find(user_id=self._id, visibility=True)
+    
+    @property
+    def friends(self) -> List[Self]:
+        friend_rels = FriendRelation.find(user1_id=self._id, status='friend')
+        friends = []
+        for rel in friend_rels:
+            friend_id = rel.user2_id
+            friend = User.find_one(_id=friend_id)
 
-    def delete(self) -> None:
-        db.users.delete_one({'_id': user._id})
+            if not friend:
+                err_msg = 'Invalid friend relation doc with id `%s`' % str(rel._id)
+                raise DatabaseError(err_msg)
+
+            friends.append(friend)
+
+        return friends
+    
+    def add_friend(self, other_user: Self) -> None:
+        current_status = self.get_friend_status(other_user)
+        if current_status == 'request_received':
+            # accepting request by creating new records for both users
+            FriendRelation.create(
+                user1_id=self._id,
+                user2_id=other_user._id,
+                status='friend',
+                created_at=datetime.now(),
+            )
+            FriendRelation.create(
+                user1_id=other_user._id,
+                user2_id=self._id,
+                status='friend',
+                created_at=datetime.now(),
+            )
+        
+        elif current_status == 'none':
+            # sending a new friend request
+            FriendRelation.create(
+                user1_id=self._id,
+                user2_id=other_user._id,
+                status='request_sent',
+                created_at=datetime.now(),
+            )
+            FriendRelation.create(
+                user1_id=other_user._id,
+                user2_id=self._id,
+                status='request_received',
+                created_at=datetime.now(),
+            )
+    
+    def remove_friend(self, other_user: Self) -> None:
+        rels = FriendRelation.find(user1_id=self._id, user2_id=other_user._id)
+        rels.extend(FriendRelation.find(user1_id=other_user._id, user2_id=self._id))
+        for rel in rels:
+            rel.delete()
+    
+    def get_friend_status(self, other_user: Self) -> str:
+        friend_rel = FriendRelation.find_one(user2_id=other_user._id)
+        if not friend_rel:
+            return 'none'
+        return friend_rel.status
+
+
+def hash_password(password: str) -> str:
+    _hash = hashlib.sha256()
+    _hash.update(password.encode())
+    hashed_password = _hash.hexdigest()
+    return hashed_password
