@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AiFillSun, AiFillMoon } from "react-icons/ai";
-
+import NotificationWidget from './NotificationWidget';
 import { AppContext } from '../lib/context';
 
 
@@ -30,15 +30,18 @@ export default function NavBar() {
                 <Link style={styles.link} to='/calendar' className='p-2'>Calendar</Link>
                 <Link style={styles.link} to='/create-event' className='p-2'>Create Event</Link>
             </div>
-            <button
-                className='btn d-flex justify-content-center align-items-center shadow-none'
-                onClick={context.toggleTheme}>
-                {context.theme === 'light' ?
-                    <AiFillMoon size={20} style={styles.themeIcon}/>
-                :
-                    <AiFillSun size={20} style={styles.themeIcon}/>
-                }
-            </button>
+            <div className="d-flex align-items-center">
+                <NotificationWidget userId={context.userId} /> 
+                <button
+                    className='btn d-flex justify-content-center align-items-center shadow-none ml-2'
+                    onClick={context.toggleTheme}>
+                    {context.theme === 'light' ? (
+                        <AiFillMoon size={20} style={styles.themeIcon} />
+                    ) : (
+                        <AiFillSun size={20} style={styles.themeIcon} />
+                    )}
+                </button>
+            </div>
         </header>
     );
 };

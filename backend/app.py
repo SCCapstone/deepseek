@@ -381,3 +381,40 @@ def get_friends_events(current_user):
         }), 200
     except Exception as e:
         return jsonify({'error': 'Failed to retrieve friends\' events'}), 500
+    
+@app.route('/events/notifications', methods=['GET'])
+@login_required
+def get_event_notifications(current_user):
+    try:
+        user_id = str(current_user['_id'])
+        # Step 1: Check for new event notifications
+        user = db.user_manager.get_user(username=current_user['username'])
+        db.event_manager.get_today_events(user,user_id)  # This will add new notifications if needed
+        
+
+        if not user or "notifications" not in user:
+            return jsonify({"data": []}), 200  # Return empty list as data
+
+        # If the user has notifications, return them under 'data'
+        return jsonify({"data": user["notifications"]}), 200
+
+    except Exception as e:
+        logger.error(f"Error fetching notifications: {e}")
+        return jsonify({"error": "Failed to fetch notifications"}), 500
+    
+@app.route('/events/notifications/clear', methods=['DELETE'])
+@login_required
+def clear_notifications(current_user):
+    try:
+        user_id = str(current_user['_id'])
+        logger.info(f"Clearing notifications for user {user_id}")
+
+        result = db.user_manager.clear_notifications(user_id)
+
+        if result.modified_count > 0:
+            return jsonify({"message": "Notifications cleared successfully"}), 200
+        else:
+            return jsonify({"error": "No notifications to clear"}), 400
+    except Exception as e:
+        logger.error(f"Error clearing notifications: {e}", exc_info=True)
+        return jsonify({"error": "Failed to clear notifications"}), 500
