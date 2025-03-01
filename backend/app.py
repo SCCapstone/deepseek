@@ -21,6 +21,7 @@ app = Flask(__name__)
 app.secret_key = secrets.token_bytes(TOKEN_SIZE_BYTES)
 CORS(app, supports_credentials=True)
 
+
 # registering app routes
 app.register_blueprint(user_router)
 app.register_blueprint(auth_router)

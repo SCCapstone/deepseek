@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AiFillSun, AiFillMoon } from "react-icons/ai";
-
+import NotificationWidget from './NotificationWidget';
 import { AppContext } from '../lib/context';
 
 

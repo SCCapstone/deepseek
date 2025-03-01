@@ -2,6 +2,8 @@ import logging
 from typing import Optional, Dict, Any, List
 from bson.objectid import ObjectId
 from pymongo.errors import PyMongoError
+from datetime import datetime, timezone
+from user_manager import UserManager
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -10,7 +12,7 @@ logger = logging.getLogger(__name__)
 class EventManager:
     def __init__(self, db):
         self.db = db
-
+        self.user_manager = UserManager(self.db) 
     def add_event(
         self,
         user_id: str,
@@ -75,3 +77,33 @@ class EventManager:
         except PyMongoError as e:
             logger.error(f"Failed to edit event: {e}")
         return False
+    
+    #Get today's events for notifications
+    def get_today_events(self, user, user_id: str) -> List[Dict[str, Any]]:
+        """Retrieve events that start today and add notifications to the user if not already present."""
+        try:
+            events = list(self.db.events.find({'user_id': user_id}))
+            today_utc = datetime.now(timezone.utc).date()
+
+            # Fetch the user's existing notifications
+            user = self.user_manager.get_user(user)
+            existing_notifications = {n['message'] for n in self.user_manager.get_notifications(user_id)}
+
+            today_events = []
+            for event in events:
+                event_start_date = datetime.fromisoformat(event['start_time'].replace("Z", "")).replace(tzinfo=timezone.utc).date()
+
+                if event_start_date == today_utc:
+                    today_events.append(event)
+
+                    # Create notification message
+                    message = f"Reminder: Your event '{event['title']}' starts today!"
+
+                    # Only add if it doesn't already exist
+                    if message not in existing_notifications:
+                        self.user_manager.add_notification(user_id, message)
+
+            return today_events
+        except PyMongoError as e:
+            logger.error(f"Failed to retrieve today's events: {e}")
+            return []
