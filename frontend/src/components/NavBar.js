@@ -43,17 +43,16 @@ export default function NavBar() {
                         <AiFillSun size={20} style={styles.themeIcon}/>
                     }
                 </button>
-                {context.user && (
-                    <Link to='/profile'>
+                <Link to='/profile'>
                         <img
                             style={{
-                                width: '40px',
-                                height: '40px',
-                                borderRadius: 1000,
-                            }}
-                            src={context.user.profile_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'}/>
-                    </Link>
-                )}
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: 1000,
+                        }}
+                        src={context.user.profile_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'}
+                    />
+                </Link>
             </div>
         </header>
     );
