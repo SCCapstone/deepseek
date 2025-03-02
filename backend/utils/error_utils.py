@@ -2,6 +2,7 @@ import sys
 import logging
 import traceback
 from flask import make_response
+from pymongo.errors import PyMongoError, ConnectionFailure, OperationFailure
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +14,14 @@ class AppError(Exception):
 
     def handle(self):
         return make_response({'message': self.message}, self.status_code)
+
+
+class InternalError(AppError):
+    status_code = 500
+    
+    def handle(self):
+        logger.error('Internal error: ' + self.message)
+        return make_response({'message': 'Internal server error'}, self.status_code)
 
 
 class InvalidInputError(AppError):
@@ -31,18 +40,8 @@ class NotFoundError(AppError):
     status_code = 404
 
 
-class DatabaseError(AppError):
-    def handle(self):
-        # logging error to console then quitting
-        logger.error('Database error: ' + self.message)
-        sys.exit(-1)
-
-
 def handle_error(error):
-    if error == 404:
-        return NotFoundError('Invalid URL').handle()
-    
-    elif isinstance(error, AppError):
+    if isinstance(error, AppError):
         return error.handle()
     
     else:
@@ -52,3 +51,19 @@ def handle_error(error):
 
         # returning generic error message to user
         return make_response({'message': 'Internal server error'}, 500)
+    
+
+def handle_database_error(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ConnectionFailure as e:
+            raise InternalError('Database connection failure: ' + e.__repr__())
+        except OperationFailure as e:
+            raise InternalError('Database operation failure: ' + e.__repr__())
+        except PyMongoError as e:
+            raise InternalError('Unknown database error: ' + e.__repr__())
+        except Exception as e:
+            raise InternalError('Unknown error: ' + e.__repr__())
+
+    return wrapper

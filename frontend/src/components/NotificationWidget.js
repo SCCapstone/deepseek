@@ -47,14 +47,13 @@ const NotificationWidget = ({ userId }) => {
     }, []);
 
     return (
-        <div className="relative">
-            <button onClick={toggleNotifications} className="p-2 relative">
-            <FaBell size={24} color="black" /> {/* Black bell icon */}
+        <div className="position-relative">
+            <button onClick={toggleNotifications} className="btn relative">
+            <FaBell size={20} color="black" /> {/* Black bell icon */}
                 {notifications.length > 0 && (
                     <span
                         className="absolute top-0 right-0 text-xs px-1 rounded-full"
                         style={{
-                            backgroundColor: "red",  // Red background for number
                             color: "white",  // White text for contrast
                             fontSize: "12px",
                             fontWeight: "bold",
@@ -66,12 +65,16 @@ const NotificationWidget = ({ userId }) => {
                 )}
             </button>
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white border rounded shadow-lg p-2">
+                <div
+                    className="position-absolute left-0 mt-2 w-full bg-white rounded shadow-lg p-2
+                    d-flex flex-column justify-content-start align-items-center"
+                    style={{right: 0, width: 300}}
+                >
                     {loading ? (
                         <div className="p-2 text-gray-500">Loading...</div> // Show loading text while fetching data
                     ) : notifications.length > 0 ? (
                         notifications.map((n, index) => (
-                            <div key={index} className="p-2 border-b">
+                            <div key={index} className="p-2">
                                 {n.message}
                             </div>
                         ))
