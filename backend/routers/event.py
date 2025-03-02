@@ -2,6 +2,7 @@
 Flask routes for event-related API endpoints
 """
 import logging
+from bson.objectid import ObjectId
 from flask import Blueprint, request, make_response
 
 from db import Event, User
@@ -87,7 +88,7 @@ def get_event_comments(current_user: User, event_id: str):
     if not event:
         raise NotFoundError('Invalid event id `%s`' % event_id)
     
-    event_user = User.find_one(_id=event_id)
+    event_user = User.find_one(_id=event.user_id)
     if current_user != event_user:
         friend_status = current_user.get_friend_status(event_user)
         if friend_status != 'friend':
@@ -99,7 +100,7 @@ def get_event_comments(current_user: User, event_id: str):
         comment_user = User.find_one(_id=x['user_id'])
         x['user'] = comment_user.profile
         del x['user_id']
-        
+    
     return make_response({'data': comment_data})
 
 
@@ -117,6 +118,8 @@ def add_event_comment(current_user: User, event_id: str):
         if friend_status != 'friend':
             raise ForbiddenError('You do not have access to this event')
     
+    data = request.json
+    body = data['body']
     event.add_comment(current_user._id, body)
     return make_response({'message': 'Successfully commented on event'}, 201)
 

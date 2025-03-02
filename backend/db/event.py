@@ -41,7 +41,7 @@ class Event(DatabaseObject):
         return EventComment.find(event_id=self._id)
     
     def add_comment(self, user_id: ObjectId, body: str) -> EventComment:
-        comment = EventComment(
+        comment = EventComment.create(
             event_id=self._id,
             user_id=user_id,
             body=body,

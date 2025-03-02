@@ -35,5 +35,4 @@ class EventComment(DatabaseObject):
             'body': self.body,
             'created_at': self.created_at,
             'user_id': self.user_id,
-            'event_id': self.event_id,
         }
