@@ -1,5 +1,6 @@
 services:
     backend:
+        container_name: deepseek-backend
         build:
             context: backend
             dockerfile: Dockerfile.prod
@@ -10,7 +11,9 @@ services:
             - 5000:5000
         environment:
             FLASK_RUN_PORT: 5000
+            FRONTEND_URL: 'https://capstone.ian-turner.xyz'
     frontend:
+        container_name: deepseek-frontend
         build:
             context: frontend
             dockerfile: Dockerfile.prod

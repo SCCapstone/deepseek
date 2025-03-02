@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./package*.json .
 COPY . .
-ARG REACT_APP_API_URL=http://api.capstone.ian-turner.xyz
+ARG REACT_APP_API_URL=https://api.capstone.ian-turner.xyz
 
 RUN npm install
 RUN npm run build
