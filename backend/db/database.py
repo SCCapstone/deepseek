@@ -141,12 +141,17 @@ class DatabaseObject(ABC):
 
     @classmethod
     def find(cls, **kwargs: Dict) -> Self:
-        # validating input against schema
-        cls._validate_input(kwargs)
+        # unpacking list arguments to $in clauses
+        query = {}
+        for field in kwargs:
+            if type(field) == list:
+                query[field] = {'$in': kwargs[field]}
+            else:
+                query[field] = kwargs[field]
 
         # finding objects in database
         db = Database()
-        results = db.find(cls.get_table_name(), kwargs)
+        results = db.find(cls.get_table_name(), query)
         
         # converting database docs to database objects
         objects = []
