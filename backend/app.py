@@ -2,12 +2,9 @@ import secrets
 from flask import Flask, make_response
 from flask_cors import CORS
 
-from utils.gacc_utils import *
-from friend_manager import *
-
 from db import *
 from routers import *
-from utils.error_utils import *
+from utils.error_utils import handle_error
 
 TOKEN_SIZE_BYTES = 32
 
