@@ -1,12 +1,13 @@
 """
 Abstraction for event data in database
 """
-from typing import Dict
+from typing import Dict, List
 from datetime import datetime
 from bson import ObjectId
 
 from utils.error_utils import *
 from .database import DatabaseObject
+from .event_comment import EventComment
 
 
 class Event(DatabaseObject):
@@ -34,3 +35,17 @@ class Event(DatabaseObject):
             'public': self.public,
             'reminder': self.reminder,
         }
+    
+    @property
+    def comments(self) -> List[EventComment]:
+        return EventComment.find(event_id=self._id)
+    
+    def add_comment(self, user_id: ObjectId, body: str) -> EventComment:
+        comment = EventComment.create(
+            event_id=self._id,
+            user_id=user_id,
+            body=body,
+            created_at=datetime.now(),
+        )
+        return comment
+    
