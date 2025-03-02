@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../lib/api";
-
+import { FaBell } from "react-icons/fa";
 const NotificationWidget = ({ userId }) => {
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
@@ -48,9 +48,18 @@ const NotificationWidget = ({ userId }) => {
     return (
         <div className="relative">
             <button onClick={toggleNotifications} className="p-2 relative">
-                🔔
+            <FaBell size={24} color="black" /> {/* Black bell icon */}
                 {notifications.length > 0 && (
-                    <span className="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-full">
+                    <span
+                        className="absolute top-0 right-0 text-xs px-1 rounded-full"
+                        style={{
+                            backgroundColor: "red",  // Red background for number
+                            color: "white",  // White text for contrast
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            padding: "2px 6px"
+                        }}
+                    >
                         {notifications.length}
                     </span>
                 )}
