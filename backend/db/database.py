@@ -202,7 +202,7 @@ class DatabaseObject(ABC):
         # updating doc in database
         try:
             db = Database()
-            db._db[self.table].update_one({'_id': self._id}, {'$set': kwargs})
+            db._db[self.get_table_name()].update_one({'_id': self._id}, {'$set': kwargs})
         
         except Exception as e:
             raise DatabaseError(e.__repr__())
@@ -211,7 +211,7 @@ class DatabaseObject(ABC):
         # removing doc from database
         try:
             db = Database()
-            db._db[self.table].delete_one({'_id': self._id})
+            db._db[self.get_table_name()].delete_one({'_id': self._id})
         
         except Exception as e:
             raise DatabaseError(e.message)

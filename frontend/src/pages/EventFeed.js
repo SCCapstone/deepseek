@@ -10,7 +10,6 @@ const EventFeed = () => {
         page: {
             minHeight: '100vh',
             backgroundColor: colorScheme.backgroundColor,
-            padding: '20px'
         },
         section: {
             backgroundColor: colorScheme.accentColor,
@@ -46,7 +45,7 @@ const EventFeed = () => {
     const context = useAppContext();
 
    async function getData() {
-           const { data, error } = await api.get('/getevents');
+           const { data, error } = await api.get('/get-events');
            if (error) {
                setError(error);
            }

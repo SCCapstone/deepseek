@@ -161,7 +161,7 @@ class User(DatabaseObject):
                 event_msg = 'Reminder: your event \'%s\' starts today!' % event.title
 
                 # sending reminder and updating event to show that reminder has been sent
-                Notification.create(user_id=self._id, message=event_msg)
+                self.add_notification(event_msg)
                 event.update(reminder_sent=True)
 
         # returning all notifications
