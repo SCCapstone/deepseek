@@ -39,7 +39,10 @@ class DatabaseError(AppError):
 
 
 def handle_error(error):
-    if isinstance(error, AppError):
+    if error == 404:
+        return NotFoundError('Invalid URL').handle()
+    
+    elif isinstance(error, AppError):
         return error.handle()
     
     else:

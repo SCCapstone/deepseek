@@ -1,6 +1,7 @@
 """
 Flask routes for event-related API endpoints
 """
+import logging
 from flask import Blueprint, request, make_response
 
 from db import Event
@@ -9,6 +10,7 @@ from utils.data_utils import *
 
 
 event_router = Blueprint('event_router', __name__)
+logger = logging.getLogger(__name__)
 
 
 @event_router.route('/add-event', methods=['POST'])

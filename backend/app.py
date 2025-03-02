@@ -1,5 +1,5 @@
 import secrets
-from flask import Flask
+from flask import Flask, make_response
 from flask_cors import CORS
 
 from utils.gacc_utils import *
@@ -7,7 +7,7 @@ from friend_manager import *
 
 from db import *
 from routers import *
-from utils.error_utils import handle_error
+from utils.error_utils import *
 
 TOKEN_SIZE_BYTES = 32
 
@@ -29,7 +29,12 @@ app.register_blueprint(event_router)
 app.register_blueprint(friend_router)
 app.register_blueprint(gacc_router)
 
-# setting error handler to catch all app errors
+
+# setting up error handlers
+@app.errorhandler(404)
+def handle_not_found(error):
+    return make_response({'message': 'Invalid URL'}, 404)
+
 @app.errorhandler(Exception)
-def _handle_error(error):
+def handle_app_error(error):
     return handle_error(error)

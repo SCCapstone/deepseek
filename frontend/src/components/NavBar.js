@@ -32,6 +32,7 @@ export default function NavBar() {
                 <Link style={styles.link} to='/create-event' className='p-2'>Create Event</Link>
             </div>
             <div className='d-flex flex-row'>
+                <NotificationWidget userId={context.userId} /> 
                 <button
                     className='btn d-flex justify-content-center align-items-center shadow-none mr-1'
                     onClick={context.toggleTheme}>
