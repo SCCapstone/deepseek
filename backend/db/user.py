@@ -102,7 +102,7 @@ class User(DatabaseObject):
         notif = Notification.create(
             user_id=self._id,
             message=message,
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
         return notif
     
@@ -142,6 +142,9 @@ class User(DatabaseObject):
                 status='request_received',
                 created_at=datetime.now(),
             )
+            
+            # sending a notification to the other user
+            other_user.add_notification('Friend request from @' + self.username)
     
     def remove_friend(self, other_user: Self) -> None:
         rels = FriendRelation.find(user1_id=self._id, user2_id=other_user._id)

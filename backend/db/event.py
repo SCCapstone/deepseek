@@ -22,9 +22,8 @@ class Event(DatabaseObject):
         'reminder': {'type': bool, 'required': True, 'default': False},
         'reminder_sent': {'type': bool, 'required': True, 'default': False},
     }
-    
-    @property
-    def data(self) -> Dict:
+
+    def to_dict(self) -> Dict:
         return {
             'title': self.title,
             'description': self.description,
