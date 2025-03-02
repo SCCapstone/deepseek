@@ -7,6 +7,7 @@ from flask import Blueprint, request, make_response
 from db import Event
 from utils.auth_utils import *
 from utils.data_utils import *
+from utils.error_utils import *
 
 
 event_router = Blueprint('event_router', __name__)
@@ -35,15 +36,29 @@ def add_event(current_user):
 @login_required
 def get_events(current_user):
     events = current_user.events
-    event_data = [x.data for x in events]
+    event_data = [x.to_dict() for x in events]
     return make_response({'message': 'Events retrieved', 'data': event_data})
 
 
 @event_router.route('/get-event/<event_id>', methods=['GET'])
 @login_required
 def get_event(current_user, event_id):
-    event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
-    return jsonify({'message': 'Event retrieved', 'data': loads(dumps(event))})
+    # finding event in user's own events
+    user_event = Event.find_one(_id=ObjectId(event_id), user_id=current_user._id)
+    if user_event:
+        return make_response({'data': user_event.to_dict()})
+
+    # getting ids of all user's friends    
+    user_friends = current_user.friends
+    friend_ids = [x._id for x in user_friends]
+
+    # finding event within friend events
+    friend_event = Event.find_one(_id=ObjectId(event_id), user_id=friend_ids)
+    if friend_event:
+        return make_response({'data': friend_event.to_dict()})
+    
+    # event not found
+    raise NotFoundError('Invalid event id `%s`' % event_id)
     
 
 @event_router.route('/update-event/<event_id>', methods=['POST'])
@@ -59,7 +74,9 @@ def get_event(current_user, event_id):
 })
 def update_event(current_user, event_id):
     data = request.json
-    event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
+    event = Event.find_one(_id=ObjectId(event_id), user_id=current_user._id)
+    if not event:
+        raise NotFoundError('Invalid event id `%s`' % event_id)
     event.update(data)
     return make_response({'message': 'Event updated'})
 
@@ -90,5 +107,5 @@ def get_friends_events(current_user):
     friend_events = []
     for friend in friends:
         friend_events.extend(friend.events)
-    event_data = [x.data for x in friend_events]
+    event_data = [x.to_dict() for x in friend_events]
     return make_response({'message': 'Friends events retrieved', 'data': event_data})
