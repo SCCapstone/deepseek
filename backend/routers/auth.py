@@ -29,7 +29,7 @@ def register():
     auth_token = new_user.new_token()
 
     # returning result to user
-    profile = new_user.profile
+    profile = email
     res = make_response({'message': 'User registered', 'data': {'user': profile}}, 201)
     res.set_cookie('auth_token', auth_token)
     return res
