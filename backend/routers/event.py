@@ -62,3 +62,22 @@ def update_event(current_user, event_id):
     event = Event.find(_id=ObjectId(event_id), user_id=current_user._id)
     event.update(data)
     return make_response({'message': 'Event updated'})
+
+
+@event_router.route('/events/notifications')
+@login_required
+def get_notifications(current_user):
+    notifications = current_user.notifications
+    notification_data = [x.to_dict() for x in notifications]
+    return make_response({'message': 'Notifications retrieved', 'data': notification_data})
+
+
+@event_router.route('/events/notifications/clear', methods=['POST'])
+@login_required
+def clear_notifications(current_user):
+    notifications = current_user.notifications
+    if len(notifications) == 0:
+        return make_response({'message': 'No notifications to clear'})
+    for x in notifications:
+        x.delete()
+    return make_response({'message': 'Notifications cleared'})

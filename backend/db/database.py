@@ -110,7 +110,8 @@ class DatabaseObject(ABC):
         for field in cls.schema:
             _schema = cls.schema[field]
             if 'required' in _schema and _schema['required'] and field not in kwargs:
-                # disregarding `_id` field if creating a database document
+                # disregarding `_id` field if creating a database
+                # document since _id has not been created yet
                 if field == '_id' and creating:
                     continue
 
@@ -122,9 +123,10 @@ class DatabaseObject(ABC):
         cls._check_schema_exists()
 
         for field in kwargs:
+            # finding fields that have unique constraint
             _schema = cls.schema[field]
             if 'unique' in _schema and _schema['unique']:
-                # making sure field is unique
+                # making sure field value is unique
                 value = kwargs[field]
                 existing = cls.find_one(**{field: value})
                 if existing:

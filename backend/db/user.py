@@ -12,6 +12,7 @@ from utils.error_utils import *
 from .database import DatabaseObject
 from .event import Event
 from .friend_relation import FriendRelation
+from .notification import Notification
 
 AUTH_TOKEN_BYTES = 32
 logger = logging.getLogger(__name__)
@@ -130,6 +131,10 @@ class User(DatabaseObject):
             friends.append(friend)
 
         return friends
+    
+    @property
+    def notifications(self) -> List[Notification]:
+        return Notification.find(user_id=self._id)
     
     def add_friend(self, other_user: Self) -> None:
         current_status = self.get_friend_status(other_user)
