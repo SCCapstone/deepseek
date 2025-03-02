@@ -7,6 +7,7 @@ import Home from './pages/Home.js';
 import Profile from './pages/Profile';
 import Calendar from './pages/Calendar.js';
 import CreateEvent from './pages/CreateEvent';
+import EventFeed from './pages/EventFeed.js';
 
 export default function App() {
     return (
@@ -18,6 +19,7 @@ export default function App() {
                 <Route path='/profile' element={<Profile/>} />
                 <Route path='/calendar' element={<Calendar/>} />
                 <Route path='/create-event' element={<CreateEvent />} />
+                <Route path='/event-feed' element={<EventFeed />}/>
             </Routes>
         </AppContextProvider>
     );

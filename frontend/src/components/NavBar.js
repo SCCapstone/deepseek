@@ -29,6 +29,7 @@ export default function NavBar() {
                 <Link style={styles.link} to='/profile' className='p-2'>Profile</Link>
                 <Link style={styles.link} to='/calendar' className='p-2'>Calendar</Link>
                 <Link style={styles.link} to='/create-event' className='p-2'>Create Event</Link>
+                <Link style={styles.link} to='/event-feed' classname='p-2'>Event Feed</Link>
             </div>
             <div className="d-flex align-items-center">
                 <NotificationWidget userId={context.userId} /> 
