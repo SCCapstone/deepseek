@@ -14,6 +14,7 @@ export default function Register() {
         const { error } = await api.post('/register', {email, username, password});
         if (error) {
             // handle error here
+            alert(error);
         }
         else {
             navigate('/calendar');

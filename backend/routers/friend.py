@@ -1,12 +1,12 @@
 """
 Flask routes for friend-related API endpoints
 """
-from flask import Blueprint, request, make_response, jsonify
+from flask import Blueprint, make_response
 
 from utils.auth_utils import *
 from utils.data_utils import *
 from utils.error_utils import NotFoundError
-from db import User, FriendRelation
+from db import User
 
 
 friend_router = Blueprint('friend_router', __name__, url_prefix='/friends')
