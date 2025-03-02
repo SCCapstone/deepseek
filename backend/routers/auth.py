@@ -44,6 +44,7 @@ def register():
 
     # returning result to user
     profile = new_user.profile
+    profile['profile_picture'] = 'default-profile-picture-url'
     res = make_response({'message': 'User registered', 'data': {'user': profile}}, 201)
     res.set_cookie('auth_token', auth_token)
     return res

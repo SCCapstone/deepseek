@@ -3,7 +3,10 @@ Flask routes for user-related API endpoints
 """
 import logging
 from typing import Union
-from flask import Blueprint, request, make_response
+
+from flask import Blueprint, request, make_response, jsonify
+from bson import ObjectId
+
 
 from utils.auth_utils import *
 from utils.data_utils import *
@@ -41,3 +44,9 @@ def update_profile(current_user):
 def delete_account(current_user):
     current_user.delete()
     return make_response({'message': 'Account deleted'})
+
+@user_router.route('/get-user/<user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.find_one(_id=ObjectId(user_id))
+    return make_response({'data': user.profile})
+

@@ -96,3 +96,14 @@ def clear_notifications(current_user):
     for x in notifications:
         x.delete()
     return make_response({'message': 'Notifications cleared'})
+
+
+@event_router.route('/get-friends-events', methods=['GET'])
+@login_required
+def get_friends_events(current_user):
+    friends = current_user.friends
+    friend_events = []
+    for friend in friends:
+        friend_events.extend(friend.events)
+    event_data = [x.data for x in friend_events]
+    return make_response({'message': 'Friends events retrieved', 'data': event_data})

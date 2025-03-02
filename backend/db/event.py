@@ -3,7 +3,7 @@ Abstraction for event data in database
 """
 from typing import Dict
 from datetime import datetime
-from bson.objectid import ObjectId
+from bson import ObjectId
 
 from utils.error_utils import *
 from .database import DatabaseObject
@@ -25,6 +25,7 @@ class Event(DatabaseObject):
 
     def to_dict(self) -> Dict:
         return {
+            'user_id': str(self.user_id),
             'title': self.title,
             'description': self.description,
             'start_time': self.start_time,
