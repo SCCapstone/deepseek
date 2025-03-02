@@ -41,7 +41,7 @@ export default function CreateEvent() {
             end_time: end.toISOString(),
             reminder: eventDetails.reminder,
         }
-        const { data, error } = await api.post('/addevent', newEvent);
+        const { data, error } = await api.post('/add-event', newEvent);
         if (error) {
             // handle error here
             alert('Could not create event');

@@ -22,7 +22,7 @@ export default function CalendarPage() {
     const context = useAppContext();
 
     async function getData() {
-        const { data, error } = await api.get('/getevents');
+        const { data, error } = await api.get('/get-events');
         if (error) {
             setError(error);
         }

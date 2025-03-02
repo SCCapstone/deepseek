@@ -27,21 +27,31 @@ export default function NavBar() {
             <div className='d-flex flex-row'>
                 <Link style={styles.link} to='/' className='p-2 font-weight-bold'>CalendarMedia</Link>
                 <Link style={styles.link} to='/profile' className='p-2'>Profile</Link>
+                <Link style={styles.link} to='/friends' className='p-2'>Friends</Link>
                 <Link style={styles.link} to='/calendar' className='p-2'>Calendar</Link>
                 <Link style={styles.link} to='/create-event' className='p-2'>Create Event</Link>
-                <Link style={styles.link} to='/event-feed' classname='p-2'>Event Feed</Link>
+                <Link style={styles.link} to='/event-feed' className='p-2'>Event Feed</Link>
             </div>
-            <div className="d-flex align-items-center">
+            <div className='d-flex flex-row'>
                 <NotificationWidget userId={context.userId} /> 
                 <button
-                    className='btn d-flex justify-content-center align-items-center shadow-none ml-2'
+                    className='btn d-flex justify-content-center align-items-center shadow-none mr-1'
                     onClick={context.toggleTheme}>
-                    {context.theme === 'light' ? (
-                        <AiFillMoon size={20} style={styles.themeIcon} />
-                    ) : (
-                        <AiFillSun size={20} style={styles.themeIcon} />
-                    )}
+                    {context.theme === 'light' ?
+                        <AiFillMoon size={20} style={styles.themeIcon}/>
+                    :
+                        <AiFillSun size={20} style={styles.themeIcon}/>
+                    }
                 </button>
+                <Link to='/profile'>
+                    <img
+                        style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: 1000,
+                        }}
+                        src={context.user.profile_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'}/>
+                </Link>
             </div>
         </header>
     );

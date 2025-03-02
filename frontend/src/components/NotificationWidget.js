@@ -10,6 +10,7 @@ const NotificationWidget = ({ userId }) => {
     const fetchNotifications = async () => {
         try {
             const { data, error } = await api.get('/events/notifications');
+            console.log(data)
 
             if (error) {
                 console.error("Error fetching notifications:", error);
@@ -28,7 +29,7 @@ const NotificationWidget = ({ userId }) => {
     const clearNotifications = async () => {
         setNotifications([]);
         try {
-            const response = await api.delete('/events/notifications/clear');
+            const response = await api.post('/events/notifications/clear');
         } catch (error) {
             console.error("Failed to clear notifications", error);
         }
