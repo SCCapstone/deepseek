@@ -8,11 +8,12 @@ from typing import Dict, Self, Union
 import pymongo
 from bson.objectid import ObjectId
 
-from utils.error_utils import DatabaseError, InvalidInputError
+from utils.error_utils import *
 
 DEFAULT_MONGO_HOST = 'mongo'
 DEFAULT_MONGO_PORT = 27017
 DEFAULT_MONGO_DB = 'appdb'
+DEFAULT_MONGO_TIMEOUT_MS = 5000
 
 
 class Database:
@@ -33,23 +34,28 @@ class Database:
         database = env.get('MONGO_DATABASE', DEFAULT_MONGO_DB)
 
         # attempting to connect to database
-        client = pymongo.MongoClient(host, port)
+        client = pymongo.MongoClient(host, port, timeoutMS=DEFAULT_MONGO_TIMEOUT_MS)
         self._db = client[database]
 
-    def find(self, table_name: str, query: Dict, sort: Dict = None):
-        pass
+    @handle_database_error
+    def find(self, collection: str, query: Dict):
+        return self._db[collection].find(query)
 
-    def find_one(self, table_name: str, query: Dict):
-        pass
+    @handle_database_error
+    def find_one(self, collection: str, query: Dict):
+        return self._db[collection].find_one(query)
 
-    def create_one(self, table_name: str, args: Dict):
-        pass
+    @handle_database_error
+    def insert_one(self, collection: str, doc: Dict):
+        return self._db[collection].insert_one(doc)
 
-    def update_one(self, table_name: str, _id: ObjectId, args: Dict):
-        pass
+    @handle_database_error
+    def update_one(self, collection: str, _id: ObjectId, doc: Dict):
+        return self._db[collection].update_one({'_id': _id}, {'$set': doc})
 
-    def delete_one(self, table_name: str, _id: ObjectId):
-        pass
+    @handle_database_error
+    def delete_one(self, collection: str, _id: ObjectId):
+        return self._db[collection].delete_one({'_id': _id})
 
 
 class DatabaseObject(ABC):
@@ -63,7 +69,7 @@ class DatabaseObject(ABC):
 
     @classmethod
     def get_table_name(cls):
-        return class_to_table_name(cls.__name__)
+        return class_to_collection_name(cls.__name__)
 
     @classmethod
     def _check_schema_exists(cls) -> None:
@@ -79,14 +85,14 @@ class DatabaseObject(ABC):
         for field in kwargs:
             # making sure field exists in schema
             if field not in cls.schema:
-                raise DatabaseError('Invalid field `%s` for object `%s`' % \
+                raise InvalidInputError('Invalid field `%s` for object `%s`' % \
                     (field, cls.__name__))
 
             # making sure field has correct type
             value = kwargs[field]
             _type = cls.schema[field]['type']
             if value and not isinstance(value, _type):
-                raise DatabaseError('Field `%s` must have type `%s' % (field, str(_type)))
+                raise InvalidInputError('Field `%s` must have type `%s' % (field, str(_type)))
 
     @classmethod
     def _set_defaults(cls, kwargs: Dict) -> None:
@@ -116,7 +122,7 @@ class DatabaseObject(ABC):
                     continue
 
                 # raising error if field is required but not set by kwargs or default
-                raise DatabaseError('Missing required field `%s`' % field)
+                raise InvalidInputError('Missing required field `%s`' % field)
             
     @classmethod
     def _check_unique(cls, kwargs: Dict) -> None:
@@ -139,11 +145,8 @@ class DatabaseObject(ABC):
         cls._validate_input(kwargs)
 
         # finding objects in database
-        try:
-            db = Database()
-            results = db._db[cls.get_table_name()].find(kwargs)
-        except Exception as e:
-            raise DatabaseError(e.__repr__())
+        db = Database()
+        results = db.find(cls.get_table_name(), kwargs)
         
         # converting database docs to database objects
         objects = []
@@ -170,11 +173,8 @@ class DatabaseObject(ABC):
         cls._check_unique(kwargs)
 
         # inserting doc into database
-        try:
-            db = Database()
-            db._db[cls.get_table_name()].insert_many([kwargs])
-        except Exception as e:
-            raise DatabaseError(e.__repr__())
+        db = Database()
+        db.insert_one(cls.get_table_name(), kwargs)
 
         # creating database object class to return
         new_obj = cls.__new__(cls)
@@ -200,48 +200,35 @@ class DatabaseObject(ABC):
         self._check_unique(kwargs)
 
         # updating doc in database
-        try:
-            db = Database()
-            db._db[self.get_table_name()].update_one({'_id': self._id}, {'$set': kwargs})
-        
-        except Exception as e:
-            raise DatabaseError(e.__repr__())
+        db = Database()
+        db.update_one(self.get_table_name(), self._id, kwargs)
 
     def delete(self) -> None:
         # removing doc from database
-        try:
-            db = Database()
-            db._db[self.get_table_name()].delete_one({'_id': self._id})
-        
-        except Exception as e:
-            raise DatabaseError(e.message)
+        db = Database()
+        db.delete_one(self.get_table_name(), self._id)
     
     def __eq__(self, other: Self) -> bool:
         return self._id == other._id
     
 
-def class_to_table_name(class_name: str) -> str:
-    # making sure first letter is a capital
-    if not class_name[0].isupper():
-        raise DatabaseError('Invalid database object class name `%s`' % class_name)
-    
+def class_to_collection_name(class_name: str) -> str:
     # constructing output string
-    string = ''
+    coll_str = ''
     i = 0
     while i < len(class_name):
         # grabbing current (capital) letter
-        string += class_name[i].lower()
+        coll_str += class_name[i].lower()
         i += 1
         while i < len(class_name) and not class_name[i].isupper():
             # looping until end of string or another capital letter
-            string += class_name[i].lower()
+            coll_str += class_name[i].lower()
             i += 1
         
-        # adding either plural suffix or underscore separator
+        # adding either plural suffix at end or underscore separator between words
         if i < len(class_name):
-            string += '_'
+            coll_str += '_'
         else:
-            string += 's'
+            coll_str += 's'
     
-    print(string)
-    return string
+    return coll_str
