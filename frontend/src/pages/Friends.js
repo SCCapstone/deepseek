@@ -24,7 +24,33 @@ export default function Friends() {
         },
         label: {
             color: context.colorScheme.textColor,
-        }
+        },
+        friendsWrapper: {
+            backgroundColor: context.colorScheme.accentColor,
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
+        },
+        friendCard: {
+            backgroundColor: context.colorScheme.backgroundColor,
+            padding: '15px',
+            boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
+            marginBottom: '10px',
+            color: context.colorScheme.textColor,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
+        friendInfo: {
+            display: 'flex',
+            alignItems: 'center',
+        },
+        friendPfp: {
+            width: '30px',
+            height: '30px',
+            borderRadius: '50%',
+            marginRight: '10px',
+        },
     }
 
     const handleAddFriend = async (e) => {
@@ -75,8 +101,8 @@ export default function Friends() {
     return (
         <div style={styles.page}>
             <NavBar/>
-            <div className='mt-5 container p-3 rounded-lg bg-light'>
-                <h3>Friends</h3>
+            <div className='mt-5 container p-3 rounded-lg'>
+                <h3 style={styles.sectionTitle}>Friends</h3>
                 <form className='d-flex flex-row mb-3' onSubmit={handleAddFriend}>
                     <input
                         id='username'
@@ -91,20 +117,17 @@ export default function Friends() {
                         className='btn btn-primary'
                     >Add</button>
                 </form>
-                <div className='p-3 bg-white rounded'>
+                <div style={styles.friendsWrapper} className='p-3 rounded'>
                     {friends.map((friend, i) =>
                         <div
                             key={i}
-                            className='p-1 rounded d-flex flex-row justify-content-between align-items-center'>
-                            <div className='d-flex flex-row justify-content-start align-items-center'>
+                            style={styles.friendCard}
+                        >
+                            <div style={styles.friendInfo}>
                                 <img
-                                    className='mr-3'
                                     src={context.user.profile_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'}
-                                    style={{
-                                        width: '40px',
-                                        height: '40px',
-                                        borderRadius: 1000,
-                                    }}/>
+                                    style={styles.friendPfp}
+                                />
                                 <p className='m-0'>{friend.username}</p>
                             </div>
                             <button onClick={() => handleRemoveFriend(friend.username)} className='btn btn-danger'>

@@ -19,6 +19,7 @@ export default function Profile() {
     const [editedData, setEditedData] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
     const context = useAppContext();
+    const { setUser } = useAppContext();
 
     async function getData() {
         const { data, error } = await api.get('/get-profile');
@@ -31,6 +32,7 @@ export default function Profile() {
         else {
             setUserData(data);
             setEditedData(data || {});
+            setUser(data);
             setLoading(false);
         }
     }
@@ -68,6 +70,7 @@ export default function Profile() {
             setError(error);
         } else {
             setUserData(editedData);
+            setUser(editedData);
             setEditing(false);
             getData(); // Refresh data
         }
