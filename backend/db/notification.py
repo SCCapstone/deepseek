@@ -14,6 +14,7 @@ class Notification(DatabaseObject):
         '_id': {'type': ObjectId, 'required': True, 'unique': True},
         'user_id': {'type': ObjectId, 'required': True},
         'message': {'type': str},
+        'is_read': {'type': bool, 'required': True, 'default': False},
         'created_at': {'type': datetime},
     }
 

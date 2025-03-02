@@ -3,7 +3,7 @@ Abstraction for user data in database
 """
 import hashlib
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from secrets import token_hex
 from typing import List, Dict, Self, Union
 from bson.objectid import ObjectId
@@ -113,6 +113,25 @@ class User(DatabaseObject):
         return Event.find(user_id=self._id)
     
     @property
+    def today_events(self) -> List[Event]:
+        # getting todays date
+        today_utc = datetime.now(timezone.utc).date()
+
+        # finding events that have the same date
+        events = self.events
+        today_events = []
+        for event in events:
+            event_start_date = datetime \
+                .fromisoformat(event.start_time.replace('Z', '')) \
+                .replace(tzinfo=timezone.utc) \
+                .date()
+            
+            if event_start_date == today_utc:
+                today_events.append(event)
+
+        return today_events
+    
+    @property
     def public_events(self) -> List[Event]:
         return Event.find(user_id=self._id, visibility=True)
     
@@ -134,7 +153,32 @@ class User(DatabaseObject):
     
     @property
     def notifications(self) -> List[Notification]:
+        # looping over todays events to see if any reminders need to be sent
+        today_events = self.today_events
+        for event in today_events:
+            if event.reminder and not event.reminder_sent:
+                # event is set to remind and reminder has not been sent yet
+                event_msg = 'Reminder: your event \'%s\' starts today!' % event.title
+
+                # sending reminder and updating event to show that reminder has been sent
+                Notification.create(user_id=self._id, message=event_msg)
+                event.update(reminder_sent=True)
+
+        # returning all notifications
         return Notification.find(user_id=self._id)
+    
+    def add_notification(self, message: str) -> Notification:
+        notif = Notification.create(
+            user_id=self._id,
+            message=message,
+            created_at=datetime.now()
+        )
+        return notif
+    
+    def mark_notifications_read(self) -> None:
+        notifs = self.notifications
+        for notif in notifs:
+            notif.update(is_read=True)
     
     def add_friend(self, other_user: Self) -> None:
         current_status = self.get_friend_status(other_user)

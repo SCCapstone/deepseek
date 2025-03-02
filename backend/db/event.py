@@ -19,7 +19,8 @@ class Event(DatabaseObject):
         'end_time': {'type': str},
         'created_at': {'type': datetime},
         'public': {'type': bool, 'required': True, 'default': False},
-        'reminder': {'type': bool, 'default': False},
+        'reminder': {'type': bool, 'required': True, 'default': False},
+        'reminder_sent': {'type': bool, 'required': True, 'default': False},
     }
     
     @property
