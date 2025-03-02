@@ -75,6 +75,8 @@ def get_event(current_user, event_id):
 def update_event(current_user, event_id):
     data = request.json
     event = Event.find_one(_id=ObjectId(event_id), user_id=current_user._id)
+    if not event:
+        raise NotFoundError('Invalid event id `%s`' % event_id)
     event.update(data)
     return make_response({'message': 'Event updated'})
 
@@ -105,5 +107,5 @@ def get_friends_events(current_user):
     friend_events = []
     for friend in friends:
         friend_events.extend(friend.events)
-    event_data = [x.data for x in friend_events]
+    event_data = [x.to_dict() for x in friend_events]
     return make_response({'message': 'Friends events retrieved', 'data': event_data})
