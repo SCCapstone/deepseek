@@ -83,7 +83,7 @@ const EventFeed = () => {
             alert('Please enter a valid comment.');
             return;
         }
-        const { error } = await api.post(`/add-event-comment/${eventId}`, { comment });
+        const { error } = await api.post(`/add-event-comment/${eventId}`, { body: comment });
         if (!error) {
             setComment('');
             setEditingCommentId(null);

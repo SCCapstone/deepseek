@@ -19,7 +19,6 @@ class EventComment(DatabaseObject):
         'user_id': {
             'type': ObjectId,
             'required': True,
-            'unique': True,
         },
         'body': {
             'type': str,
