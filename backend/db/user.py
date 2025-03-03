@@ -153,7 +153,7 @@ class User(DatabaseObject):
             rel.delete()
     
     def get_friend_status(self, other_user: Self) -> str:
-        friend_rel = FriendRelation.find_one(user2_id=other_user._id)
+        friend_rel = FriendRelation.find_one(user1_id=self._id, user2_id=other_user._id)
         if not friend_rel:
             return 'none'
         return friend_rel.status

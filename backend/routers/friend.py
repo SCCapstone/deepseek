@@ -30,7 +30,6 @@ def add_friend(current_user: User, friend_username: str):
         raise NotFoundError('No user with username `%s`' % friend_username)
     
     # accepting or sending request
-    # FriendRelation.add(current_user, other_user)
     current_user.add_friend(other_user)
     return make_response({'message': 'Success'}, 201)
 
