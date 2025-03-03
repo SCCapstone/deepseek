@@ -40,6 +40,8 @@ export default function CreateEvent() {
             start_time: start.toISOString(),
             end_time: end.toISOString(),
             reminder: eventDetails.reminder,
+            location: eventDetails.location,
+            reminder: eventDetails.reminder,
         }
         const { data, error } = await api.post('/add-event', newEvent);
         if (error) {
