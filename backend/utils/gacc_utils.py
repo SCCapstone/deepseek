@@ -2,7 +2,8 @@ from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from datetime import datetime
-
+from bson import ObjectId
+from db import User, Event
 # TODO find a better way to store the google secret file, kinda just chilling in a JSON in the app directory
 class GoogleCalendar:
     def __init__(self, client_secrets_file, scopes, redirect_uri):
@@ -107,13 +108,16 @@ class GoogleCalendar:
         ).execute()
 
         events = events_result.get("items", [])
+        if not events:
+            print("Warning: No events found in the calendar.")
+        
         parsed_events = []
         
         for event in events:
             parsed_event = self.parse_calendar_event(event)
             if parsed_event:
                 parsed_events.append(parsed_event)
-            
+        
         return parsed_events
 
     @staticmethod
@@ -133,30 +137,38 @@ class GoogleCalendar:
             "scopes": credentials.scopes,
         }
 
-    def handle_callback(self, session, request_url, auth_token, user_manager, event_manager):
+    def handle_callback(self, session, request_url, user_id):
         """Handle the OAuth callback and event import."""
         try:
             credentials = self.exchange_code_for_credentials(session, request_url)
             events = self.fetch_calendar_events(session)
             
-            # Get current user
-            current_user = user_manager.get_token_user(auth_token)
-            if not current_user or not events:
-                return None, "Failed to import events"
-            
+            # Log the auth_token for debugging
+            print(f"Debug: user_id received: {user_id}")
+
+            # Get current user based on auth_token
+            current_user = User.find_one(_id=ObjectId(user_id))  # Assuming User class has a method to find by token
+            if not current_user:
+                print("Error: User not found for the provided auth_token.")
+                return None, user_id
+
+            if not events:
+                print("Warning: No events found for the user.")
+                return 0, "No events found"
+
             # Import events
-            events_added = self.import_events(events, current_user, event_manager)
+            events_added = self.import_events(events, current_user)
             return events_added, None
             
         except Exception as e:
             print(f"Error in Google callback: {e}")
             return None, str(e)
 
-    def import_events(self, events, current_user, event_manager):
+    def import_events(self, events, current_user):
         """Import Google Calendar events for a user."""
         # Get existing event titles
-        existing_events = event_manager.get_events(user_id=str(current_user['_id']))
-        existing_titles = {event['title'] for event in existing_events}
+        existing_events = Event.find(user_id=ObjectId(current_user._id))  # Assuming Event class has a method to find by user_id
+        existing_titles = {event.title for event in existing_events}
         
         events_added = 0
         for event in events:
@@ -169,13 +181,14 @@ class GoogleCalendar:
                 "description": event['description'],
                 "start_time": event['start_time'],
                 "end_time": event['end_time'],
-                "visibility": False
+                "public": False,  
+                "reminder": False,  
+                "reminder_sent": False,  
+                "location": event.get('location', None),  
+                "user_id": ObjectId(current_user._id)  
             }
             
-            event_manager.add_event(
-                user_id=str(current_user['_id']),
-                **event_data
-            )
+            Event.create(**event_data)  # Create the event using the Event class
             events_added += 1
             existing_titles.add(title)
             

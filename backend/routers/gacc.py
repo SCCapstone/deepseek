@@ -2,19 +2,22 @@
 Flask routes for authentication-related API endpoints
 """
 from flask import Blueprint, request, redirect, session
+import os
+from db import User
 
 from utils.gacc_utils import *
-
+from utils.auth_utils import *
 
 gacc_router = Blueprint('gacc_router', __name__)
-FRONTEND_URL = "http://localhost:4000"
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+REACT_APP_API_URL = os.getenv('REACT_APP_API_URL')
 
 
 # google calendar setup and handling
 googlecalendar = GoogleCalendar(
     client_secrets_file="googlesecret.json",
     scopes=["https://www.googleapis.com/auth/calendar.readonly"],
-    redirect_uri="http://localhost:5000/googlecallback",
+    redirect_uri=f"{REACT_APP_API_URL}/googlecallback",
 )
 
 @gacc_router.route('/googlelogin')
@@ -24,21 +27,26 @@ def google_login():
     return redirect(auth_url)
 
 @gacc_router.route('/googlecallback')
-def google_callback():
-    auth_token = request.cookies.get('auth_token')
+@login_required
+def google_callback(current_user):
+    if not current_user._id:
+        return redirect(f"{FRONTEND_URL}/login?error=Unauthorized")
+
     events_added, error = googlecalendar.handle_callback(
         session=session,
         request_url=request.url,
-        auth_token=auth_token,
-        user_manager=db.user_manager,
-        event_manager=db.event_manager
+        user_id=current_user._id
     )
 
-    # sorry if this messes up production, I'm not sure how to do this properly so sorry in advance
-    frontend_url = f"{FRONTEND_URL}/calendar"
     if error:
-        return redirect(f"{frontend_url}?error={error}")
-    
-    response = redirect(f"{frontend_url}?success=true&count={events_added}")
-    response.set_cookie('auth_token', auth_token)
+        return redirect(f"{FRONTEND_URL}/calendar?error={error}")
+
+    # Fetch the user
+    user = User.find_one(_id=ObjectId(current_user._id))
+    if not user:
+        return redirect(f"{FRONTEND_URL}/calendar?error=Unauthorized")
+
+    # Redirect to the frontend with success message and count of events added
+    response = redirect(f"{FRONTEND_URL}/calendar?success=true&count={events_added}")
+    #response.set_cookie('auth_token', user.auth_token)
     return response
