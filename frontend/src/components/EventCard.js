@@ -1,7 +1,7 @@
 import { useAppContext } from '../lib/context';
 
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, onClick }) {
     const context = useAppContext();
 
     const styles = {
@@ -11,7 +11,7 @@ export default function EventCard({ event }) {
     }
 
     return (
-        <div className='p-2 mb-3 shadow-sm rounded-lg border w-100'>
+        <div onClick={onClick} className='p-2 mb-3 shadow-sm rounded-lg border w-100'>
             <div className='font-weight-bold' style={styles.text}>
                 {event.title}
             </div>
