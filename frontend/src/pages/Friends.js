@@ -76,9 +76,10 @@ export default function Friends() {
         }
         else {
             alert(message);
-            getData();
+            await getData();
         }
-    }
+    };
+    
 
     const getData = async () => {
         setLoading(true);

@@ -54,7 +54,10 @@ export default function Profile() {
             window.location.hash = '';
         }
         
-        getData();
+        async function fetchData() {
+            await getData();
+        }
+        fetchData();
     }, []);
 
     const handleInputChange = (field, value) => {
