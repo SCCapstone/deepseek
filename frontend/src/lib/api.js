@@ -10,31 +10,26 @@ const api = async (method, url, variables = null) => {
         options.headers['Content-Type'] = 'application/json';
         options.body = JSON.stringify(variables);
     }
-
+    
     try {
         const res = await fetch(process.env.REACT_APP_API_URL + url, options);
-        const data = await res.json();
+    
+        let data;
+        try {
+            data = await res.json();
+        } catch (err) {
+            return { error: 'Invalid response from server', data: null, message: null }; // Ensure we return an empty array if no data
+        }
         
         if (res.ok) {
-            return {
-                data: data.data || null, // Ensure we return an empty array if no data
-                message: data.message,
-                error: null 
-            }
+            return { data: data?.data || null, message: data?.message, error: null }; // Return empty array on error
         } else {
-            return { 
-                error: data.message || 'An error occurred', 
-                data: null, // Return empty array on error
-                message: null
-            }
+            return { error: data?.message || 'An error occurred', data: null, message: null };
         }
     } catch (e) {
-        return { 
-            error: 'Network or server error',
-            data: null, // Return empty array on network error
-            message: null
-        }
+        return { error: 'Network or server error', data: null, message: null }; // Return empty array on network error
     }
+    
 }
 
 export default {
