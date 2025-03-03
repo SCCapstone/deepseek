@@ -22,6 +22,7 @@ class Event(DatabaseObject):
         'public': {'type': bool, 'required': True, 'default': False},
         'reminder': {'type': bool, 'required': True, 'default': False},
         'reminder_sent': {'type': bool, 'required': True, 'default': False},
+        'location': {'type': str},
     }
 
     def to_dict(self) -> Dict:
@@ -34,6 +35,7 @@ class Event(DatabaseObject):
             'created_at': self.created_at,
             'public': self.public,
             'reminder': self.reminder,
+            'location': self.location,
         }
     
     @property

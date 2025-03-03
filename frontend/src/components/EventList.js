@@ -41,6 +41,7 @@ export default function EventList({ events, date }) {
             return value;
         });
     }, [sidebarWidthSetter]);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     const styles = {
         container: {
@@ -94,17 +95,32 @@ export default function EventList({ events, date }) {
             className='d-flex flex-row justify-content-start'
             style={styles.container}>
             <div className='h-100' style={styles.border} onMouseDown={startResizing}></div>
-            <div className='p-3 d-flex flex-column w-100'>
-                <h3 className='h3' style={styles.text}>{date.toDateString()}</h3>
-                {sortedEvents.map((event, i) =>
-                    <EventCard 
-                        key={i} 
-                        event={{
-                            ...event,
-                            formattedTime: formatTimeRange(event.start_time, event.end_time)
-                        }}
-                    />
-                )}
+                <div className='p-3 d-flex flex-column w-100'>
+                {selectedEvent ?
+                    <div>
+                        <div className='d-flex flex-row justify-content-start align-items-center mb-3'>
+                            <button className='btn' onClick={() => setSelectedEvent(null)}>&#x2190;</button>
+                            <h3 className='h3 m-0'>{selectedEvent.title}</h3>
+                        </div>
+                        <p>{selectedEvent.description}</p>
+                        <p>Location: {selectedEvent.location}</p>
+                        <p>{formatTimeRange(selectedEvent.start_time, selectedEvent.end_time)}</p>
+                    </div>
+                :
+                    <div>
+                        <h3 className='h3' style={styles.text}>{date.toDateString()}</h3>
+                        {sortedEvents.map((event, i) =>
+                            <EventCard 
+                                key={i}
+                                onClick={() => setSelectedEvent(event)}
+                                event={{
+                                    ...event,
+                                    formattedTime: formatTimeRange(event.start_time, event.end_time)
+                                }}
+                            />
+                        )}
+                    </div>
+                }
             </div>
         </div>
     );
