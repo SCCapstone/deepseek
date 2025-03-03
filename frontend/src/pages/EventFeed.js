@@ -65,7 +65,9 @@ const EventFeed = () => {
             alert('Title cannot be empty.');
             return;
         }
-        const { error } = await api.post(`/update-event/${eventId}`, editedEvent);
+        const { error } = await api.post(`/update-event/${eventId}`, {
+            title: editedEvent.title,
+        });
         if (!error) {
             setEditingEventId(null);
             getData();

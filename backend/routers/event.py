@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
     'location': {'type': str},
     'reminder': {'type': bool},
     'public': {'type': bool},
+    'created_at': {'type': datetime},
 })
 def add_event(current_user: User):
     event_data = request.json
