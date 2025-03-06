@@ -43,6 +43,5 @@ def remove_friend(current_user: User, friend_username: str):
         raise NotFoundError('No user with username `%s`' % friend_username)
     
     # deleting friend relation records
-    # FriendRelation.delete_relations(current_user, other_user)
     current_user.remove_friend(other_user)
     return make_response({'message': 'Successfuly removed friend'})

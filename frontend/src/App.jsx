@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 
-import { AppContextProvider } from './lib/context.js';
+import { AppContextProvider } from './lib/context';
 import Login from './pages/Login'
 import Register from './pages/Register';
-import Home from './pages/Home.js';
+import Home from './pages/Home';
 import Profile from './pages/Profile';
-import Calendar from './pages/Calendar.js';
+import Calendar from './pages/Calendar';
 import CreateEvent from './pages/CreateEvent';
 import EventFeed from './pages/EventFeed';
 import Friends from './pages/Friends';

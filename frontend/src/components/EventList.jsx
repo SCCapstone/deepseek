@@ -5,7 +5,7 @@ import {
     useRef,
     useCallback,
  } from 'react';
-import EventCard from './EventCard.js';
+import EventCard from './EventCard';
 import { useAppContext } from '../lib/context';
 
 function formatTimeRange(startTime, endTime) {

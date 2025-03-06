@@ -12,7 +12,7 @@ const api = async (method, url, variables = null) => {
     }
     
     try {
-        const res = await fetch(process.env.REACT_APP_API_URL + url, options);
+        const res = await fetch(import.meta.env.VITE_API_URL + url, options);
     
         let data;
         try {
