@@ -1,0 +1,47 @@
+import { useState, useEffect } from 'react';
+import Loading from '../Loading';
+import Alert from '../Alert';
+import api from '../../lib/api';
+
+
+export default function EventsTab() {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [events, setEvents] = useState([]);
+
+    const getData = async () => {
+        const { data, error: apiError } = await api.get('/get-events');
+        setError(apiError);
+        setEvents(data);
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
+    if (loading) return <Loading/>
+
+    return (
+        <div className='mb-3'>
+            {events.length > 0 ?
+                <div>
+                    {events.map((event, i) => (
+                        <div key={i}>
+                            {event.title}
+                        </div>
+                    ))}
+                </div>
+            :
+                <div className='p-5 d-flex flex-row justify-content-center align-items-center'>
+                    <p>
+                        Nothing to see here. <a href='/create-event'>
+                            Click here
+                        </a> to create a new event.
+                    </p>
+                </div>
+            }
+        </div>
+    );
+}

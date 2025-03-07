@@ -8,10 +8,12 @@ import Alert from '../../components/Alert';
 import api from '../../lib/api';
 
 
-export default function ProfileHeader({ showEditor }) {
+export default function ProfileHeader({ editing, setEditing }) {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const showEditor = () => setEditing(true);
 
     const getData = async () => {
         setLoading(true);
@@ -23,7 +25,7 @@ export default function ProfileHeader({ showEditor }) {
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [editing]);
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     if (loading) return <Loading className='mt-5'/>

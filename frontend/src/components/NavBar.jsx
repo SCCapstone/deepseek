@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { AiFillSun, AiFillMoon } from "react-icons/ai";
 import NotificationWidget from './NotificationWidget';
@@ -6,6 +6,10 @@ import { AppContext } from '../lib/context';
 
 
 export default function NavBar() {
+    const { pathname } = useLocation();
+    if (pathname === '/' || pathname === '/login' || pathname === '/register')
+        return null;
+
     const context = useContext(AppContext);
 
     const styles = {

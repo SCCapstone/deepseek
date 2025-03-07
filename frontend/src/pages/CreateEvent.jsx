@@ -3,7 +3,6 @@ import {
     useContext,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../components/NavBar';
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
 
@@ -84,7 +83,6 @@ export default function CreateEvent() {
 
     return (
         <div style={styles.page}>
-            <NavBar/>
             <form
                 onSubmit={handleSubmit}
                 className='container shadow rounded-lg mt-5 p-3'

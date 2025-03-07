@@ -4,7 +4,6 @@ import {
 } from 'react';
 import { useAppContext } from '../lib/context';
 import api from '../lib/api';
-import NavBar from '../components/NavBar';
 
 
 export default function Friends() {
@@ -101,7 +100,6 @@ export default function Friends() {
 
     return (
         <div style={styles.page}>
-            <NavBar/>
             <div className='mt-5 container p-3 rounded-lg'>
                 <h3 style={styles.sectionTitle}>Friends</h3>
                 <form className='d-flex flex-row mb-3' onSubmit={handleAddFriend}>

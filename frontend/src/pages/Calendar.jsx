@@ -8,10 +8,11 @@ import {
 import Calendar from '../components/Calendar';
 import 'react-calendar/dist/Calendar.css';
 
-import NavBar from '../components/NavBar';
 import EventList from '../components/EventList';
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
+import Loading from '../components/Loading';
+import Alert from '../components/Alert';
 
 
 export default function CalendarPage() {
@@ -22,9 +23,9 @@ export default function CalendarPage() {
     const context = useAppContext();
 
     async function getData() {
-        const { data, error } = await api.get('/get-events');
-        if (error) {
-            setError(error);
+        const { data, error: apiError } = await api.get('/get-events');
+        if (apiError) {
+            setError(apiError);
         }
         else {
             setEvents(data);
@@ -42,7 +43,6 @@ export default function CalendarPage() {
 
     const styles = {
         page: {
-            minHeight: '100vh',
             backgroundColor: context.colorScheme.backgroundColor,
         },
         calendar: {
@@ -50,29 +50,25 @@ export default function CalendarPage() {
         },
     }
   
-    if (error) return <div>Error: {error}</div>;
-  
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
+    if (loading) return <Loading/>
+
     return (
-        <div style={styles.page} className='d-flex flex-column justify-content-start'>
-            <NavBar/>
-            {loading ? <div>Loading...</div> :
-                <div className='flex-grow-1 d-flex flex-row align-items-stretch'>
-                    <div className='flex-grow-1 d-flex flex-column'>
-                        <Calendar
-                            className='w-100 h-100'
-                            style={styles.calendar}
-                            onChange={handleDateChange}
-                            selectedDate={selectedDate}
-                            setSelectedDate={setSelectedDate}/>
-                    </div>
-                    <EventList
-                        events={events.filter(event => {
-                            const eventDate = new Date(event.start_time).toDateString();
-                            return eventDate === selectedDate.toDateString();
-                        })}
-                        date={selectedDate}/>
-                </div>
-            }
+        <div className='flex-grow-1 d-flex flex-row align-items-stretch'>
+            <div className='flex-grow-1 d-flex flex-column'>
+                <Calendar
+                    className='w-100 h-100'
+                    style={styles.calendar}
+                    onChange={handleDateChange}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}/>
+            </div>
+            <EventList
+                events={events.filter(event => {
+                    const eventDate = new Date(event.start_time).toDateString();
+                    return eventDate === selectedDate.toDateString();
+                })}
+                date={selectedDate}/>
         </div>
     );
 }

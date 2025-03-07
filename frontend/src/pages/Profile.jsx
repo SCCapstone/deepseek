@@ -9,16 +9,13 @@ export default function ProfilePage() {
     const [editing, setEditing] = useState(false);
 
     return (
-        <div className='position-relative'>
-            <NavBar/>
+        <div>
             <div
-                className='position-relative container mt-3 w-100 rounded
+                className='container mt-3 w-100 rounded
                 d-flex flex-column justify-content-start align-items-stretch'
-                style={{
-                    backgroundColor: '#eee'
-                }}
+                style={{ backgroundColor: '#eee' }}
             >
-                <ProfileHeader showEditor={() => setEditing(true)}/>
+                <ProfileHeader {...{editing, setEditing}}/>
                 <ProfileTabs/>
             </div>
             {editing ? <ProfileEditor hideEditor={() => setEditing(false)}/> : null}

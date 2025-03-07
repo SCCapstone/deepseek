@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import NavBar from '../components/NavBar';
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
 
@@ -95,7 +94,6 @@ const EventFeed = () => {
 
     return (
         <div style={styles.page}>
-            <NavBar />
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                 <button className={`btn ${eventType === 'user' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => { setEventType('user'); getData(); }} style={{ marginRight: '10px' }}>
                     My Events
