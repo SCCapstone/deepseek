@@ -3,6 +3,8 @@ import {
     useEffect,
 } from 'react';
 import CustomButton from '../../components/input/CustomButton';
+import Loading from '../../components/Loading';
+import Alert from '../../components/Alert';
 import api from '../../lib/api';
 
 
@@ -14,48 +16,39 @@ export default function ProfileHeader({ showEditor }) {
     const getData = async () => {
         setLoading(true);
         const { data, error: apiError } = await api.get('/get-profile');
-        if (apiError) {
-            setError(apiError);
-        }
-        else {
-            setUserData(data);
-            setLoading(false);
-        }
+        setError(apiError);
+        setUserData(data);
+        setLoading(false);
     }
 
     useEffect(() => {
         getData();
     }, []);
 
-    if (error) return <div>error: {error}</div>
-    if (loading) return <div>loading...</div>
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
+    if (loading) return <Loading className='mt-5'/>
 
     return (
         <div
-            className='container p-3 mt-3 p-3 d-flex flex-column
+            className='position-relative w-100 p-3 d-flex flex-column
                 justify-content-center align-items-center rounded-lg'
-            style={{ backgroundColor: '#eee' }}
         >
-            <div
-                className='position-relative w-100 d-flex flex-row justify-content-center align-items-start'
-            >
-                <img
-                    className='mb-3'
-                    src={userData.profile_picture}
-                    style={{
-                        width: '180px',
-                        height: '180px',
-                        borderRadius: 1000,
-                        backgroundColor: '#888',
-                    }}
-                />
-                <CustomButton
-                    className='position-absolute'
-                    style={{top: 0, right: 0}}
-                    text='Edit profile'
-                    onClick={showEditor}
-                />
-            </div>
+            <CustomButton
+                className='position-absolute m-3'
+                style={{top: 0, right: 0}}
+                text='Edit profile'
+                onClick={showEditor}
+            />
+            <img
+                className='mb-3'
+                src={userData.profile_picture}
+                style={{
+                    width: '180px',
+                    height: '180px',
+                    borderRadius: 1000,
+                    backgroundColor: '#888',
+                }}
+            />
             {userData.name ?
                 <p className='mb-1'>{userData.name}</p>
             : null}

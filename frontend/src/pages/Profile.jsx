@@ -2,6 +2,7 @@ import { useState } from 'react';
 import NavBar from '../components/NavBar';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileEditor from '../components/profile/ProfileEditor';
+import ProfileTabs from '../components/profile/ProfileTabs';
 
 
 export default function ProfilePage() {
@@ -10,7 +11,16 @@ export default function ProfilePage() {
     return (
         <div className='position-relative'>
             <NavBar/>
-            <ProfileHeader showEditor={() => setEditing(true)}/>
+            <div
+                className='position-relative container mt-3 w-100 rounded
+                d-flex flex-column justify-content-start align-items-stretch'
+                style={{
+                    backgroundColor: '#eee'
+                }}
+            >
+                <ProfileHeader showEditor={() => setEditing(true)}/>
+                <ProfileTabs/>
+            </div>
             {editing ? <ProfileEditor hideEditor={() => setEditing(false)}/> : null}
         </div>
     );
