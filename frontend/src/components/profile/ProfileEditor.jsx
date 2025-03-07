@@ -53,11 +53,26 @@ export default function ProfileEditor({ hideEditor }) {
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
 
     return (
-        <div className='position-absolute w-100 h-100' style={{top: 0, left: 0}} onClick={hideEditor}>
+        <div
+            className='position-absolute w-100 d-flex flex-column justify-content-center align-items-center'
+            style={{
+                top: 0,
+                left: 0,
+                width: '100vh',
+                height: '100vh',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            }}
+            onClick={hideEditor}
+        >
             <div
                 className='d-flex flex-column justify-content-start align-items-center
-                m-5 p-3 mx-auto bg-white rounded-lg shadow-lg'
-                style={{maxWidth: '800px'}}
+                p-3 mx-auto bg-white rounded-lg shadow-lg'
+                style={{
+                    minWidth: '600px',
+                    maxWidth: '800px',
+                    maxHeight: '80%',
+                    overflowY: 'scroll',
+                }}
                 onClick={e => e.stopPropagation()}
             >
                 {loading ? <Loading/> :
