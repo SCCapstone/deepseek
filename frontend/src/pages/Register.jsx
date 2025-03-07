@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
+import CustomTextInput from '../components/input/CustomTextInput';
+import CustomButton from '../components/input/CustomButton';
 
 
-export default function Register() {
+export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -33,44 +35,29 @@ export default function Register() {
             onSubmit={handleSubmit}>
                 <h3 className='h3'>Register</h3>
                 <div className='mb-3'>
-                    <div className='mb-1'>
-                        <label className='m-0'>Email</label>
-                        <input
-                            className='form-control'
-                            placeholder='EMAIL'
-                            type='email'
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className='mb-1'>
-                        <label className='m-0'>Username</label>
-                        <input
-                            className='form-control'
-                            placeholder='USERNAME'
-                            type='text'
-                            value={username}
-                            onChange={e => setUsername(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className='mb-1'>
-                        <label className='m-0'>Password</label>
-                        <input
-                            className='form-control'
-                            type='password'
-                            placeholder='PASSWORD'
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
+                    <CustomTextInput
+                        className='mb-2'
+                        type='text'
+                        value={email}
+                        onChange={text => setEmail(text)}
+                        placeholder='EMAIL'
+                    />
+                    <CustomTextInput
+                        className='mb-2'
+                        type='text'
+                        value={username}
+                        onChange={text => setUsername(text)}
+                        placeholder='USERNAME'
+                    />
+                    <CustomTextInput
+                        className='mb-2'
+                        type='password'
+                        value={password}
+                        onChange={text => setPassword(text)}
+                        placeholder='PASSWORD'
+                    />
                 </div>
-                <button
-                onClick={handleSubmit}
-                className='btn btn-primary mb-3'
-                type='submit'>Register</button>
+                <CustomButton className='mb-2' onClick={handleSubmit} text='Submit'/>
                 <Link className='' to='/login'>Login</Link>
             </form>
         </div>

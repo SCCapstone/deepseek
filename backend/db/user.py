@@ -37,6 +37,7 @@ class User(DatabaseObject):
             'default_event_visibility': self.default_event_visibility,
             'email': self.email,
             'name': self.name,
+            'joined': self.created_at.date(),
         }
     
     @property
