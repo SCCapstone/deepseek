@@ -12,7 +12,7 @@ export default function ProfilePage() {
     return (
         <div>
             <div
-                className='container mt-3 w-100 rounded
+                className='container mt-3 mb-5 w-100 rounded
                 d-flex flex-column justify-content-start align-items-stretch'
                 style={{ backgroundColor: '#eee' }}
             >

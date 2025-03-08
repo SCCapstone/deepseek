@@ -18,19 +18,21 @@ export default function App() {
         <AppContextProvider>
             <div
                 className='d-flex flex-column justify-content-start'
-                style={{minHeight: '100vh'}}
+                style={{height: '100vh', overflow: 'hidden'}}
             >
                 <NavBar/>
-                <Routes>
-                    <Route path='/' element={<Home />} /> 
-                    <Route path='/login' element={<Login />} />
-                    <Route path='/register' element={<Register />} />
-                    <Route path='/profile' element={<Profile/>} />
-                    <Route path='/friends' element={<Friends/>} />
-                    <Route path='/calendar' element={<Calendar/>} />
-                    <Route path='/create-event' element={<CreateEvent />} />
-                    <Route path='/event-feed' element={<EventFeed />}/>
-                </Routes>
+                <div className='flex-grow-1 d-flex flex-column' style={{overflowY: 'auto'}}>
+                    <Routes>
+                        <Route path='/' element={<Home />} /> 
+                        <Route path='/login' element={<Login />} />
+                        <Route path='/register' element={<Register />} />
+                        <Route path='/profile' element={<Profile/>} />
+                        <Route path='/friends' element={<Friends/>} />
+                        <Route path='/calendar' element={<Calendar/>} />
+                        <Route path='/create-event' element={<CreateEvent />} />
+                        <Route path='/event-feed' element={<EventFeed />}/>
+                    </Routes>
+                </div>
             </div>
         </AppContextProvider>
     );

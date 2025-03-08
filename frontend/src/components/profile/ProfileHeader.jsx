@@ -52,7 +52,7 @@ export default function ProfileHeader({ editing, setEditing, className }) {
                 }}
             />
             {userData.name ?
-                <p className='mb-1'>{userData.name}</p>
+                <p className='mb-0'>{userData.name}</p>
             : null}
             <p
                 className='mb-3'

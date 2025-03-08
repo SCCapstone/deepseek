@@ -4,7 +4,7 @@ import EventsTab from './EventsTab';
 
 function TabButton({ active, label, onClick }) {
     return (
-        <button className='w-100 p-3' onClick={onClick} style={{
+        <button className='w-100 p-3 font-weight-bold' onClick={onClick} style={{
             borderBottomWidth: (active ? 4 : 0),
             borderColor: 'rgb(0, 0, 255)',
             outline: 'none',
@@ -27,15 +27,19 @@ export default function ProfileTabs() {
     return (
         <div>
             <div
-                className='mb-3 d-flex flex-row justify-content-between align-items-center'
+                className='p-1 mb-3 d-flex flex-row justify-content-between align-items-center'
                 style={{
                     gap: 10,
                 }}
             >
                 <TabButton active={tab === 'events'} onClick={() => setTab('events')} label='Events'/>
-                <TabButton active={tab === 'friends'} onClick={() => setTab('friends')} label='Friends'/>
-                <TabButton active={tab === 'friend-requests'} onClick={() => setTab('friend-requests')} label='Friend requests'/>
                 <TabButton active={tab === 'comments'} onClick={() => setTab('comments')} label='Comments'/>
+                <TabButton active={tab === 'friends'} onClick={() => setTab('friends')} label='Friends'/>
+                <TabButton
+                    active={tab === 'friend-requests'}
+                    onClick={() => setTab('friend-requests')}
+                    label='Friend requests'
+                />
             </div>
             {renderTab(tab)}
         </div>

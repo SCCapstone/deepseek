@@ -20,7 +20,7 @@ export default function Modal({ showModal, hideModal, children }) {
                     minWidth: '600px',
                     maxWidth: '800px',
                     maxHeight: '80%',
-                    overflowY: 'scroll',
+                    overflowY: 'auto',
                 }}
                 onClick={e => e.stopPropagation()}
             >
