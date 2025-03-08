@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Loading from '../Loading';
 import Alert from '../Alert';
+import EventsGrid from './EventsGrid';
 import api from '../../lib/api';
 
 
@@ -21,17 +22,13 @@ export default function EventsTab() {
     }, []);
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
-    if (loading) return <Loading/>
+    if (loading) return <Loading className='mb-3'/>
 
     return (
         <div className='mb-3'>
             {events.length > 0 ?
                 <div>
-                    {events.map((event, i) => (
-                        <div key={i}>
-                            {event.title}
-                        </div>
-                    ))}
+                    <EventsGrid events={events}/>
                 </div>
             :
                 <div className='p-5 d-flex flex-column justify-content-center align-items-center'>

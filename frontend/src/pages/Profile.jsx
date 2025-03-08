@@ -3,6 +3,7 @@ import NavBar from '../components/NavBar';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileEditor from '../components/profile/ProfileEditor';
 import ProfileTabs from '../components/profile/ProfileTabs';
+import Modal from '../components/Modal';
 
 
 export default function ProfilePage() {
@@ -18,7 +19,9 @@ export default function ProfilePage() {
                 <ProfileHeader {...{editing, setEditing}}/>
                 <ProfileTabs/>
             </div>
-            <ProfileEditor showEditor={editing} hideEditor={() => setEditing(false)}/>
+            <Modal showModal={editing} hideModal={() => setEditing(false)}>
+                <ProfileEditor hideEditor={() => setEditing(false)}/>
+            </Modal>
         </div>
     );
 }

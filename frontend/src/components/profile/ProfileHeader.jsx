@@ -8,7 +8,7 @@ import Alert from '../../components/Alert';
 import api from '../../lib/api';
 
 
-export default function ProfileHeader({ editing, setEditing }) {
+export default function ProfileHeader({ editing, setEditing, className }) {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -33,7 +33,7 @@ export default function ProfileHeader({ editing, setEditing }) {
     return (
         <div
             className='position-relative w-100 p-3 d-flex flex-column
-                justify-content-center align-items-center rounded-lg'
+            justify-content-center align-items-center rounded-lg'
         >
             <CustomButton
                 className='position-absolute m-3'
