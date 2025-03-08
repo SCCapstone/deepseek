@@ -26,15 +26,16 @@ export default function PictureUpload({ url, setUrl, className }) {
     }
 
     return (
-        <div className={'d-flex flex-row justify-content-start align-items-center border \
+        <div className={'d-flex flex-row justify-content-start align-items-stretch border \
         rounded-lg overflow-hidden '+(className || '')}>
             <img
-                className='p-3'
-                style={{height: '100px'}}
+                className='p-2'
+                style={{width: '180px', height: '180px'}}
                 src={url || DefaultPFP}
             />
             <div className='flex-grow-1 d-flex flex-column justify-content-start border-left'>
-                <div className='d-flex flex-row justify-content-between align-items-center border-bottom'>
+                <div className='d-flex flex-row justify-content-between
+                align-items-center border-bottom'>
                     <div
                         onClick={() => setTab('url')}
                         className={'w-100 p-2 text-center '+(tab === 'url' ? ' bg-primary' : '')}
@@ -44,14 +45,18 @@ export default function PictureUpload({ url, setUrl, className }) {
                         className={'w-100 p-2 text-center '+(tab === 'upload' ? ' bg-primary' : '')}
                     >Upload</div>
                 </div>
-                <div className='p-3'>
+                <div className='p-3 flex-grow-1 d-flex flex-column justify-content-center'>
                     {tab === 'url' ?
-                        <CustomTextInput
-                            className='w-100'
-                            value={url || ''}
-                            onChange={text => setUrl(text)}
-                            placeholder='PROFILE PICTURE URL'
-                            />
+                        <>
+                            <label className='m-0' htmlFor='profile-picture-url'>Profile picture URL</label>
+                            <CustomTextInput
+                                id='profile-picture-url'
+                                className='w-100'
+                                value={url || ''}
+                                onChange={text => setUrl(text)}
+                                placeholder='PROFILE PICTURE URL'
+                                />
+                        </>
                     :
                         <div className='d-flex flex-row justify-content-between align-items-center'>
                             {file ?
