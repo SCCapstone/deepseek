@@ -5,6 +5,7 @@ import CustomTextarea from '../../components/input/CustomTextarea';
 import Loading from '../../components/Loading';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
+import PictureUpload from './PictureUpload';
 import api from '../../lib/api';
 
 
@@ -63,6 +64,13 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
                     <CustomButton text='Save' onClick={handleSaveProfile}/>
                 </div>
             </div>
+            <label className='m-0 w-100' htmlFor='profile-picture'>Profile picture</label>
+            <PictureUpload
+                id='profile-picture'
+                className='mb-3'
+                url={userData.profile_picture}
+                setUrl={url => handleUpdateField('profile_picture', url)}
+            />
             <label className='m-0 w-100' htmlFor='name'>Name</label>
             <CustomTextInput
                 id='name'
@@ -79,15 +87,6 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
                 placeholder='USERNAME'
                 value={userData.username}
                 onChange={text => handleUpdateField('username', text)}
-                className='mb-2 w-100'
-            />
-            <label className='m-0 w-100' htmlFor='profile-picture'>Profile picture</label>
-            <CustomTextInput
-                id='profile-picture'
-                type='text'
-                placeholder='PROFILE PICTURE'
-                value={userData.profile_picture || ''}
-                onChange={text => handleUpdateField('profile_picture', text)}
                 className='mb-2 w-100'
             />
             <label className='m-0 w-100' htmlFor='email'>Email</label>

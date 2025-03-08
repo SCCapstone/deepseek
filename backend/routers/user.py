@@ -1,12 +1,12 @@
 """
 Flask routes for user-related API endpoints
 """
+import os
 import logging
+from uuid import uuid4
 from typing import Union
-
-from flask import Blueprint, request, make_response, jsonify
+from flask import Blueprint, request, make_response, send_from_directory
 from bson import ObjectId
-
 
 from utils.auth_utils import *
 from utils.data_utils import *
@@ -50,3 +50,36 @@ def get_user(user_id):
     user = User.find_one(_id=ObjectId(user_id))
     return make_response({'data': user.profile})
 
+
+@user_router.route('/upload-picture', methods=['POST'])
+@login_required
+def upload_picture(current_user: User):
+    # getting file from request
+    if 'file' not in request.files:
+        raise InvalidInputError('Request must contain file data')
+    file = request.files['file']
+
+    # making sure file is an image
+    if file.mimetype not in ['image/jpeg', 'image/png']:
+        raise InvalidInputError('Invalid file type \'%s\'' % file.mimetype)
+
+    # saving file in uploads folder
+    _, suffix = file.mimetype.split('/')
+    filename = str(uuid4()) + '.' + suffix
+    upload_folder = os.environ.get('UPLOAD_FOLDER', './uploads')
+    if not os.path.isdir(upload_folder):
+        os.mkdir(upload_folder)
+    save_path = os.path.join(upload_folder, filename)
+    file.save(save_path)
+    
+    # returning saved file url to user
+    return make_response({
+        'message': 'Successfuly uploaded picture',
+        'data': {'url': 'http://localhost:5000/pictures/' + filename}
+    })
+
+
+@user_router.route('/pictures/<filename>')
+def get_picture(filename: str):
+    upload_folder = os.environ.get('UPLOAD_FOLDER', './uploads')
+    return send_from_directory(upload_folder, filename)
