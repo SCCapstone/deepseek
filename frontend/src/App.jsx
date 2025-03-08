@@ -18,7 +18,7 @@ export default function App() {
         <AppContextProvider>
             <div
                 className='d-flex flex-column justify-content-start'
-                style={{height: '100vh', overflowX: 'scroll'}}
+                style={{minHeight: '100vh'}}
             >
                 <NavBar/>
                 <Routes>

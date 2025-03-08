@@ -34,12 +34,9 @@ export default function EventsTab() {
                     ))}
                 </div>
             :
-                <div className='p-5 d-flex flex-row justify-content-center align-items-center'>
-                    <p>
-                        Nothing to see here. <a href='/create-event'>
-                            Click here
-                        </a> to create a new event.
-                    </p>
+                <div className='p-5 d-flex flex-column justify-content-center align-items-center'>
+                    <p className='m-0'>Nothing to see here!</p>
+                    <a href='/create-event'>Create an event &#8594;</a>
                 </div>
             }
         </div>
