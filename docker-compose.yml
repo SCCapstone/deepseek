@@ -7,6 +7,7 @@ services:
         restart: on-failure
         volumes:
             - ./backend:/app
+            - ./data/uploads:/uploads:rw
         links:
             - mongo:mongo
         ports:
@@ -14,6 +15,7 @@ services:
         environment:
             FLASK_RUN_PORT: 5000
             FRONTEND_URL: 'http://localhost:4000'
+            UPLOADS_FOLDER: '/uploads'
     frontend:
         container_name: deepseek-frontend
         build:
