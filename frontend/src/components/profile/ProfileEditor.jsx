@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import CustomButton from '../../components/input/CustomButton';
-import CustomTextInput from '../../components/input/CustomTextInput';
-import CustomTextarea from '../../components/input/CustomTextarea';
-import Loading from '../../components/Loading';
-import Alert from '../../components/Alert';
-import Modal from '../../components/Modal';
+import CustomButton from '../input/CustomButton';
+import CustomTextInput from '../input/CustomTextInput';
+import CustomTextarea from '../input/CustomTextarea';
+import Loading from '../Loading';
+import Alert from '../Alert';
+import Modal from '../Modal';
 import PictureUpload from './PictureUpload';
 import api from '../../lib/api';
 

@@ -88,7 +88,7 @@ class User(DatabaseObject):
         # looping over todays events to see if any reminders need to be sent
         today_events = self.today_events
         for event in today_events:
-            if event.reminder and not event.reminder_sent:
+            if event.set_reminder and not event.reminder_sent:
                 # event is set to remind and reminder has not been sent yet
                 event_msg = 'Reminder: your event \'%s\' starts today!' % event.title
 

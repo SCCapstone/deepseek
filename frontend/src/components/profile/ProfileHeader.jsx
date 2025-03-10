@@ -25,7 +25,8 @@ export default function ProfileHeader({ editing, setEditing, className }) {
     }
 
     useEffect(() => {
-        getData();
+        if (!editing)
+            getData();
     }, [editing]);
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>

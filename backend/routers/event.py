@@ -19,11 +19,12 @@ logger = logging.getLogger(__name__)
 @login_required
 @data_filter({
     'title': {'type': str, 'required': True},
+    'date': {'type': str, 'required': True},
     'start_time': {'type': str, 'required': True},
     'end_time': {'type': str, 'required': True},
     'description': {'type': str},
     'location': {'type': str},
-    'reminder': {'type': bool},
+    'set_reminder': {'type': bool},
     'public': {'type': bool},
     'created_at': {'type': datetime},
 })

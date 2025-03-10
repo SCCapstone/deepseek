@@ -40,15 +40,6 @@ export default function CalendarPage() {
     const handleDateChange = (date) => {
         setSelectedDate(date);
     }
-
-    const styles = {
-        page: {
-            backgroundColor: context.colorScheme.backgroundColor,
-        },
-        calendar: {
-            backgroundColor: context.colorScheme.backgroundColor,
-        },
-    }
   
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     if (loading) return <Loading/>
@@ -58,15 +49,18 @@ export default function CalendarPage() {
             <div className='flex-grow-1 d-flex flex-column'>
                 <Calendar
                     className='w-100 h-100'
-                    style={styles.calendar}
                     onChange={handleDateChange}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}/>
             </div>
             <EventList
                 events={events.filter(event => {
-                    const eventDate = new Date(event.start_time).toDateString();
-                    return eventDate === selectedDate.toDateString();
+                    const eventDate = new Date(event.date);
+                    return (
+                        (eventDate.getDate() == selectedDate.getDate())
+                        && (eventDate.getMonth() == selectedDate.getMonth())
+                        && (eventDate.getFullYear() == selectedDate.getFullYear())
+                    );
                 })}
                 date={selectedDate}/>
         </div>
