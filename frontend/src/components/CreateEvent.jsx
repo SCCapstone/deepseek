@@ -30,7 +30,6 @@ export default function CreateEvent({ hideEditor }) {
         event.preventDefault();
         setLoading(true);
         const { data, error: apiError } = await api.post('/add-event', eventData);
-        console.log(apiError)
         setError(apiError);
         if (!apiError)
             hideEditor();
@@ -93,7 +92,6 @@ export default function CreateEvent({ hideEditor }) {
                         id='start-time'
                         type='time'
                         className='form-control'
-                        required
                         value={eventData.start_time}
                         onChange={event => handleUpdateField('start_time', event.target.value)}
                     />
@@ -104,8 +102,9 @@ export default function CreateEvent({ hideEditor }) {
                         id='end-time'
                         type='time'
                         className='form-control'
-                        required
-                        value={eventData.end_time}
+                        disabled={eventData.start_time === ''}
+                        required={!(eventData.start_time === '')}
+                        value={eventData.start_time === '' ? '' : eventData.end_time}
                         onChange={event => handleUpdateField('end_time', event.target.value)}
                     />
                 </div>

@@ -55,7 +55,9 @@ export default function CalendarPage() {
             </div>
             <EventList
                 events={events.filter(event => {
-                    const eventDate = new Date(event.date);
+                    const dateObj = new Date();
+                    const timezoneOffset = dateObj.getTimezoneOffset();
+                    const eventDate = new Date((new Date(event.date)).getTime() + timezoneOffset * 60 * 1000);
                     return (
                         (eventDate.getDate() == selectedDate.getDate())
                         && (eventDate.getMonth() == selectedDate.getMonth())
