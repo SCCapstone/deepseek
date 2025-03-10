@@ -8,9 +8,10 @@ import api from '../../lib/api';
 export default function EventsTab() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState(null);
 
     const getData = async () => {
+        setLoading(true);
         const { data, error: apiError } = await api.get('/get-events');
         setError(apiError);
         setEvents(data);
@@ -24,8 +25,8 @@ export default function EventsTab() {
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     if (loading) return <Loading className='mb-3'/>
 
-    return (
-        <div className='mb-3'>
+    if (events) return (
+        <div>
             {events.length > 0 ?
                 <div>
                     <EventsGrid events={events}/>
@@ -38,4 +39,6 @@ export default function EventsTab() {
             }
         </div>
     );
+    
+    return null;
 }

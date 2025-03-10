@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/navigation/NavBar';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileEditor from '../components/profile/ProfileEditor';
 import ProfileTabs from '../components/profile/ProfileTabs';

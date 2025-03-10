@@ -48,23 +48,23 @@ const NotificationWidget = ({ userId }) => {
 
     return (
         <div className="position-relative">
-            <button onClick={toggleNotifications} className="btn relative">
-            <FaBell size={20} color="black" /> {/* Black bell icon */}
-                {notifications.length > 0 && (
-                    <span
-                        className="absolute top-0 right-0 text-xs px-1 rounded-full"
-                        style={{
-                            color: "white",  // White text for contrast
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            padding: "2px 6px"
-                        }}
-                    >
-                        {notifications.length}
-                    </span>
-                )}
+            <button onClick={toggleNotifications} className="btn">
+                <FaBell size={20} color="black" /> {/* Black bell icon */}
+                    {notifications.length > 0 && (
+                        <span
+                            className="absolute top-0 right-0 text-xs px-1 rounded-full"
+                            style={{
+                                color: "white",  // White text for contrast
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                                padding: "2px 6px"
+                            }}
+                        >
+                            {notifications.length}
+                        </span>
+                    )}
             </button>
-            {isOpen && (
+            {isOpen ?
                 <div
                     className="position-absolute left-0 mt-2 w-full bg-white rounded shadow-lg p-2
                     d-flex flex-column justify-content-start align-items-center"
@@ -88,7 +88,7 @@ const NotificationWidget = ({ userId }) => {
                         Clear All Notifications
                     </button>
                 </div>
-            )}
+            : null}
         </div>
     );
 };

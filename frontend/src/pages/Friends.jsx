@@ -88,8 +88,7 @@ export default function Friends() {
             setError(error);
         }
         else {
-            console.log(data.friends)
-            setFriends(data.friends);
+            setFriends(data);
             setLoading(false);
         }
     }

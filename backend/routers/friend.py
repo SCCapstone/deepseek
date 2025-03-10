@@ -17,8 +17,8 @@ friend_router = Blueprint('friend_router', __name__, url_prefix='/friends')
 def get_friends(current_user: User):
     # friends = FriendRelation.get_friends(current_user)
     friends = current_user.friends
-    friend_data = [x.profile for x in friends]
-    return make_response({'data': {'friends': friend_data}})
+    friends_data = [x.profile for x in friends]
+    return make_response({'data': friends_data})
 
 
 @friend_router.route('/add/<friend_username>', methods=['POST'])

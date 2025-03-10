@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from '../lib/api';
-import { useAppContext } from '../lib/context';
 import CustomTextInput from '../components/input/CustomTextInput';
 import CustomButton from '../components/input/CustomButton';
 
@@ -11,7 +10,6 @@ export default function RegisterPage() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const navigate = useNavigate();
-    const context = useAppContext();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -21,8 +19,6 @@ export default function RegisterPage() {
             alert(error);
         }
         else {
-            // getting profile data
-            context.setUser(data.user);
             navigate('/calendar');
         }
     }

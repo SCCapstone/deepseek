@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import EventsTab from './EventsTab';
+import FriendsTab from './FriendsTab';
 
 
 function TabButton({ active, label, onClick }) {
@@ -13,12 +14,15 @@ function TabButton({ active, label, onClick }) {
     );
 }
 
-const renderTab = (tab) => {
+function Tab({ tab }) {
     switch(tab) {
         case 'events':
             return <EventsTab/>
+        case 'friends':
+            return <FriendsTab/>
+        default:
+            return null;
     }
-    return null;
 }
 
 export default function ProfileTabs() {
@@ -28,9 +32,7 @@ export default function ProfileTabs() {
         <div>
             <div
                 className='p-1 mb-3 d-flex flex-row justify-content-between align-items-center'
-                style={{
-                    gap: 10,
-                }}
+                style={{gap: 10}}
             >
                 <TabButton active={tab === 'events'} onClick={() => setTab('events')} label='Events'/>
                 <TabButton active={tab === 'comments'} onClick={() => setTab('comments')} label='Comments'/>
@@ -41,7 +43,9 @@ export default function ProfileTabs() {
                     label='Friend requests'
                 />
             </div>
-            {renderTab(tab)}
+            <div className='mb-3'>
+                <Tab tab={tab}/>
+            </div>
         </div>
     );
 }
