@@ -19,9 +19,7 @@ export default function ProfilePage() {
                 <ProfileHeader {...{editing, setEditing}}/>
                 <ProfileTabs/>
             </div>
-            <Modal showModal={editing} hideModal={() => setEditing(false)}>
-                <ProfileEditor hideEditor={() => setEditing(false)}/>
-            </Modal>
+            <ProfileEditor showEditor={editing} hideEditor={() => setEditing(false)}/>
         </div>
     );
 }

@@ -35,7 +35,6 @@ export default function FriendsTab() {
                 :
                     <div className='p-5 d-flex flex-column justify-content-center align-items-center'>
                         <p className='m-0'>Nothing to see here!</p>
-                        <a href='/create-event'>Add a friend &#8594;</a>
                     </div>
                 }
             </div>

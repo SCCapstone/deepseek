@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SearchBar from '../input/SearchBar';
 import ProfileIcon from './ProfileIcon';
-import Modal from '../Modal';
 import CreateEvent from '../CreateEvent';
 
 
@@ -27,9 +26,7 @@ export default function NavBar() {
                     <ProfileIcon/>
                 </div>
             </header>
-            <Modal showModal={creatingEvent} hideModal={() => setCreatingEvent(false)}>
-                <CreateEvent hideEditor={() => setCreatingEvent(false)}/>
-            </Modal>
+            <CreateEvent showEditor={creatingEvent} hideEditor={() => setCreatingEvent(false)}/>
         </>
     );
 };

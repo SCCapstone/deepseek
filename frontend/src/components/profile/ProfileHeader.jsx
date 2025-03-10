@@ -45,14 +45,13 @@ export default function ProfileHeader({ editing, setEditing, className }) {
                 />
             </div>
             <img
-                className='mb-3'
+                className='mb-3 bg-white'
                 src={(loading || (userData && (!userData.profile_picture || userData.profile_picture === '')))
                     ? DefaultPFP : userData.profile_picture}
                 style={{
                     width: '180px',
                     height: '180px',
                     borderRadius: 1000,
-                    backgroundColor: '#888',
                 }}
             />
             {userData.name ?

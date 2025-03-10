@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Loading from '../Loading';
 import Alert from '../Alert';
 import EventsGrid from './EventsGrid';
+import CreateEvent from '../CreateEvent';
 import api from '../../lib/api';
 
 
@@ -34,7 +35,6 @@ export default function EventsTab() {
             :
                 <div className='p-5 d-flex flex-column justify-content-center align-items-center'>
                     <p className='m-0'>Nothing to see here!</p>
-                    <a href='/create-event'>Create an event &#8594;</a>
                 </div>
             }
         </div>
