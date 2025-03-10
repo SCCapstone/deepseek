@@ -5,6 +5,7 @@ import {
 import CustomButton from '../../components/input/CustomButton';
 import Loading from '../../components/Loading';
 import Alert from '../../components/Alert';
+import DefaultPFP from '../../assets/default-pfp.jpg';
 import api from '../../lib/api';
 
 
@@ -32,18 +33,20 @@ export default function ProfileHeader({ editing, setEditing, className }) {
 
     return (
         <div
-            className='position-relative w-100 p-3 d-flex flex-column
+            className='w-100 p-3 d-flex flex-column
             justify-content-center align-items-center rounded-lg'
         >
-            <CustomButton
-                className='position-absolute m-3'
-                style={{top: 0, right: 0}}
-                text='Edit profile'
-                onClick={showEditor}
-            />
+            <div className='w-100 d-flex flex-row justify-content-end'>
+                <CustomButton
+                    style={{top: 0, right: 0}}
+                    text='Edit profile'
+                    onClick={showEditor}
+                />
+            </div>
             <img
                 className='mb-3'
-                src={userData.profile_picture}
+                src={(loading || (userData && (!userData.profile_picture || userData.profile_picture === '')))
+                    ? DefaultPFP : userData.profile_picture}
                 style={{
                     width: '180px',
                     height: '180px',

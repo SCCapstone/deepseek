@@ -3,7 +3,7 @@ export default function Modal({ showModal, hideModal, children }) {
     
     return (
         <div
-            className='position-fixed w-100 d-flex flex-column justify-content-center align-items-center'
+            className='p-5 position-fixed w-100 d-flex flex-column justify-content-center align-items-center'
             style={{
                 top: 0,
                 left: 0,
@@ -14,11 +14,11 @@ export default function Modal({ showModal, hideModal, children }) {
             onClick={hideModal}
         >
             <div
-                className='d-flex flex-column justify-content-start align-items-center
-                p-3 bg-white rounded-lg shadow-lg'
+                className='w-100 d-flex flex-column justify-content-start align-items-center
+                p-3 bg-white rounded-lg'
                 style={{
                     minWidth: '600px',
-                    maxWidth: '800px',
+                    maxWidth: '900px',
                     maxHeight: '80%',
                     overflowY: 'auto',
                 }}

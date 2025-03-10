@@ -70,7 +70,7 @@ export default function PictureUpload({ url, setUrl, className }) {
                             :
                                 <>
                                     <label
-                                        className='p-2 w-100 m-0 text-center'
+                                        className='p-2 w-100 h-100 m-0 text-center'
                                         htmlFor='file-input'>Upload file</label>
                                     <input
                                         onChange={handleUpdateFile}

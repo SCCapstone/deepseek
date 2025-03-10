@@ -10,9 +10,9 @@ import api from '../../lib/api';
 
 
 export default function ProfileEditor({ showEditor, hideEditor }) {
-    const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userData, setUserData] = useState(null);
     const [editedFields, setEditedFields] = useState([]);
 
     const getData = async () => {
