@@ -2,6 +2,7 @@
 Abstraction for user data in database
 """
 import logging
+import pytz
 from datetime import datetime, timezone
 from typing import List, Dict, Self, Union
 from bson.objectid import ObjectId
@@ -47,18 +48,14 @@ class User(DatabaseObject):
     @property
     def today_events(self) -> List[Event]:
         # getting todays date
-        today_utc = datetime.now(timezone.utc).date()
+        timezone = pytz.timezone('America/New_York')
+        today_date = str(datetime.now(timezone).date())
 
         # finding events that have the same date
         events = self.events
         today_events = []
         for event in events:
-            event_start_date = datetime \
-                .fromisoformat(event.start_time.replace('Z', '')) \
-                .replace(tzinfo=timezone.utc) \
-                .date()
-            
-            if event_start_date == today_utc:
+            if event.date == today_date:
                 today_events.append(event)
 
         return today_events

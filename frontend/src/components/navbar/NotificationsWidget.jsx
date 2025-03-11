@@ -7,7 +7,7 @@ import api from '../../lib/api';
 
 function Notification({ item }) {
     return (
-        <div>
+        <div className='p-3 bg-light rounded-lg mb-2'>
             {item.message}
         </div>
     );
@@ -30,7 +30,17 @@ export default function NotificationsWidget({ className }) {
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [showNotifications]);
+
+    const handleClearNotifications = async () => {
+        setLoading(true);
+        const { data, error: apiError } = await api.post('/events/notifications/clear');
+        setError(apiError);
+        setShowNotifications(false);
+        setLoading(false);
+    }
+
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
 
     return (
         <div className={'position-relative '+(className || '')}>
@@ -54,6 +64,10 @@ export default function NotificationsWidget({ className }) {
                                         {notifications.map((item, i) => (
                                             <Notification key={i} item={item}/>
                                         ))}
+                                        <button
+                                            onClick={handleClearNotifications}
+                                            className='w-100 btn border bg-danger text-white'
+                                        >Clear</button>
                                     </>
                                 :
                                     <p className='p-3 m-0'>Nothing to see here!</p>
