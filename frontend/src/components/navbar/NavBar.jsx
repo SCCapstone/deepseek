@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
-import SearchBar from '../input/SearchBar';
+import SearchBar from './SearchBar';
 import ProfileIcon from './ProfileIcon';
 import NotificationsWidget from './NotificationsWidget';
 import SettingsWidget from './SettingsWidget';

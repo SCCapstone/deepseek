@@ -63,19 +63,23 @@ export default function NotificationsWidget({ className }) {
                     <div
                         className='position-absolute mt-4 p-2 bg-white shadow rounded-lg
                         d-flex flex-column align-items-center border'
-                        style={{right: 0, width: '280px', zIndex: 1020}}
+                        style={{right: 0, width: '280px', maxHeight: '400px', zIndex: 1020}}
                     >
                         {loading ? <Loading/> :
                             <>
                                 {notifications.length > 0 ?
                                     <>
-                                        {notifications.map((item, i) => (
-                                            <Notification key={i} item={item}/>
-                                        ))}
-                                        <button
-                                            onClick={handleClearNotifications}
-                                            className='w-100 btn border bg-danger text-white'
-                                        >Clear</button>
+                                        <div style={{overflowY: 'auto'}}>
+                                            {notifications.map((item, i) => (
+                                                <Notification key={i} item={item}/>
+                                            ))}
+                                        </div>
+                                        <div className='pt-2 w-100'>
+                                            <button
+                                                onClick={handleClearNotifications}
+                                                className='w-100 btn border bg-danger text-white'
+                                            >Clear</button>
+                                        </div>
                                     </>
                                 :
                                     <p className='p-3 m-0'>Nothing to see here!</p>

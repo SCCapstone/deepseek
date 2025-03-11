@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import DefaultPFP from '../../assets/default-pfp.jpg';
-import CustomTextInput from './CustomTextInput';
+import CustomTextInput from '../input/CustomTextInput';
 import Loading from '../Loading';
 import Alert from '../Alert';
 import api from '../../lib/api';
@@ -64,7 +64,6 @@ export default function SearchBar(props) {
             setShowResults(true);
         }
         else {
-            setResults(null);
             setShowResults(false);
         }
     }
@@ -78,7 +77,7 @@ export default function SearchBar(props) {
             <div
                 style={{
                     position: 'relative',
-                    zIndex: 1020,
+                    zIndex: showResults ? 1020 : 0,
                 }}
                 className='d-flex flex-row border rounded-lg'
             >
@@ -90,6 +89,7 @@ export default function SearchBar(props) {
                     value={search}
                     onChange={event => setSearch(event.target.value)}
                     ref={inputRef}
+                    onFocus={() => setShowResults(true)}
                 />
                 <button
                     onClick={() => inputRef.current.focus()}
@@ -99,28 +99,29 @@ export default function SearchBar(props) {
                     <FaSearch size={20} color='white'/>
                 </button>
             </div>
-            {(results && results.length > 0) ?
-                <div
-                    className='position-absolute bottom-0 left-0 zindex-dropdown
-                    bg-white border rounded-lg shadow p-2 mt-3 w-100'
-                    style={{
-                        overflow: 'auto',
-                        maxHeight: '400px',
-                        zIndex: 1020,
-                    }}
-                >
-                    {results.map((result, i) => <UserResult key={i} user={result}/>)}
-                </div>
-            : null}
             {showResults ?
-                <div
-                    onClick={() => {
-                        setShowResults(false);
-                        setResults(null);
-                    }}
-                    className='position-fixed h-100 w-100'
-                    style={{top: 0, left: 0, zIndex: 1000, backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
-                ></div>
+                <>
+                    {(results && results.length > 0) ?
+                        <div
+                            className='position-absolute bottom-0 left-0 zindex-dropdown
+                            bg-white border rounded-lg shadow p-2 mt-3 w-100'
+                            style={{
+                                overflow: 'auto',
+                                maxHeight: '400px',
+                                zIndex: 1020,
+                            }}
+                        >
+                            {results.map((result, i) => <UserResult key={i} user={result}/>)}
+                        </div>
+                    : null}
+                    <div
+                        onClick={() => {
+                            setShowResults(false);
+                        }}
+                        className='position-fixed h-100 w-100'
+                        style={{top: 0, left: 0, zIndex: 1000, backgroundColor: 'rgba(0, 0, 0, 0.2)'}}
+                    ></div>
+                </>
             : null}
         </div>
     );

@@ -9,7 +9,7 @@ export default function Modal({ showModal, hideModal, children }) {
                 left: 0,
                 width: '100vh',
                 height: '100vh',
-                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                backgroundColor: 'rgba(0, 0, 0, 0.2)',
             }}
             onClick={hideModal}
         >
