@@ -33,6 +33,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
         setLoading(true);
         const { data, error: apiError } = await api.post('/add-event', eventData);
         setError(apiError);
+        setLoading(false);
         if (!apiError)
             hideEditor();
     }

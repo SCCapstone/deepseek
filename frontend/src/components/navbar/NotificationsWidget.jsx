@@ -69,7 +69,7 @@ export default function NotificationsWidget({ className }) {
                             <>
                                 {notifications.length > 0 ?
                                     <>
-                                        <div style={{overflowY: 'auto'}}>
+                                        <div className='w-100' style={{overflowY: 'auto'}}>
                                             {notifications.map((item, i) => (
                                                 <Notification key={i} item={item}/>
                                             ))}

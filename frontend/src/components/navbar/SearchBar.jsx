@@ -8,16 +8,7 @@ import Alert from '../Alert';
 import api from '../../lib/api';
 
 
-function UserResult({ user }) {
-    const [error, setError] = useState(null);
-
-    const handleAddFriend = async () => {
-        const { data, error: apiError } = await api.post('/friends/add/' + user.username);
-        setError(apiError);
-    }
-
-    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
-
+function UserResult({ user, handleAddFriend }) {
     return (
         <div className='p-2 rounded-lg mb-2 bg-light d-flex flex-row justify-content-between align-items-center'>
             <div className='d-flex flex-row'>
@@ -38,7 +29,7 @@ function UserResult({ user }) {
                 </div>
             </div>
             <button
-                onClick={handleAddFriend}
+                onClick={() => handleAddFriend(user.username)}
                 className='btn btn-danger'
             >Add</button>
         </div>
@@ -66,6 +57,13 @@ export default function SearchBar(props) {
         else {
             setShowResults(false);
         }
+    }
+
+    const handleAddFriend = async (username) => {
+        const { data, error: apiError } = await api.post('/friends/add/' + username);
+        setError(apiError);
+        if (!error)
+            setShowResults(false);
     }
 
     useEffect(() => {
@@ -111,7 +109,7 @@ export default function SearchBar(props) {
                                 zIndex: 1020,
                             }}
                         >
-                            {results.map((result, i) => <UserResult key={i} user={result}/>)}
+                            {results.map((result, i) => <UserResult key={i} user={result} handleAddFriend={handleAddFriend}/>)}
                         </div>
                     : null}
                     <div
