@@ -90,15 +90,6 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
                         onChange={text => handleUpdateField('username', text)}
                         className='mb-2 w-100'
                     />
-                    <label className='m-0 w-100' htmlFor='email'>Email</label>
-                    <CustomTextInput
-                        id='email'
-                        type='text'
-                        placeholder='EMAIL'
-                        value={userData.email}
-                        onChange={text => handleUpdateField('email', text)}
-                        className='mb-2 w-100'
-                    />
                     <label className='m-0 w-100' htmlFor='bio'>Bio</label>
                     <CustomTextarea
                         id='bio'

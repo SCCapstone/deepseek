@@ -17,8 +17,8 @@ export default function Modal({ showModal, hideModal, children }) {
                 className='w-100 d-flex flex-column justify-content-start align-items-center
                 p-3 bg-white rounded-lg'
                 style={{
-                    minWidth: '600px',
-                    maxWidth: '900px',
+                    minWidth: '400px',
+                    maxWidth: '700px',
                     maxHeight: '90%',
                     overflowY: 'auto',
                 }}

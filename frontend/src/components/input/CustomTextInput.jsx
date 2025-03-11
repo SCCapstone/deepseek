@@ -1,7 +1,7 @@
 export default function CustomTextInput({ value, onChange, placeholder, type, ...props }) {
     return (
         <div
-            className='d-flex flex-column justify-content-start align-items center'
+            className='d-flex flex-column justify-content-start align-items center rounded-lg'
             {...props}
         >
             <input
