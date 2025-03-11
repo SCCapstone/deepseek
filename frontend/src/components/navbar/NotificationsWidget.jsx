@@ -17,7 +17,7 @@ function Notification({ item }) {
 export default function NotificationsWidget({ className }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [notifications, setNotifications] = useState([]);
+    const [notifications, setNotifications] = useState(null);
     const [showNotifications, setShowNotifications] = useState(false);
 
     const getData = async () => {
@@ -30,7 +30,7 @@ export default function NotificationsWidget({ className }) {
 
     useEffect(() => {
         getData();
-    }, [showNotifications]);
+    }, []);
 
     const handleClearNotifications = async () => {
         setLoading(true);
@@ -44,12 +44,20 @@ export default function NotificationsWidget({ className }) {
 
     return (
         <div className={'position-relative '+(className || '')}>
-            <FaBell
-                size={24}
-                color='black'
-                style={{cursor: 'pointer'}}
-                onClick={() => setShowNotifications(true)}
-            />
+            <div className='position-relative' onClick={() => setShowNotifications(true)} style={{cursor: 'pointer'}}>
+                <FaBell
+                    size={24}
+                    color='black'
+                />
+                {(notifications && notifications.length > 0) ?
+                    <div
+                        className='position-absolute w-100 h-100 d-flex justify-content-center align-items-center'
+                        style={{top: 0, left: 0}}
+                    >
+                        <p className='m-0 text-white' style={{fontSize: 10}}>{notifications.length}</p>
+                    </div>
+                : null}
+            </div>
             {showNotifications ?
                 <>
                     <div
