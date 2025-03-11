@@ -4,36 +4,43 @@ import { FaSearch } from 'react-icons/fa';
 import DefaultPFP from '../../assets/default-pfp.jpg';
 import CustomTextInput from './CustomTextInput';
 import Loading from '../Loading';
+import Alert from '../Alert';
 import api from '../../lib/api';
 
 
 function UserResult({ user }) {
+    const [error, setError] = useState(null);
+
+    const handleAddFriend = async () => {
+        const { data, error: apiError } = await api.post('/friends/add/' + user.username);
+        setError(apiError);
+    }
+
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
+
     return (
-        <div className='p-2 rounded-lg mb-2 bg-light d-flex flex-row justify-content-start align-items-center'>
-            <button className='mr-2' style={{outline: 'none'}}>
-                <img
-                    src={user.profile_picture || DefaultPFP}
-                    style={{
-                        width: '40px',
-                        borderRadius: 1000,
-                    }}
-                />
-            </button>
-            <div className='d-flex flex-column'>
-                {(user.name && user.name !== '') ?
-                    <p className='m-0 font-weight-bold'>{user.name}</p>
-                : null}
-                <p className='m-0 text-muted'>@{user.username}</p>
+        <div className='p-2 rounded-lg mb-2 bg-light d-flex flex-row justify-content-between align-items-center'>
+            <div className='d-flex flex-row'>
+                <button className='mr-2' style={{outline: 'none'}}>
+                    <img
+                        src={user.profile_picture || DefaultPFP}
+                        style={{
+                            width: '40px',
+                            borderRadius: 1000,
+                        }}
+                    />
+                </button>
+                <div className='d-flex flex-column'>
+                    {(user.name && user.name !== '') ?
+                        <p className='m-0 font-weight-bold'>{user.name}</p>
+                    : null}
+                    <p className='m-0 text-muted'>@{user.username}</p>
+                </div>
             </div>
-        </div>
-    );
-}
-
-
-function SearchResults({ results }) {
-    return (
-        <div>
-            {results.map((result, i) => <UserResult key={i} user={result}/>)}
+            <button
+                onClick={handleAddFriend}
+                className='btn btn-danger'
+            >Add</button>
         </div>
     );
 }
@@ -86,7 +93,7 @@ export default function SearchBar({ className, ...props }) {
             {(results && results.length > 0) ?
                 <div className='position-absolute bottom-0 left-0 zindex-dropdown
                 bg-white border rounded-lg shadow p-2 mt-3 w-100'>
-                    <SearchResults results={results}/>
+                    {results.map((result, i) => <UserResult key={i} user={result}/>)}
                 </div>
             : null}
         </div>

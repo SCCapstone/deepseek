@@ -7,7 +7,7 @@ import api from '../../lib/api';
 
 function Notification({ item }) {
     return (
-        <div className='p-3 bg-light rounded-lg mb-2'>
+        <div className='p-3 bg-light rounded-lg mb-2 w-100'>
             {item.message}
         </div>
     );
@@ -30,7 +30,7 @@ export default function NotificationsWidget({ className }) {
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [showNotifications]);
 
     const handleClearNotifications = async () => {
         setLoading(true);

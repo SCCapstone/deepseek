@@ -1,8 +1,41 @@
 import { useState, useEffect } from 'react';
+import DefaultPFP from '../../assets/default-pfp.jpg';
 import Loading from '../Loading';
 import Alert from '../Alert';
-import FriendsGrid from './FriendsGrid';
 import api from '../../lib/api';
+
+
+function UserResult({ user, handleRemoveFriend }) {
+    const [error, setError] = useState(null);
+
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
+
+    return (
+        <div className='p-2 rounded-lg mb-2 bg-light d-flex flex-row justify-content-between align-items-center'>
+            <div className='d-flex flex-row'>
+                <button className='mr-2' style={{outline: 'none'}}>
+                    <img
+                        src={user.profile_picture || DefaultPFP}
+                        style={{
+                            width: '40px',
+                            borderRadius: 1000,
+                        }}
+                    />
+                </button>
+                <div className='d-flex flex-column'>
+                    {(user.name && user.name !== '') ?
+                        <p className='m-0 font-weight-bold'>{user.name}</p>
+                    : null}
+                    <p className='m-0 text-muted'>@{user.username}</p>
+                </div>
+            </div>
+            <button
+                onClick={handleRemoveFriend}
+                className='btn btn-danger'
+            >Remove</button>
+        </div>
+    );
+}
 
 
 export default function FriendsTab() {
@@ -22,6 +55,12 @@ export default function FriendsTab() {
         getData();
     }, []);
 
+    const handleRemoveFriend = async (username) => {
+        const { data, error: apiError } = await api.post('/friends/remove/' + username);
+        setError(apiError);
+        getData();
+    }
+
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     if (loading) return <Loading className='mb-3'/>
 
@@ -30,7 +69,9 @@ export default function FriendsTab() {
             <div>
                 {friends.length > 0 ?
                     <div>
-                        <FriendsGrid friends={friends}/>
+                        {friends.map((item, i) => (
+                            <UserResult key={i} user={item} handleRemoveFriend={() => handleRemoveFriend(item.username)}/>
+                        ))}
                     </div>
                 :
                     <div className='p-5 d-flex flex-column justify-content-center align-items-center'>
