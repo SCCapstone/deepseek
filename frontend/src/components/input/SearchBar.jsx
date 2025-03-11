@@ -46,11 +46,12 @@ function UserResult({ user }) {
 }
 
 
-export default function SearchBar({ className, ...props }) {
+export default function SearchBar(props) {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [results, setResults] = useState(null);
+    const [showResults, setShowResults] = useState(false);
     const inputRef = useRef();
 
     const getData = async () => {
@@ -60,9 +61,11 @@ export default function SearchBar({ className, ...props }) {
             setError(apiError);
             setResults(data);
             setLoading(false);
+            setShowResults(true);
         }
         else {
             setResults(null);
+            setShowResults(false);
         }
     }
 
@@ -71,8 +74,14 @@ export default function SearchBar({ className, ...props }) {
     }, [search]);
 
     return (
-        <div className={'position-relative '+(className || '')} {...props}>
-            <div className='d-flex flex-row border rounded-lg overflow-hidden'>
+        <div className='position-relative' {...props}>
+            <div
+                style={{
+                    position: 'relative',
+                    zIndex: 1020,
+                }}
+                className='d-flex flex-row border rounded-lg'
+            >
                 <input
                     type='text'
                     className='bg-white p-2 rounded-left'
@@ -85,16 +94,33 @@ export default function SearchBar({ className, ...props }) {
                 <button
                     onClick={() => inputRef.current.focus()}
                     className='p-2 px-3 align-self-stretch d-flex flex-column align-items-center
-                    justify-content-center bg-primary'
+                    justify-content-center bg-primary rounded-right'
                 >
                     <FaSearch size={20} color='white'/>
                 </button>
             </div>
             {(results && results.length > 0) ?
-                <div className='position-absolute bottom-0 left-0 zindex-dropdown
-                bg-white border rounded-lg shadow p-2 mt-3 w-100'>
+                <div
+                    className='position-absolute bottom-0 left-0 zindex-dropdown
+                    bg-white border rounded-lg shadow p-2 mt-3 w-100'
+                    style={{
+                        overflow: 'auto',
+                        maxHeight: '400px',
+                        zIndex: 1020,
+                    }}
+                >
                     {results.map((result, i) => <UserResult key={i} user={result}/>)}
                 </div>
+            : null}
+            {showResults ?
+                <div
+                    onClick={() => {
+                        setShowResults(false);
+                        setResults(null);
+                    }}
+                    className='position-fixed h-100 w-100'
+                    style={{top: 0, left: 0, zIndex: 1000, backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
+                ></div>
             : null}
         </div>
     );
