@@ -19,6 +19,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
         start_time: '',
         end_time: '',
         set_reminder: false,
+        public: false,
     });
 
     const handleUpdateField = (field, value) => {
@@ -113,15 +114,27 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                                 />
                             </div>
                         </div>
-                        <div className='form-control d-flex flex-row align-items-center'>
-                            <input
-                                id='set-reminder'
-                                type='checkbox'
-                                className='mr-1'
-                                checked={eventData.set_reminder}
-                                onChange={event => handleUpdateField('set_reminder', !eventData.set_reminder)}
-                            />
-                            <label className='m-0 w-100' htmlFor='set-reminder'>Set reminder</label>
+                        <div className='d-flex flex-row'>
+                            <div className='form-control d-flex flex-row align-items-center mr-2'>
+                                <input
+                                    id='set-reminder'
+                                    type='checkbox'
+                                    className='mr-1'
+                                    checked={eventData.set_reminder}
+                                    onChange={event => handleUpdateField('set_reminder', !eventData.set_reminder)}
+                                />
+                                <label className='m-0 w-100' htmlFor='set-reminder'>Set reminder</label>
+                            </div>
+                            <div className='form-control d-flex flex-row align-items-center'>
+                                <input
+                                    id='public'
+                                    type='checkbox'
+                                    className='mr-1'
+                                    checked={eventData.public}
+                                    onChange={event => handleUpdateField('public', !eventData.public)}
+                                />
+                                <label className='m-0 w-100' htmlFor='public'>Public</label>
+                            </div>
                         </div>
                     </>
                 }
