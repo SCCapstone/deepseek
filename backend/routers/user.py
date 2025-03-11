@@ -84,3 +84,14 @@ def upload_picture(current_user: User):
 def get_picture(filename: str):
     upload_folder = os.environ.get('UPLOADS_FOLDER', './uploads')
     return send_from_directory(upload_folder, filename)
+
+
+@user_router.route('/search-user')
+def search_user():
+    query = request.args.get('q')
+    if not query or query == '' or query == ' ':
+        raise InvalidInputError('Invalid query `%s` for user' % query)
+    
+    users = User.search(query)
+    user_data = [x.profile for x in users]
+    return make_response({'data': user_data})

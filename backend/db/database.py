@@ -57,6 +57,10 @@ class Database:
     def delete_one(self, collection: str, _id: ObjectId):
         return self._db[collection].delete_one({'_id': _id})
 
+    @handle_database_error
+    def search(self, collection: str, query: str):
+        return self._db[collection].find({'$text': {'$search': query}})
+
 
 class DatabaseObject(ABC):
     def __init__(self, **kwargs: Dict):
@@ -185,6 +189,21 @@ class DatabaseObject(ABC):
         new_obj = cls.__new__(cls)
         new_obj.__init__(**kwargs)
         return new_obj
+    
+    @classmethod
+    def search(cls, query: str) -> Self:
+        # searching the database for results
+        db = Database()
+        results = db.search(cls.get_table_name(), query)
+
+        # creating objects to return
+        objects = []
+        for res in results:
+            new_obj = cls.__new__(cls)
+            new_obj.__init__(**res)
+            objects.append(new_obj)
+        
+        return objects
 
     def update(self, **kwargs: Dict) -> None:
         # validating input against schema
