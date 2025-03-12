@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import CustomButton from './input/CustomButton';
-import CustomTextInput from './input/CustomTextInput';
-import CustomTextarea from './input/CustomTextarea';
-import Loading from './Loading';
-import Modal from './Modal';
-import Alert from './Alert';
-import api from '../lib/api';
+import CustomButton from '../input/CustomButton';
+import CustomTextInput from '../input/CustomTextInput';
+import CustomTextarea from '../input/CustomTextarea';
+import Loading from '../utility/Loading';
+import Modal from '../utility/Modal';
+import Alert from '../utility/Alert';
+import api from '../../lib/api';
 
 
 export default function CreateEvent({ showEditor, hideEditor }) {

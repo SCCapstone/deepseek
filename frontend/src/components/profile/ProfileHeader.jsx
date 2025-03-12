@@ -2,9 +2,9 @@ import {
     useState,
     useEffect,
 } from 'react';
-import CustomButton from '../../components/input/CustomButton';
-import Loading from '../../components/Loading';
-import Alert from '../../components/Alert';
+import CustomButton from '../input/CustomButton';
+import Loading from '../utility/Loading';
+import Alert from '../utility/Alert';
 import DefaultPFP from '../../assets/default-pfp.jpg';
 import api from '../../lib/api';
 

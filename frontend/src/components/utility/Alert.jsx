@@ -1,4 +1,4 @@
-import CustomButton from './input/CustomButton';
+import CustomButton from '../input/CustomButton';
 
 
 export default function Alert({ message, hideAlert }) {

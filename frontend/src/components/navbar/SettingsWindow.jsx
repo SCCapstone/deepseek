@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import CustomButton from '../input/CustomButton';
 import CustomTextInput from '../input/CustomTextInput';
-import Modal from '../Modal';
-import Loading from '../Loading';
-import Alert from '../Alert';
+import Modal from '../utility/Modal';
+import Loading from '../utility/Loading';
+import Alert from '../utility/Alert';
 
 
 export default function SettingsWindow({ showWindow, hideWindow }) {

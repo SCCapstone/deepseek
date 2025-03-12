@@ -1,4 +1,4 @@
-import { useAppContext } from '../lib/context';
+import { useAppContext } from '../../lib/context';
 
 
 export default function EventCard({ event, onClick }) {

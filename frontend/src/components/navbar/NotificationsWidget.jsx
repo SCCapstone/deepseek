@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaBell } from "react-icons/fa";
-import Loading from '../Loading';
-import Alert from '../Alert';
+import Loading from '../utility/Loading';
+import Alert from '../utility/Alert';
 import api from '../../lib/api';
 
 

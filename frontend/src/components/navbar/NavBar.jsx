@@ -5,7 +5,7 @@ import SearchBar from './SearchBar';
 import ProfileIcon from './ProfileIcon';
 import NotificationsWidget from './NotificationsWidget';
 import SettingsWidget from './SettingsWidget';
-import CreateEvent from '../CreateEvent';
+import CreateEvent from '../events/CreateEvent';
 import CalendarIcon from '../../assets/calendar.png';
 
 

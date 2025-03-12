@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import CustomButton from '../input/CustomButton';
 import CustomTextInput from '../input/CustomTextInput';
 import CustomTextarea from '../input/CustomTextarea';
-import Loading from '../Loading';
-import Alert from '../Alert';
-import Modal from '../Modal';
+import Loading from '../utility/Loading';
+import Alert from '../utility/Alert';
+import Modal from '../utility/Modal';
 import PictureUpload from './PictureUpload';
 import api from '../../lib/api';
 

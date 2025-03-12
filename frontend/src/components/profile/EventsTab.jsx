@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import Loading from '../Loading';
-import Alert from '../Alert';
+import Loading from '../utility/Loading';
+import Alert from '../utility/Alert';
 import EventsGrid from './EventsGrid';
-import CreateEvent from '../CreateEvent';
 import api from '../../lib/api';
 
 

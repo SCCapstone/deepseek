@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DefaultPFP from '../../assets/default-pfp.jpg';
-import Alert from '../Alert';
+import Alert from '../utility/Alert';
 import api from '../../lib/api';
 
 

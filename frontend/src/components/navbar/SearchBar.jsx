@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import DefaultPFP from '../../assets/default-pfp.jpg';
 import CustomTextInput from '../input/CustomTextInput';
-import Loading from '../Loading';
-import Alert from '../Alert';
+import Loading from '../utility/Loading';
+import Alert from '../utility/Alert';
 import api from '../../lib/api';
 
 
@@ -56,6 +56,7 @@ export default function SearchBar(props) {
         }
         else {
             setShowResults(false);
+            setResults(null);
         }
     }
 

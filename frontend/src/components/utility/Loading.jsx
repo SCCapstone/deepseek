@@ -1,5 +1,5 @@
 
-import LoadingGIF from '../assets/loading.gif';
+import LoadingGIF from '../../assets/loading.gif';
 
 
 export default function Loading({ className, ...props }) {

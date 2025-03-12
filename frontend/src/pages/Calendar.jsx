@@ -1,18 +1,12 @@
-import {
-    useState,
-    useEffect,
-} from 'react';
-import {
-    useNavigate,
-} from 'react-router-dom';
-import Calendar from '../components/Calendar';
-import 'react-calendar/dist/Calendar.css';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Calendar from '../components/calendar/Calendar';
 
-import EventList from '../components/EventList';
+import Sidebar from '../components/utility/Sidebar';
+import EventList from '../components/calendar/EventList';
+import Loading from '../components/utility/Loading';
+import Alert from '../components/utility/Alert';
 import api from '../lib/api';
-import { useAppContext } from '../lib/context';
-import Loading from '../components/Loading';
-import Alert from '../components/Alert';
 
 
 export default function CalendarPage() {
@@ -20,7 +14,7 @@ export default function CalendarPage() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const context = useAppContext();
+    const [tab, setTab] = useState('selected-date');
 
     async function getData() {
         const { data, error: apiError } = await api.get('/get-events');
@@ -53,18 +47,23 @@ export default function CalendarPage() {
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}/>
             </div>
-            <EventList
-                events={events.filter(event => {
-                    const dateObj = new Date();
-                    const timezoneOffset = dateObj.getTimezoneOffset();
-                    const eventDate = new Date((new Date(event.date)).getTime() + timezoneOffset * 60 * 1000);
-                    return (
-                        (eventDate.getDate() == selectedDate.getDate())
-                        && (eventDate.getMonth() == selectedDate.getMonth())
-                        && (eventDate.getFullYear() == selectedDate.getFullYear())
-                    );
-                })}
-                date={selectedDate}/>
+            <div className='h-100 d-flex flex-column'>
+                <Sidebar>
+                    <EventList
+                        events={events.filter(event => {
+                            const dateObj = new Date();
+                            const timezoneOffset = dateObj.getTimezoneOffset();
+                            const eventDate = new Date((new Date(event.date)).getTime() + timezoneOffset * 60 * 1000);
+                            return (
+                                (eventDate.getDate() == selectedDate.getDate())
+                                && (eventDate.getMonth() == selectedDate.getMonth())
+                                && (eventDate.getFullYear() == selectedDate.getFullYear())
+                            );
+                        })}
+                        date={selectedDate}
+                    />
+                </Sidebar>
+            </div>
         </div>
     );
 }

@@ -38,6 +38,13 @@ class User(DatabaseObject):
             'name': self.name,
             'joined': self.created_at.date(),
         }
+
+    @property
+    def settings(self) -> Dict:
+        return {
+            'email': self.email,
+            'default_event_visibility': self.default_event_visibility,
+        }
     
     @property
     def events(self) -> List[Event]:

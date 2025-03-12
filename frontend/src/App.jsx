@@ -7,9 +7,6 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Calendar from './pages/Calendar';
-import CreateEvent from './pages/CreateEvent';
-import EventFeed from './pages/EventFeed';
-import Friends from './pages/Friends';
 
 
 
@@ -27,10 +24,7 @@ export default function App() {
                         <Route path='/login' element={<Login />} />
                         <Route path='/register' element={<Register />} />
                         <Route path='/profile' element={<Profile/>} />
-                        <Route path='/friends' element={<Friends/>} />
                         <Route path='/calendar' element={<Calendar/>} />
-                        <Route path='/create-event' element={<CreateEvent />} />
-                        <Route path='/event-feed' element={<EventFeed />}/>
                     </Routes>
                 </div>
             </div>

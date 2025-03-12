@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileEditor from '../components/profile/ProfileEditor';
 import ProfileTabs from '../components/profile/ProfileTabs';
-import Modal from '../components/Modal';
+import Modal from '../components/utility/Modal';
 
 
 export default function ProfilePage() {
