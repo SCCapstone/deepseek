@@ -29,7 +29,6 @@ class Event(DatabaseObject):
     def to_dict(self) -> Dict:
         return {
             'id': str(self._id),
-            'user_id': str(self.user_id),
             'title': self.title,
             'description': self.description,
             'date': self.date,

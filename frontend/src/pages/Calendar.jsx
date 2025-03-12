@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Calendar from '../components/calendar/Calendar';
 
 import Sidebar from '../components/utility/Sidebar';
-import EventList from '../components/calendar/EventList';
+import EventList from '../components/events/EventList';
+import EventFeed from '../components/events/EventFeed';
 import Loading from '../components/utility/Loading';
 import Alert from '../components/utility/Alert';
 import api from '../lib/api';
@@ -47,21 +48,40 @@ export default function CalendarPage() {
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}/>
             </div>
-            <div className='h-100 d-flex flex-column'>
+            <div className='h-100 d-flex flex-column justify-content-center'>
                 <Sidebar>
-                    <EventList
-                        events={events.filter(event => {
-                            const dateObj = new Date();
-                            const timezoneOffset = dateObj.getTimezoneOffset();
-                            const eventDate = new Date((new Date(event.date)).getTime() + timezoneOffset * 60 * 1000);
-                            return (
-                                (eventDate.getDate() == selectedDate.getDate())
-                                && (eventDate.getMonth() == selectedDate.getMonth())
-                                && (eventDate.getFullYear() == selectedDate.getFullYear())
-                            );
-                        })}
-                        date={selectedDate}
-                    />
+                    <div className='d-flex flex-row justify-content-between w-100 border-bottom'>
+                        <div
+                            className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'bg-primary text-white' : '')}
+                            onClick={() => setTab('selected-date')}
+                        >
+                            {selectedDate.toDateString()}
+                        </div>
+                        <div
+                            className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'bg-primary text-white' : '')}
+                            onClick={() => setTab('event-feed')}
+                        >
+                            Event feed
+                        </div>
+                    </div>
+                    {tab === 'selected-date' ?
+                        <EventList
+                            events={events.filter(event => {
+                                const dateObj = new Date();
+                                const timezoneOffset = dateObj.getTimezoneOffset();
+                                const eventDate = new Date(
+                                    (new Date(event.date)).getTime() + timezoneOffset * 60 * 1000
+                                );
+                                return (
+                                    (eventDate.getDate() == selectedDate.getDate())
+                                    && (eventDate.getMonth() == selectedDate.getMonth())
+                                    && (eventDate.getFullYear() == selectedDate.getFullYear())
+                                );
+                            })}
+                        />
+                    :
+                        <EventFeed/>
+                    }
                 </Sidebar>
             </div>
         </div>

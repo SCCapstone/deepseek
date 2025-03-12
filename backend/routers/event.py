@@ -60,7 +60,10 @@ def get_event(current_user: User, event_id: str):
         if friend_status != 'friend':
             raise ForbiddenError('You do not have access to this event')
     
-    return make_response({'data': event.to_dict()})
+    event_user_data = event_user.profile
+    event_data = event.to_dict()
+    event_data['user'] = event_user_data
+    return make_response({'data': event_data})
 
 
 @event_router.route('/update-event/<event_id>', methods=['POST'])
@@ -148,9 +151,21 @@ def clear_notifications(current_user: User):
 @event_router.route('/get-friends-events', methods=['GET'])
 @login_required
 def get_friends_events(current_user: User):
+    # getting user's friends
     friends = current_user.friends
+
+    # finding events that belong to user's friends
     friend_events = []
     for friend in friends:
         friend_events.extend(friend.events)
+    
+    # serializing event data
     event_data = [x.to_dict() for x in friend_events]
+
+    # serializing user data for each event
+    for (event, _event_data) in zip(friend_events, event_data):
+        user = User.find_one(_id=ObjectId(event.user_id))
+        user_data = user.profile
+        _event_data['user'] = user_data
+
     return make_response({'message': 'Friends events retrieved', 'data': event_data})

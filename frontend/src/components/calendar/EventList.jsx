@@ -54,7 +54,6 @@ export default function EventList({ events, date }) {
             </div>
         :
             <div>
-                <h3 className='h3' style={styles.text}>{date.toDateString()}</h3>
                 {sortedEvents.map((event, i) =>
                     <EventCard 
                         key={i}
