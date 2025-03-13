@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import DefaultPFP from '../../assets/default-pfp.jpg';
 import Loading from '../utility/Loading';
@@ -14,13 +15,15 @@ function UserResult({ user, handleRemoveFriend }) {
         <div className='p-2 rounded-lg mb-2 bg-light d-flex flex-row justify-content-between align-items-center'>
             <div className='d-flex flex-row'>
                 <button className='mr-2' style={{outline: 'none'}}>
-                    <img
-                        src={user.profile_picture || DefaultPFP}
-                        style={{
-                            width: '40px',
-                            borderRadius: 1000,
-                        }}
-                    />
+                    <Link to={'/profile/' + user.username}>
+                        <img
+                            src={user.profile_picture || DefaultPFP}
+                            style={{
+                                width: '40px',
+                                borderRadius: 1000,
+                            }}
+                        />
+                    </Link>
                 </button>
                 <div className='d-flex flex-column'>
                     {(user.name && user.name !== '') ?

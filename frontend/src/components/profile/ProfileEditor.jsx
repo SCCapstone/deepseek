@@ -25,7 +25,7 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [showEditor]);
 
     const handleUpdateField = (field, value) => {
         if (!editedFields.includes(field))

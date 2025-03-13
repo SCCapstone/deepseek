@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
@@ -7,22 +7,19 @@ import DefaultPFP from '../../assets/default-pfp.jpg';
 
 
 function Comment({ commentData }) {
-    const navigate = useNavigate();
-
     return (
         <div className='w-100 mb-3 p-2 rounded-lg bg-white d-flex flex-row justify-content-start align-items-center'>
-            <img
-                className='mr-2'
-                src={commentData.user.profile_picture || DefaultPFP}
-                style={{
-                    width: '40px',
-                    borderRadius: 1000,
-                    cursor: 'pointer',
-                }}
-                onClick={() => {
-                    navigate('/profile/' + commentData.user.username);
-                }}
-            />
+            <Link to={'/profile/' + commentData.user.username}>
+                <img
+                    className='mr-2'
+                    src={commentData.user.profile_picture || DefaultPFP}
+                    style={{
+                        width: '40px',
+                        borderRadius: 1000,
+                        cursor: 'pointer',
+                    }}
+                />
+            </Link>
             <div>
                 <Link
                     to={'/profile/' + commentData.user.username}

@@ -8,19 +8,22 @@ import Alert from '../utility/Alert';
 import api from '../../lib/api';
 
 
+const BLANK_EVENT = {
+    title: '',
+    description: '',
+    location: '',
+    date: '',
+    start_time: '',
+    end_time: '',
+    set_reminder: false,
+    public: false,
+}
+
+
 export default function CreateEvent({ showEditor, hideEditor }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [eventData, setEventData] = useState({
-        title: '',
-        description: '',
-        location: '',
-        date: '',
-        start_time: '',
-        end_time: '',
-        set_reminder: false,
-        public: false,
-    });
+    const [eventData, setEventData] = useState(BLANK_EVENT);
 
     const handleUpdateField = (field, value) => {
         let tmp = {}
@@ -37,6 +40,10 @@ export default function CreateEvent({ showEditor, hideEditor }) {
         if (!apiError)
             hideEditor();
     }
+
+    useEffect(() => {
+        setEventData(BLANK_EVENT);
+    }, [showEditor]);
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
 
