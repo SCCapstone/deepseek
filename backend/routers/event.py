@@ -35,7 +35,7 @@ def add_event(current_user: User):
     return make_response({'message': 'Event created'}, 201)
 
 
-@event_router.route('/get-events', methods=['GET'])
+@event_router.route('/get-events')
 @login_required
 def get_events(current_user):
     events = current_user.events
@@ -43,7 +43,7 @@ def get_events(current_user):
     return make_response({'message': 'Events retrieved', 'data': event_data})
 
 
-@event_router.route('/get-event/<event_id>', methods=['GET'])
+@event_router.route('/get-event/<event_id>')
 @login_required
 def get_event(current_user: User, event_id: str):
     # finding event in database
@@ -148,7 +148,7 @@ def clear_notifications(current_user: User):
     return make_response({'message': 'Notifications cleared'})
 
 
-@event_router.route('/get-friends-events', methods=['GET'])
+@event_router.route('/get-friends-events')
 @login_required
 def get_friends_events(current_user: User):
     # getting user's friends

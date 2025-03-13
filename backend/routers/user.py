@@ -24,6 +24,13 @@ def get_profile(current_user: User):
     return make_response({'data': profile})
 
 
+@user_router.route('/get-profile/<username>')
+def get_user(username: str):
+    user = User.find_one(username=username)
+    profile_data = user.profile
+    return make_response({'data': profile_data})
+
+
 @user_router.route('/get-settings')
 @login_required
 def get_settings(current_user: User):
@@ -52,12 +59,6 @@ def update_profile(current_user: User):
 def delete_account(current_user):
     current_user.delete()
     return make_response({'message': 'Account deleted'})
-
-
-@user_router.route('/get-user/<user_id>')
-def get_user(user_id):
-    user = User.find_one(_id=ObjectId(user_id))
-    return make_response({'data': user.profile})
 
 
 @user_router.route('/upload-picture', methods=['POST'])

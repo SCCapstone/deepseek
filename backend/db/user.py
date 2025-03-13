@@ -156,9 +156,14 @@ class User(DatabaseObject):
             rel.delete()
     
     def get_friend_status(self, other_user: Self) -> str:
-        friend_rel = FriendRelation.find_one(user1_id=self._id, user2_id=other_user._id)
-        if not friend_rel:
+        # finding all relationships in database
+        friend_rels = FriendRelation.find(user1_id=self._id, user2_id=other_user._id)
+        if len(friend_rels) == 0:
             return 'none'
+
+        # sorting to find the latest one
+        friend_rels = sorted(friend_rels, key=lambda x: x.created_at)
+        friend_rel = friend_rels[-1]
         return friend_rel.status
 
 

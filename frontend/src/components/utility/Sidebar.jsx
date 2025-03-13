@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function SideBar({ children, ...props }) {
     const MIN_SIDEBAR_WIDTH = 200;
-    const MAX_SIDEBAR_WIDTH = 800;
+    const MAX_SIDEBAR_WIDTH = 1000;
     const DEFAULT_SIDEBAR_WIDTH = 300;
 
     const sidebarRef = useRef(null);
