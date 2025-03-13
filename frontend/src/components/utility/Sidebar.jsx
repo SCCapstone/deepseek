@@ -3,20 +3,20 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function SideBar({ children, ...props }) {
     const MIN_SIDEBAR_WIDTH = 200;
-    const MAX_SIDEBAR_WIDTH = 600;
+    const MAX_SIDEBAR_WIDTH = 800;
     const DEFAULT_SIDEBAR_WIDTH = 300;
 
     const sidebarRef = useRef(null);
     const [isResizing, setIsResizing] = useState(false);
     const [sidebarWidth, sidebarWidthSetter] = useState(() => {
-        const savedWidth = localStorage.getItem('sidebar_width');
+        const savedWidth = localStorage.getItem('calendar_sidebar_width');
         if (savedWidth)
             return parseInt(savedWidth);
         return DEFAULT_SIDEBAR_WIDTH;
     });
     const setSidebarWidth = useCallback((value) => {
         sidebarWidthSetter(() => {
-            localStorage.setItem('sidebar_width', value);
+            localStorage.setItem('calendar_sidebar_width', value);
             return value;
         });
     }, [sidebarWidthSetter]);
@@ -51,15 +51,14 @@ export default function SideBar({ children, ...props }) {
     return (
         <div
             ref={sidebarRef}
-            className='h-100 d-flex flex-row'
+            className='d-flex flex-row'
             style={{width: sidebarWidth}}
         >
             <div
-                className='h-100'
                 style={{width: 4, cursor: 'ew-resize', backgroundColor: '#eee'}}
                 onMouseDown={startResizing}
             ></div>
-            <div className='w-100'>
+            <div className='flex-grow-1 d-flex flex-column' style={{overflowY: 'auto'}}>
                 {children}
             </div>
         </div>

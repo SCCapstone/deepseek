@@ -9,9 +9,9 @@ export default function ProfilePage() {
     const [editing, setEditing] = useState(false);
 
     return (
-        <div>
+        <div className='w-100' style={{ overflowY: 'auto' }}>
             <div
-                className='container mt-3 mb-5 w-100 rounded
+                className='container my-3 w-100 rounded
                 d-flex flex-column justify-content-start align-items-stretch'
                 style={{ backgroundColor: '#eee' }}
             >

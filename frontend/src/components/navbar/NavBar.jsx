@@ -18,7 +18,7 @@ export default function NavBar() {
     return (
         <>
             <header
-                className='position-relative d-flex flex-row p-2 align-items-center justify-content-between'
+                className='w-100 position-relative d-flex flex-row p-2 align-items-center justify-content-between'
                 style={{backgroundColor: '#eee'}}
             >
                 <div className='d-flex flex-row align-items-center'>

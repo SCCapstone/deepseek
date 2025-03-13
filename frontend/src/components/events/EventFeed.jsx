@@ -35,7 +35,7 @@ export default function EventFeed() {
     const [tab, setTab] = useState('my-events');
     return (
         <div className='w-100 d-flex flex-column align-items-center'>
-            <div className='my-3 d-flex flex-row justify-content-center rounded-lg border overflow-hidden' style={{
+            <div className='my-2 d-flex flex-row justify-content-center rounded-lg border overflow-hidden' style={{
                 cursor: 'pointer',
             }}>
                 <div
@@ -47,7 +47,9 @@ export default function EventFeed() {
                     onClick={() => setTab('friends-events')}
                 >Friends events</div>
             </div>
-            <Events url={tab === 'my-events' ? '/get-events' : '/get-friends-events'}/>
+            <div className='w-100 flex-grow-1 flex-shrink-1'>
+                <Events url={tab === 'my-events' ? '/get-events' : '/get-friends-events'}/>
+            </div>
         </div>
     );
 }

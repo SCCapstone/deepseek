@@ -40,50 +40,46 @@ export default function CalendarPage() {
     if (loading) return <Loading/>
 
     return (
-        <div className='flex-grow-1 d-flex flex-row align-items-stretch'>
-            <div className='flex-grow-1 d-flex flex-column'>
+        <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{overflowY: 'hidden'}}>
+            <div className='w-100 h-100'>
                 <Calendar
-                    className='w-100 h-100'
                     onChange={handleDateChange}
                     selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}/>
+                    setSelectedDate={setSelectedDate}
+                />
             </div>
-            <div className='h-100 d-flex flex-column justify-content-center'>
-                <Sidebar>
-                    <div className='d-flex flex-row justify-content-between w-100 border-bottom'>
-                        <div
-                            className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'bg-primary text-white' : '')}
-                            onClick={() => setTab('selected-date')}
-                        >
-                            {selectedDate.toDateString()}
-                        </div>
-                        <div
-                            className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'bg-primary text-white' : '')}
-                            onClick={() => setTab('event-feed')}
-                        >
-                            Event feed
-                        </div>
+            <Sidebar>
+                <div className='d-flex flex-row justify-content-between w-100 border-bottom'>
+                    <div
+                        className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'bg-primary text-white' : '')}
+                        onClick={() => setTab('selected-date')}
+                    >
+                        {selectedDate.toDateString()}
                     </div>
-                    {tab === 'selected-date' ?
-                        <EventList
-                            events={events.filter(event => {
-                                const dateObj = new Date();
-                                const timezoneOffset = dateObj.getTimezoneOffset();
-                                const eventDate = new Date(
-                                    (new Date(event.date)).getTime() + timezoneOffset * 60 * 1000
-                                );
-                                return (
-                                    (eventDate.getDate() == selectedDate.getDate())
-                                    && (eventDate.getMonth() == selectedDate.getMonth())
-                                    && (eventDate.getFullYear() == selectedDate.getFullYear())
-                                );
-                            })}
-                        />
-                    :
-                        <EventFeed/>
-                    }
-                </Sidebar>
-            </div>
+                    <div
+                        className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'bg-primary text-white' : '')}
+                        onClick={() => setTab('event-feed')}
+                    >
+                        Event feed
+                    </div>
+                </div>
+                {tab === 'selected-date' ?
+                    <EventList
+                        events={events.filter(event => {
+                            const dateObj = new Date();
+                            const timezoneOffset = dateObj.getTimezoneOffset();
+                            const eventDate = new Date(
+                                (new Date(event.date)).getTime() + timezoneOffset * 60 * 1000
+                            );
+                            return (
+                                (eventDate.getDate() == selectedDate.getDate())
+                                && (eventDate.getMonth() == selectedDate.getMonth())
+                                && (eventDate.getFullYear() == selectedDate.getFullYear())
+                            );
+                        })}
+                    />
+                : <EventFeed/>}
+            </Sidebar>
         </div>
     );
 }

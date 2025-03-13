@@ -8,7 +8,11 @@ function Event({ event }) {
     const handleClick = () => navigate('/events/' + event.id);
 
     return (
-        <div className='mb-2 p-2 w-100 d-flex flex-row bg-light rounded' onClick={handleClick}>
+        <div
+            className='mb-3 p-2 w-100 d-flex flex-row bg-light rounded'
+            onClick={handleClick}
+            style={{cursor: 'pointer'}}
+        >
             <div>
                 <div className='mb-2'>
                     <p className='m-0'>{event.title}</p>
