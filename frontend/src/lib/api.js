@@ -33,6 +33,9 @@ const api = async (method, url, variables = null) => {
         if (res.ok) {
             return { data: data?.data || null, message: data?.message, error: null };
         } else {
+            if (res.status === 401) {
+                window.location.href = '/login';
+            }
             return { error: data?.message || 'An error occurred', data: null, message: null };
         }
     } catch (e) {
