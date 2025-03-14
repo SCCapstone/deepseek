@@ -16,7 +16,8 @@ function EventCard({ event }) {
     return (
         <button
             onClick={() => navigate('/events/' + event.id)}
-            className='p-2 d-flex flex-column justify-content-start align-items-center rounded bg-light'
+            className='p-2 d-flex flex-column justify-content-start
+            border-0 align-items-center rounded bg-light'
         >
             <h4 className='h4 w-100 text-left mb-0'>{event.title}</h4>
             <p className='w-100 text-left mb-0'>{event.location}</p>

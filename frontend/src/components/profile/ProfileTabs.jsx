@@ -6,8 +6,11 @@ import FriendsTab from './FriendsTab';
 function TabButton({ active, label, onClick }) {
     return (
         <button className='w-100 p-3 font-weight-bold' onClick={onClick} style={{
+            borderTopWidth: 0,
+            borderRightWidth: 0,
+            borderLeftWidth: 0,
             borderBottomWidth: (active ? 4 : 0),
-            borderColor: 'rgb(0, 0, 255)',
+            borderColor: 'rgb(100, 100, 255)',
             outline: 'none',
             backgroundColor: (active ? 'rgb(215, 215, 215)' : null)
         }}>{label}</button>

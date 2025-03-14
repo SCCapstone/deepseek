@@ -13,25 +13,22 @@ function UserResult({ user, handleRemoveFriend, showAddButton }) {
 
     return (
         <div className='p-2 rounded-lg mb-2 bg-light d-flex flex-row justify-content-between align-items-center'>
-            <div className='d-flex flex-row'>
-                <button className='mr-2' style={{outline: 'none'}}>
-                    <Link to={'/profile/' + user.username}>
-                        <img
-                            src={user.profile_picture || DefaultPFP}
-                            style={{
-                                width: '40px',
-                                borderRadius: 1000,
-                            }}
-                        />
-                    </Link>
-                </button>
+            <Link className='d-flex flex-row align-items-center' to={'/profile/' + user.username}>
+                <img
+                    className='mr-2'
+                    src={user.profile_picture || DefaultPFP}
+                    style={{
+                        width: '40px',
+                        borderRadius: 1000,
+                    }}
+                />
                 <div className='d-flex flex-column'>
                     {(user.name && user.name !== '') ?
-                        <p className='m-0 font-weight-bold'>{user.name}</p>
+                        <p className='m-0 font-weight-bold text-dark'>{user.name}</p>
                     : null}
-                    <p className='m-0 text-muted'>@{user.username}</p>
+                    <p className='m-0 text-muted text-dark'>@{user.username}</p>
                 </div>
-            </div>
+            </Link>
             {showAddButton ?
                 <button
                     onClick={handleRemoveFriend}

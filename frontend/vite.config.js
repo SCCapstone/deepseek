@@ -10,4 +10,7 @@ export default defineConfig({
         host: true,
         port: 4000,
     },
+    build: {
+        outDir: 'build',
+    },
 });

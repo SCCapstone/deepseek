@@ -83,7 +83,7 @@ def upload_picture(current_user: User):
     file.save(save_path)
     
     # returning saved file url to user
-    hostname = os.environ.get('SERVER_HOSTNAME', 'http://localhost:5000')
+    hostname = os.environ.get('BACKEND_URL', 'http://localhost:5000')
     return make_response({
         'message': 'Successfuly uploaded picture',
         'data': {'url': hostname + '/pictures/' + filename}

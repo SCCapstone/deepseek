@@ -16,19 +16,20 @@ export default function SettingsWidget({ className }) {
                     <>
                         <div
                             className='position-absolute mt-4 bg-white shadow rounded-lg
-                            d-flex flex-column align-items-center border'
+                            d-flex flex-column align-items-center border overflow-hidden'
                             style={{right: 0, width: '160px', zIndex: 1020}}
                         >
                             <button
-                                className='p-2 border-bottom w-100 text-dark text-center'
+                                className='p-2 border-0 w-100 text-dark text-center'
                             >Appearance</button>
+                            <div className='w-100' style={{height: 1, backgroundColor: '#ccc'}}></div>
                             <button
                                 onClick={() => {
                                     setShowMenu(false);
                                     setShowSettings(true);
                                 }}
                                 style={{outline: 'none'}}
-                                className='p-2 w-100 text-dark text-center'
+                                className='p-2 w-100 text-dark text-center border-0'
                             >Settings</button>
                         </div>
                         <div

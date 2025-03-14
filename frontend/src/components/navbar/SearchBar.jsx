@@ -92,7 +92,7 @@ export default function SearchBar(props) {
             >
                 <input
                     type='text'
-                    className='bg-white p-2 rounded-left'
+                    className='bg-white p-2 rounded-left border-0'
                     style={{width: '400px'}}
                     placeholder='SEARCH'
                     value={search}
@@ -103,7 +103,7 @@ export default function SearchBar(props) {
                 <button
                     onClick={() => inputRef.current.focus()}
                     className='p-2 px-3 align-self-stretch d-flex flex-column align-items-center
-                    justify-content-center bg-primary rounded-right'
+                    justify-content-center bg-primary rounded-right border-0'
                 >
                     <FaSearch size={20} color='white'/>
                 </button>
