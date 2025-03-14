@@ -6,7 +6,7 @@ import Alert from '../utility/Alert';
 import api from '../../lib/api';
 
 
-function UserResult({ user, handleRemoveFriend }) {
+function UserResult({ user, handleRemoveFriend, showAddButton }) {
     const [error, setError] = useState(null);
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
@@ -32,23 +32,30 @@ function UserResult({ user, handleRemoveFriend }) {
                     <p className='m-0 text-muted'>@{user.username}</p>
                 </div>
             </div>
-            <button
-                onClick={handleRemoveFriend}
-                className='btn btn-danger'
-            >Remove</button>
+            {showAddButton ?
+                <button
+                    onClick={handleRemoveFriend}
+                    className='btn btn-danger'
+                >Remove</button>
+            : null}
         </div>
     );
 }
 
 
-export default function FriendsTab() {
+export default function FriendsTab({ username }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [friends, setFriends] = useState(null);
 
     const getData = async () => {
         setLoading(true);
-        const { data, error: apiError } = await api.get('/friends/get-friends');
+        let url;
+        if (!username)
+            url = '/friends/get-friends';
+        else
+            url = '/friends/get-user-friends/' + username;
+        const { data, error: apiError } = await api.get(url);
         setError(apiError);
         setFriends(data);
         setLoading(false);
@@ -73,7 +80,12 @@ export default function FriendsTab() {
                 {friends.length > 0 ?
                     <div>
                         {friends.map((item, i) => (
-                            <UserResult key={i} user={item} handleRemoveFriend={() => handleRemoveFriend(item.username)}/>
+                            <UserResult
+                                key={i}
+                                user={item}
+                                handleRemoveFriend={() => handleRemoveFriend(item.username)}
+                                showAddButton={username === undefined}
+                            />
                         ))}
                     </div>
                 :

@@ -21,6 +21,17 @@ def get_friends(current_user: User):
     return make_response({'data': friends_data})
 
 
+@friend_router.route('/get-user-friends/<username>')
+def get_user_friends(username: str):
+    user = User.find_one(username=username)
+    if not user:
+        raise NotFoundError('No user with username \'%s\'' % username)
+    
+    friends = user.friends
+    friend_data = [x.profile for x in friends]
+    return make_response({'data': friend_data})
+
+
 @friend_router.route('/add/<friend_username>', methods=['POST'])
 @login_required
 def add_friend(current_user: User, friend_username: str):

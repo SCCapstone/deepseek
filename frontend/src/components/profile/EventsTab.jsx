@@ -5,14 +5,19 @@ import EventsGrid from './EventsGrid';
 import api from '../../lib/api';
 
 
-export default function EventsTab() {
+export default function EventsTab({ username }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [events, setEvents] = useState(null);
 
     const getData = async () => {
         setLoading(true);
-        const { data, error: apiError } = await api.get('/get-events');
+        let url;
+        if (!username)
+            url = '/get-events'
+        else
+            url = '/get-user-events/' + username;
+        const { data, error: apiError } = await api.get(url);
         setError(apiError);
         setEvents(data);
         setLoading(false);

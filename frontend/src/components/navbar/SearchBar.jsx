@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import DefaultPFP from '../../assets/default-pfp.jpg';
 import CustomTextInput from '../input/CustomTextInput';
@@ -8,19 +8,29 @@ import Alert from '../utility/Alert';
 import api from '../../lib/api';
 
 
-function UserResult({ user, handleAddFriend }) {
+function UserResult({ user, handleAddFriend, hideResults }) {
+    const navigate = useNavigate();
+
+    const handleNavigateToProfile = () => {
+        hideResults();
+        navigate('/profile/' + user.username);
+    }
+
     return (
         <div className='p-2 rounded-lg mb-2 bg-light d-flex flex-row justify-content-between align-items-center'>
-            <div className='d-flex flex-row'>
-                <button className='mr-2' style={{outline: 'none'}}>
-                    <img
-                        src={user.profile_picture || DefaultPFP}
-                        style={{
-                            width: '40px',
-                            borderRadius: 1000,
-                        }}
-                    />
-                </button>
+            <div
+                className='flex-grow-1 d-flex flex-row align-items-center'
+                onClick={handleNavigateToProfile}
+                style={{cursor: 'pointer'}}
+            >
+                <img
+                    className='mr-2'
+                    src={user.profile_picture || DefaultPFP}
+                    style={{
+                        width: '40px',
+                        borderRadius: 1000,
+                    }}
+                />
                 <div className='d-flex flex-column'>
                     {(user.name && user.name !== '') ?
                         <p className='m-0 font-weight-bold'>{user.name}</p>
@@ -110,7 +120,14 @@ export default function SearchBar(props) {
                                 zIndex: 1020,
                             }}
                         >
-                            {results.map((result, i) => <UserResult key={i} user={result} handleAddFriend={handleAddFriend}/>)}
+                            {results.map((result, i) => (
+                                <UserResult
+                                    key={i}
+                                    user={result}
+                                    handleAddFriend={handleAddFriend}
+                                    hideResults={() => setShowResults(false)}
+                                />
+                            ))}
                         </div>
                     : null}
                     <div

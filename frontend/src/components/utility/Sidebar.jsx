@@ -58,7 +58,7 @@ export default function SideBar({ children, ...props }) {
                 style={{width: 4, cursor: 'ew-resize', backgroundColor: '#eee'}}
                 onMouseDown={startResizing}
             ></div>
-            <div className='flex-grow-1 d-flex flex-column' style={{overflowY: 'auto'}}>
+            <div className='flex-grow-1 d-flex flex-column' style={{overflowY: 'hidden'}}>
                 {children}
             </div>
         </div>

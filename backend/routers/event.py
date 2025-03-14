@@ -37,10 +37,21 @@ def add_event(current_user: User):
 
 @event_router.route('/get-events')
 @login_required
-def get_events(current_user):
+def get_events(current_user: User):
     events = current_user.events
     event_data = [x.to_dict() for x in events]
     return make_response({'message': 'Events retrieved', 'data': event_data})
+
+
+@event_router.route('/get-user-events/<username>')
+def get_user_events(username: str):
+    user = User.find_one(username=username)
+    if not user:
+        raise NotFoundError('No user with that username')
+    
+    public_events = Event.find(user_id=user._id, public=True)
+    event_data = [x.to_dict() for x in public_events]
+    return make_response({'data': event_data})
 
 
 @event_router.route('/get-event/<event_id>')

@@ -14,18 +14,18 @@ function TabButton({ active, label, onClick }) {
     );
 }
 
-function Tab({ tab }) {
+function Tab({ tab, username }) {
     switch(tab) {
         case 'events':
-            return <EventsTab/>
+            return <EventsTab username={username}/>
         case 'friends':
-            return <FriendsTab/>
+            return <FriendsTab username={username}/>
         default:
             return null;
     }
 }
 
-export default function ProfileTabs() {
+export default function ProfileTabs({ username }) {
     const [tab, setTab] = useState('events');
 
     return (
@@ -35,16 +35,12 @@ export default function ProfileTabs() {
                 style={{gap: 10}}
             >
                 <TabButton active={tab === 'events'} onClick={() => setTab('events')} label='Events'/>
+                <TabButton active={tab === 'reposts'} onClick={() => setTab('reposts')} label='Reposts'/>
                 <TabButton active={tab === 'comments'} onClick={() => setTab('comments')} label='Comments'/>
                 <TabButton active={tab === 'friends'} onClick={() => setTab('friends')} label='Friends'/>
-                <TabButton
-                    active={tab === 'friend-requests'}
-                    onClick={() => setTab('friend-requests')}
-                    label='Friend requests'
-                />
             </div>
             <div className='mb-3'>
-                <Tab tab={tab}/>
+                <Tab tab={tab} username={username}/>
             </div>
         </div>
     );

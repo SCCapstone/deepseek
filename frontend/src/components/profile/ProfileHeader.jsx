@@ -1,53 +1,25 @@
-import {
-    useState,
-    useEffect,
-} from 'react';
 import CustomButton from '../input/CustomButton';
-import Loading from '../utility/Loading';
-import Alert from '../utility/Alert';
 import DefaultPFP from '../../assets/default-pfp.jpg';
-import api from '../../lib/api';
 
 
-export default function ProfileHeader({ editing, setEditing, className }) {
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const showEditor = () => setEditing(true);
-
-    const getData = async () => {
-        setLoading(true);
-        const { data, error: apiError } = await api.get('/get-profile');
-        setError(apiError);
-        setUserData(data);
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        if (!editing)
-            getData();
-    }, [editing]);
-
-    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
-    if (loading) return <Loading className='mt-5'/>
-
+export default function ProfileHeader({ userData, showEditor }) {
     return (
         <div
             className='w-100 p-3 d-flex flex-column
             justify-content-center align-items-center rounded-lg'
         >
-            <div className='w-100 d-flex flex-row justify-content-end'>
-                <CustomButton
-                    style={{top: 0, right: 0}}
-                    text='Edit profile'
-                    onClick={showEditor}
-                />
-            </div>
+            {showEditor ?
+                <div className='w-100 d-flex flex-row justify-content-end'>
+                    <CustomButton
+                        style={{top: 0, right: 0}}
+                        text='Edit profile'
+                        onClick={showEditor}
+                    />
+                </div>
+            : null}
             <img
                 className='mb-3 bg-white'
-                src={(loading || (userData && (!userData.profile_picture || userData.profile_picture === '')))
-                    ? DefaultPFP : userData.profile_picture}
+                src={userData.profile_picture || DefaultPFP}
                 style={{
                     width: '180px',
                     height: '180px',
