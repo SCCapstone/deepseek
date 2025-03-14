@@ -14,6 +14,8 @@ services:
             FRONTEND_URL: 'https://capstone.ian-turner.xyz'
             BACKEND_URL: 'https://api.capstone.ian-turner.xyz'
             UPLOADS_FOLDER: '/uploads'
+        volumes:
+            - ./data/uploads:/uploads:rw
     frontend:
         container_name: deepseek-frontend
         build:
@@ -23,6 +25,7 @@ services:
         ports:
             - 4000:80
     mongo:
+        container_name: deepseek-mongo
         image: mongo
         restart: on-failure
         ports:
