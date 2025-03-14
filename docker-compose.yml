@@ -7,6 +7,7 @@ services:
         restart: on-failure
         volumes:
             - ./backend:/app
+            - ./data/uploads:/uploads:rw
         links:
             - mongo:mongo
         ports:
@@ -14,7 +15,7 @@ services:
         environment:
             FLASK_RUN_PORT: 5000
             FRONTEND_URL: 'http://localhost:4000'
-            REACT_APP_API_URL: 'http://localhost:5000'
+            UPLOADS_FOLDER: '/uploads'
     frontend:
         container_name: deepseek-frontend
         build:
@@ -22,13 +23,15 @@ services:
             dockerfile: Dockerfile.dev
         restart: on-failure
         volumes:
-            - ./frontend/src:/app/src:ro
-            - ./frontend/public:/app/public:ro
+            - ./frontend:/app:delegated
+            - ./frontend/package.json:/app/package.json
+            - ./frontend/package-lock.json:/app/package-lock.json
+            - notused:/app/node_modules
         ports:
             - 4000:4000
         environment:
             PORT: 4000
-            REACT_APP_API_URL: 'http://localhost:5000'
+            VITE_API_URL: 'http://localhost:5000'
     mongo:
         container_name: deepseek-mongo
         image: mongo
@@ -36,6 +39,7 @@ services:
         ports:
             - 27017:27017
         volumes:
+            - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
             - ./data/db:/data/db:rw
-
-    
+volumes:
+    notused:

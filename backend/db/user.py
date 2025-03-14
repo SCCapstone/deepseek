@@ -2,6 +2,7 @@
 Abstraction for user data in database
 """
 import logging
+import pytz
 from datetime import datetime, timezone
 from typing import List, Dict, Self, Union
 from bson.objectid import ObjectId
@@ -34,9 +35,15 @@ class User(DatabaseObject):
             'username': self.username,
             'profile_picture': self.profile_picture,
             'bio': self.bio,
-            'default_event_visibility': self.default_event_visibility,
-            'email': self.email,
             'name': self.name,
+            'joined': self.created_at.date(),
+        }
+
+    @property
+    def settings(self) -> Dict:
+        return {
+            'email': self.email,
+            'default_event_visibility': self.default_event_visibility,
         }
     
     @property
@@ -46,18 +53,14 @@ class User(DatabaseObject):
     @property
     def today_events(self) -> List[Event]:
         # getting todays date
-        today_utc = datetime.now(timezone.utc).date()
+        timezone = pytz.timezone('America/New_York')
+        today_date = str(datetime.now(timezone).date())
 
         # finding events that have the same date
         events = self.events
         today_events = []
         for event in events:
-            event_start_date = datetime \
-                .fromisoformat(event.start_time.replace('Z', '')) \
-                .replace(tzinfo=timezone.utc) \
-                .date()
-            
-            if event_start_date == today_utc:
+            if event.date == today_date:
                 today_events.append(event)
 
         return today_events
@@ -87,7 +90,7 @@ class User(DatabaseObject):
         # looping over todays events to see if any reminders need to be sent
         today_events = self.today_events
         for event in today_events:
-            if event.reminder and not event.reminder_sent:
+            if event.set_reminder and not event.reminder_sent:
                 # event is set to remind and reminder has not been sent yet
                 event_msg = 'Reminder: your event \'%s\' starts today!' % event.title
 
@@ -153,9 +156,14 @@ class User(DatabaseObject):
             rel.delete()
     
     def get_friend_status(self, other_user: Self) -> str:
-        friend_rel = FriendRelation.find_one(user1_id=self._id, user2_id=other_user._id)
-        if not friend_rel:
+        # finding all relationships in database
+        friend_rels = FriendRelation.find(user1_id=self._id, user2_id=other_user._id)
+        if len(friend_rels) == 0:
             return 'none'
+
+        # sorting to find the latest one
+        friend_rels = sorted(friend_rels, key=lambda x: x.created_at)
+        friend_rel = friend_rels[-1]
         return friend_rel.status
 
 

@@ -1,8 +1,6 @@
-import {
-    useState,
-} from 'react';
+import { useState } from 'react';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
-import { useAppContext } from '../lib/context';
+import { useAppContext } from '../../lib/context';
 
 
 const monthNames = [

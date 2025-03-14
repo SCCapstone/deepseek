@@ -16,11 +16,12 @@ class Event(DatabaseObject):
         'user_id': {'type': ObjectId, 'required': True},
         'title': {'type': str, 'required': True},
         'description': {'type': str},
-        'start_time': {'type': str},
-        'end_time': {'type': str},
+        'date': {'type': str, 'required': True},
+        'start_time': {'type': str, 'required': True},
+        'end_time': {'type': str, 'required': True},
         'created_at': {'type': datetime},
         'public': {'type': bool, 'required': True, 'default': False},
-        'reminder': {'type': bool, 'required': True, 'default': False},
+        'set_reminder': {'type': bool, 'required': True, 'default': False},
         'reminder_sent': {'type': bool, 'required': True, 'default': False},
         'location': {'type': str},
     }
@@ -28,14 +29,14 @@ class Event(DatabaseObject):
     def to_dict(self) -> Dict:
         return {
             'id': str(self._id),
-            'user_id': str(self.user_id),
             'title': self.title,
             'description': self.description,
+            'date': self.date,
             'start_time': self.start_time,
             'end_time': self.end_time,
             'created_at': self.created_at,
             'public': self.public,
-            'reminder': self.reminder,
+            'set_reminder': self.set_reminder,
             'location': self.location,
         }
     

@@ -17,8 +17,19 @@ friend_router = Blueprint('friend_router', __name__, url_prefix='/friends')
 def get_friends(current_user: User):
     # friends = FriendRelation.get_friends(current_user)
     friends = current_user.friends
+    friends_data = [x.profile for x in friends]
+    return make_response({'data': friends_data})
+
+
+@friend_router.route('/get-user-friends/<username>')
+def get_user_friends(username: str):
+    user = User.find_one(username=username)
+    if not user:
+        raise NotFoundError('No user with username \'%s\'' % username)
+    
+    friends = user.friends
     friend_data = [x.profile for x in friends]
-    return make_response({'data': {'friends': friend_data}})
+    return make_response({'data': friend_data})
 
 
 @friend_router.route('/add/<friend_username>', methods=['POST'])
@@ -43,6 +54,5 @@ def remove_friend(current_user: User, friend_username: str):
         raise NotFoundError('No user with username `%s`' % friend_username)
     
     # deleting friend relation records
-    # FriendRelation.delete_relations(current_user, other_user)
     current_user.remove_friend(other_user)
     return make_response({'message': 'Successfuly removed friend'})

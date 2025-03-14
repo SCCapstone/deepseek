@@ -19,11 +19,12 @@ logger = logging.getLogger(__name__)
 @login_required
 @data_filter({
     'title': {'type': str, 'required': True},
+    'date': {'type': str, 'required': True},
     'start_time': {'type': str, 'required': True},
     'end_time': {'type': str, 'required': True},
     'description': {'type': str},
     'location': {'type': str},
-    'reminder': {'type': bool},
+    'set_reminder': {'type': bool},
     'public': {'type': bool},
     'created_at': {'type': datetime},
 })
@@ -34,15 +35,26 @@ def add_event(current_user: User):
     return make_response({'message': 'Event created'}, 201)
 
 
-@event_router.route('/get-events', methods=['GET'])
+@event_router.route('/get-events')
 @login_required
-def get_events(current_user):
+def get_events(current_user: User):
     events = current_user.events
     event_data = [x.to_dict() for x in events]
     return make_response({'message': 'Events retrieved', 'data': event_data})
 
 
-@event_router.route('/get-event/<event_id>', methods=['GET'])
+@event_router.route('/get-user-events/<username>')
+def get_user_events(username: str):
+    user = User.find_one(username=username)
+    if not user:
+        raise NotFoundError('No user with that username')
+    
+    public_events = Event.find(user_id=user._id, public=True)
+    event_data = [x.to_dict() for x in public_events]
+    return make_response({'data': event_data})
+
+
+@event_router.route('/get-event/<event_id>')
 @login_required
 def get_event(current_user: User, event_id: str):
     # finding event in database
@@ -59,7 +71,10 @@ def get_event(current_user: User, event_id: str):
         if friend_status != 'friend':
             raise ForbiddenError('You do not have access to this event')
     
-    return make_response({'data': event.to_dict()})
+    event_user_data = event_user.profile
+    event_data = event.to_dict()
+    event_data['user'] = event_user_data
+    return make_response({'data': event_data})
 
 
 @event_router.route('/update-event/<event_id>', methods=['POST'])
@@ -144,12 +159,24 @@ def clear_notifications(current_user: User):
     return make_response({'message': 'Notifications cleared'})
 
 
-@event_router.route('/get-friends-events', methods=['GET'])
+@event_router.route('/get-friends-events')
 @login_required
 def get_friends_events(current_user: User):
+    # getting user's friends
     friends = current_user.friends
+
+    # finding events that belong to user's friends
     friend_events = []
     for friend in friends:
         friend_events.extend(friend.events)
+    
+    # serializing event data
     event_data = [x.to_dict() for x in friend_events]
+
+    # serializing user data for each event
+    for (event, _event_data) in zip(friend_events, event_data):
+        user = User.find_one(_id=ObjectId(event.user_id))
+        user_data = user.profile
+        _event_data['user'] = user_data
+
     return make_response({'message': 'Friends events retrieved', 'data': event_data})

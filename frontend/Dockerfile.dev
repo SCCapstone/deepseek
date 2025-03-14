@@ -4,4 +4,6 @@ WORKDIR /app
 COPY ./package*.json .
 RUN npm i
 
-CMD npm start
+EXPOSE 4000
+
+CMD npm run dev
