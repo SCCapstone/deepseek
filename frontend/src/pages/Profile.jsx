@@ -27,7 +27,8 @@ export default function ProfilePage() {
     }
 
     useEffect(() => {
-        getData();
+        if (!editing)
+            getData();
     }, [editing, username]);
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
