@@ -58,8 +58,8 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
     return (
         <Modal showModal={showEditor} hideModal={hideEditor}>
             {loading ? <Loading/> :
-                <div className='w-100'>
-                    <div className='w-100 mb-3 d-flex flex-row justify-content-between align-items-center'>
+                <div className='w-100 p-4 rounded' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
+                    <div className='w-100 mb-3 d-flex flex-row justify-content-between align-items-center' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
                         <h3 className='h3 m-0' style={{color: context.colorScheme.textColor}}>Edit profile</h3>
                         <div>
                             <CustomButton className='mr-1 btn-danger' text='Cancel' onClick={hideEditor}/>
@@ -69,7 +69,7 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
                     <label className='m-0 w-100' htmlFor='profile-picture' style={{color: context.colorScheme.textColor}}>Profile picture</label>
                     <PictureUpload
                         id='profile-picture'
-                        className='mb-3'
+                        className='mb-4'
                         url={userData.profile_picture}
                         setUrl={url => handleUpdateField('profile_picture', url)}
                     />

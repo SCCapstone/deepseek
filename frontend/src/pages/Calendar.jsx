@@ -76,14 +76,30 @@ export default function CalendarPage() {
                     <div
                         className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'bg-primary text-white' : '')}
                         onClick={() => setTab('selected-date')}
-                        style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}
+                        style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor, cursor: 'pointer'}}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                ? 'rgba(255, 255, 255, 0.15)' 
+                                : 'rgba(0, 0, 0, 0.08)';
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = context.colorScheme.secondaryBackground;
+                        }}
                     >
                         {selectedDate.toDateString()}
                     </div>
                     <div
                         className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'bg-primary text-white' : '')}
                         onClick={() => setTab('event-feed')}
-                        style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}
+                        style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor, cursor: 'pointer'}}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                ? 'rgba(255, 255, 255, 0.15)' 
+                                : 'rgba(0, 0, 0, 0.08)';
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = context.colorScheme.secondaryBackground;
+                        }}
                     >
                         Event feed
                     </div>

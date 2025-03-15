@@ -52,6 +52,15 @@ export default function EventFeed() {
                     style={{
                         backgroundColor: context.colorScheme.secondaryBackground,
                         color: context.colorScheme.textColor,
+                        cursor: 'pointer'
+                    }}
+                    onMouseOver={(e) => {
+                        e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                            ? 'rgba(255, 255, 255, 0.15)' 
+                            : 'rgba(0, 0, 0, 0.08)';
+                    }}
+                    onMouseOut={(e) => {
+                        e.currentTarget.style.backgroundColor = context.colorScheme.secondaryBackground;
                     }}
                 >My events</div>
                 <div
@@ -60,6 +69,15 @@ export default function EventFeed() {
                     style={{
                         backgroundColor: context.colorScheme.secondaryBackground,
                         color: context.colorScheme.textColor,
+                        cursor: 'pointer'
+                    }}
+                    onMouseOver={(e) => {
+                        e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                            ? 'rgba(255, 255, 255, 0.15)' 
+                            : 'rgba(0, 0, 0, 0.08)';
+                    }}
+                    onMouseOut={(e) => {
+                        e.currentTarget.style.backgroundColor = context.colorScheme.secondaryBackground;
                     }}
                 >Friends events</div>
             </div>

@@ -17,7 +17,11 @@ export default function Event() {
                 height: 'calc(100vh - 48px)' // Adjust for navbar height
             }}
         >
-            <div className='container py-3'>
+            <div
+                className='container my-3 w-100 rounded
+                d-flex flex-column justify-content-start align-items-stretch'
+                style={{backgroundColor: context.colorScheme.secondaryBackground}}
+            >
                 <div className='mb-3'>
                     <EventHeader eventId={id}/>
                 </div>

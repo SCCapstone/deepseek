@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaLocationArrow, FaClock, FaInfoCircle } from 'react-icons/fa';
+import { FaLocationArrow, FaClock, FaInfoCircle, FaBell } from 'react-icons/fa';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
@@ -33,7 +33,7 @@ export default function EventHeader({ eventId }) {
         : null;
 
     return (
-        <div className='container p-3 rounded-lg' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
+        <div className='container p-3 rounded-lg' style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
             <div className='d-flex flex-row justify-content-between align-items-center mb-3'>
                 <h3 className='h3 m-0' style={{color: context.colorScheme.textColor}}>{eventData.title}</h3>
                 <button className='btn btn-danger'>Edit</button>
@@ -62,8 +62,9 @@ export default function EventHeader({ eventId }) {
             )}
             
             {eventData.set_reminder && (
-                <div className='alert alert-info mt-3' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
-                    <small>You've set a reminder for this event</small>
+                <div className='d-flex flex-row align-items-start mb-3'>
+                    <FaBell size={16} className='mr-2 mt-1' style={{color: context.colorScheme.textColor}}/>
+                    <p className='m-0' style={{color: context.colorScheme.textColor}}>You have set a reminder for this event</p>
                 </div>
             )}
         </div>

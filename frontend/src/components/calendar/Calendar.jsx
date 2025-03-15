@@ -256,6 +256,11 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
         return view === 0 ? 3 : 5; // Show more events in week/day view
     };
 
+    // Function to handle day click
+    const handleDayClick = (day) => {
+        onChange(day.date);
+    };
+
     return (
         <div className='d-flex flex-column w-100 h-100' style={{ backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor }}>
             <div className='d-flex flex-row p-3' style={styles.calendarHeader}>
@@ -334,11 +339,10 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                         const dayEvents = getEventsForDay(day);
                         const maxEventsToShow = getMaxEventsToShow();
                         
-                        // Determine day number style based on state
                         const dayNumberStyle = {
                             ...styles.dayNumber,
-                            backgroundColor: isSelected ? context.colorScheme.accentColor : isToday ? context.colorScheme.secondaryText : 'transparent',
-                            color: (isSelected || isToday) ? 'white' : context.colorScheme.textColor,
+                            backgroundColor: isSelected ? 'transparent' : isToday ? context.colorScheme.secondaryText : 'transparent',
+                            color: context.colorScheme.textColor,
                         };
                         
                         return (
@@ -352,7 +356,7 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                                     transition: 'background-color 0.2s ease',
                                 }}
                                 className='border p-1'
-                                onClick={() => onChange(day.date)}
+                                onClick={() => handleDayClick(day)}
                                 onMouseOver={(e) => {
                                     if (!isSelected) {
                                         e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
@@ -427,7 +431,7 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                                                 onChange(day.date);
                                             }}
                                             onMouseOver={(e) => {
-                                                e.currentTarget.style.color = context.colorScheme.accentColor;
+                                                e.currentTarget.style.color = context.colorScheme.accentColor + 'cc';
                                             }}
                                             onMouseOut={(e) => {
                                                 e.currentTarget.style.color = context.colorScheme.secondaryText;

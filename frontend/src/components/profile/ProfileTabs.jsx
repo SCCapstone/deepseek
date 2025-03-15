@@ -44,7 +44,7 @@ export default function ProfileTabs({ username }) {
     return (
         <div>
             <div
-                className='p-1 mb-3 d-flex flex-row justify-content-between align-items-center'
+                className='p-1 mb-3 d-flex flex-row justify-content-between align-items-center rounded'
                 style={{gap: 10}}
             >
                 <TabButton active={tab === 'events'} onClick={() => setTab('events')} label='Events'/>
