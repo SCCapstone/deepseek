@@ -1,6 +1,8 @@
+import React from 'react';
 import { useAppContext } from '../../lib/context';
+import { formatDate } from '../utility/dateUtils';
 
-// Event colors for visual distinction - same as in Calendar component
+// Event colors for visual distinction
 const eventColors = [
     '#4285F4', // Blue
     '#EA4335', // Red
@@ -13,18 +15,20 @@ const eventColors = [
 
 export default function EventCard({ event, onClick }) {
     const context = useAppContext();
+    const { title, description, location, date, formattedTime } = event;
 
     // Function to get a consistent color for an event based on its ID or title
     const getEventColor = (event) => {
-        // Use event ID or title to generate a consistent color
-        const identifier = event.id || event.title;
-        const hash = identifier.split('').reduce((acc, char) => {
+        const identifier = event.user_id;
+        const hash = String(identifier).split('').reduce((acc, char) => {
             return char.charCodeAt(0) + ((acc << 5) - acc);
         }, 0);
         return eventColors[Math.abs(hash) % eventColors.length];
     };
 
     const eventColor = getEventColor(event);
+
+    const formattedDate = formatDate(date);
 
     const styles = {
         text: {
@@ -57,14 +61,24 @@ export default function EventCard({ event, onClick }) {
             }}
         >
             <div className='font-weight-bold' style={styles.text}>
-                {event.title}
+                {title}
             </div>
+            
             <div style={styles.text}>
-                {event.description}
+                {formattedDate} {formattedTime && `• ${formattedTime}`}
             </div>
-            <div style={styles.text}>
-                {event.formattedTime}
-            </div>
+            
+            {location && (
+                <div style={styles.text}>
+                    Location: {location}
+                </div>
+            )}
+            
+            {description && (
+                <div style={styles.text} className="text-truncate">
+                    {description}
+                </div>
+            )}
         </div>
     );
 } 

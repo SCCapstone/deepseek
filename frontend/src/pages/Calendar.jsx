@@ -39,14 +39,12 @@ export default function CalendarPage() {
     
     const handleEventSelect = (event) => {
         setSelectedEvent(event);
-        setTab('selected-date'); // Switch to the selected date tab when an event is clicked
+        setTab('selected-date');
     }
-    
-    // Helper function to compare dates without time component
-    // Adjusts for the day-behind issue
+
+    // something is off with the date
     const isSameDay = (date1, date2) => {
         const d1 = new Date(date1);
-        // Add one day to fix the day-behind issue
         d1.setDate(d1.getDate() + 1);
         
         const d2 = new Date(date2);
@@ -89,10 +87,7 @@ export default function CalendarPage() {
                 {tab === 'selected-date' ?
                     <EventList
                         events={events.filter(event => {
-                            // Create a new date object from the event date
                             const eventDate = new Date(event.date);
-                            console.log(eventDate, selectedDate);
-                            // Compare dates without time component
                             return isSameDay(eventDate, selectedDate);
                         })}
                         selectedEvent={selectedEvent}

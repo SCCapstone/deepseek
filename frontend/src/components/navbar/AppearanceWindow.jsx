@@ -6,6 +6,11 @@ export default function AppearanceWindow({ showWindow, hideWindow }) {
 
     if (!showWindow) return null;
 
+    const handleContainerClick = (e) => {
+        // Stop propagation to prevent closing other modals unintentionally
+        e.stopPropagation();
+    };
+
     return (
         <>
             <div
@@ -18,10 +23,12 @@ export default function AppearanceWindow({ showWindow, hideWindow }) {
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
                     zIndex: 1030,
                 }}
+                onClick={hideWindow}
             >
                 <div
                     className="bg-white rounded-lg shadow p-4"
                     style={{ width: '400px', maxWidth: '90%' }}
+                    onClick={handleContainerClick}
                 >
                     <div className="d-flex justify-content-between align-items-center mb-4">
                         <h5 className="m-0 font-weight-bold">Appearance</h5>

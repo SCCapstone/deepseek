@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import { useAppContext } from '../../lib/context';
+import { formatDate } from '../utility/dateUtils';
 
+// Debug code to check if this file exists and what components it imports
+console.log('Calendar component file exists');
 
 const monthNames = [
     'January',
@@ -152,28 +155,53 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
         if (!events || events.length === 0) return [];
         
         return events.filter(event => {
-            // Fix for ISO date format and timezone issues
-            const eventDate = new Date(event.date);
-            
-            // Adjust for timezone offset to ensure correct day
-            const adjustedEventDate = new Date(eventDate);
-            adjustedEventDate.setDate(eventDate.getDate() + 1); // Add one day to fix the day-behind issue
-            
-            // Create date objects with only year, month, and day for comparison
-            const eventDateOnly = new Date(
-                adjustedEventDate.getFullYear(),
-                adjustedEventDate.getMonth(),
-                adjustedEventDate.getDate()
-            );
-            
-            const dayDateOnly = new Date(
-                day.date.getFullYear(),
-                day.date.getMonth(),
-                day.date.getDate()
-            );
-            
-            // Compare dates without time component
-            return eventDateOnly.getTime() === dayDateOnly.getTime();
+            try {
+                // Handle ISO date format properly
+                if (typeof event.date === 'string' && event.date.includes('-')) {
+                    const [year, month, dayOfMonth] = event.date.split('-').map(num => parseInt(num, 10));
+                    
+                    // Create date using year, month, day components to avoid timezone issues
+                    // Month is 0-indexed in JavaScript
+                    const eventDate = new Date(year, month - 1, dayOfMonth);
+                    
+                    // Get the components of the day we're checking
+                    const dayYear = day.date.getFullYear();
+                    const dayMonth = day.date.getMonth();
+                    const dayDay = day.date.getDate();
+                    
+                    // Compare year, month, and day components directly
+                    return (
+                        eventDate.getFullYear() === dayYear &&
+                        eventDate.getMonth() === dayMonth &&
+                        eventDate.getDate() === dayDay
+                    );
+                }
+                
+                // Fallback for other date formats
+                const eventDate = new Date(event.date);
+                if (!isNaN(eventDate.getTime())) {
+                    // Create date objects with only year, month, and day for comparison
+                    const eventDateOnly = new Date(
+                        eventDate.getFullYear(),
+                        eventDate.getMonth(),
+                        eventDate.getDate()
+                    );
+                    
+                    const dayDateOnly = new Date(
+                        day.date.getFullYear(),
+                        day.date.getMonth(),
+                        day.date.getDate()
+                    );
+                    
+                    // Compare dates without time component
+                    return eventDateOnly.getTime() === dayDateOnly.getTime();
+                }
+                
+                return false;
+            } catch (e) {
+                console.error('Error comparing dates:', e);
+                return false;
+            }
         });
     };
 
@@ -188,8 +216,8 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
     // Function to get a consistent color for an event based on its ID or title
     const getEventColor = (event) => {
         // Use event ID or title to generate a consistent color
-        const identifier = event.id || event.title;
-        const hash = identifier.split('').reduce((acc, char) => {
+        const identifier = event.id || event._id || event.title;
+        const hash = String(identifier).split('').reduce((acc, char) => {
             return char.charCodeAt(0) + ((acc << 5) - acc);
         }, 0);
         return eventColors[Math.abs(hash) % eventColors.length];

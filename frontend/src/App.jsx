@@ -8,6 +8,8 @@ import Profile from './pages/Profile';
 import Calendar from './pages/Calendar';
 import Event from './pages/Event';
 
+// Debug code to check the App component imports and routing
+console.log('App component file exists');
 
 export default function App() {
     return (

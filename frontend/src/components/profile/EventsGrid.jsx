@@ -1,17 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-
+import { formatDate, formatTime } from '../utility/dateUtils';
 
 function EventCard({ event }) {
     const navigate = useNavigate();
-    const eventDate = new Date(event.date);
-
-    if (event.start_time && event.start_time.length > 0) {
-        const timeSplit = event.start_time.split(':');
-        const hours = timeSplit[0];
-        const mins = timeSplit[1];
-        eventDate.setHours(hours);
-        eventDate.setMinutes(mins);
-    }
+    const formattedDate = formatDate(event.date);
+    const formattedTime = event.start_time ? formatTime(event.start_time) : '';
 
     return (
         <button
@@ -20,21 +13,18 @@ function EventCard({ event }) {
             border-0 align-items-center rounded bg-light'
         >
             <h4 className='h4 w-100 text-left mb-0'>{event.title}</h4>
-            <p className='w-100 text-left mb-0'>{event.location}</p>
+            {event.location && <p className='w-100 text-left mb-0'>{event.location}</p>}
             <p className='w-100 text-left mb-0'>
-                {eventDate.toLocaleString('utc', {
-                    dateStyle: 'short',
-                })}
+                {formattedDate}
             </p>
-            {event.start_time && event.start_time.length > 0 ?
+            {formattedTime && (
                 <p className='w-100 text-left mb-0'>
-                    {eventDate.toLocaleTimeString('utc', {timeStyle: 'short'})}
+                    {formattedTime}
                 </p>
-            : null}
+            )}
         </button>
     );
 }
-
 
 export default function EventsGrid({ events }) {
     return (

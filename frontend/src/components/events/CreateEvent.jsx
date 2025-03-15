@@ -19,7 +19,6 @@ const BLANK_EVENT = {
     public: false,
 }
 
-
 export default function CreateEvent({ showEditor, hideEditor }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -49,7 +48,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
 
     return (
         <Modal showModal={showEditor} hideModal={hideEditor}>
-            <form className='w-100 d-flex flex-column'>
+            <form className='w-100 d-flex flex-column bg-white p-4 rounded shadow'>
                 {loading ? <Loading className='mb-3'/> :
                     <>
                         <div className='w-100 d-flex flex-row justify-content-between align-items-center mb-3'>

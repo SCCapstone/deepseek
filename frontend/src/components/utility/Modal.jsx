@@ -1,28 +1,36 @@
+import React from 'react';
+
 export default function Modal({ showModal, hideModal, children }) {
     if (!showModal) return null;
     
+    const handleModalContainerClick = (e) => {
+        // Prevent clicks within the modal content from closing the modal
+        e.stopPropagation();
+    };
+
     return (
-        <div
-            className='p-5 position-fixed w-100 d-flex flex-column justify-content-center align-items-center'
+        <div 
+            className="position-fixed d-flex justify-content-center align-items-center"
             style={{
                 top: 0,
                 left: 0,
-                width: '100vh',
-                height: '100vh',
-                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                zIndex: 1050,
             }}
             onClick={hideModal}
         >
-            <div
-                className='w-100 d-flex flex-column justify-content-start align-items-center
-                p-3 bg-white rounded-lg'
+            <div 
+                className="modal-content"
                 style={{
-                    minWidth: '400px',
-                    maxWidth: '700px',
+                    width: '600px',
+                    maxWidth: '90%',
                     maxHeight: '90%',
-                    overflowY: 'auto',
+                    overflow: 'auto',
+                    zIndex: 1051,
                 }}
-                onClick={e => e.stopPropagation()}
+                onClick={handleModalContainerClick}
             >
                 {children}
             </div>
