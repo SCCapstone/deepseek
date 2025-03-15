@@ -1,19 +1,65 @@
 import { useState, useEffect } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import CustomButton from '../input/CustomButton';
 import CustomTextInput from '../input/CustomTextInput';
 import Modal from '../utility/Modal';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
-
+import api from '../../lib/api';
+import { useAppContext } from '../../lib/context';
 
 export default function SettingsWindow({ showWindow, hideWindow }) {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [settingsData, setSettingsData] = useState(null);
+    const context = useAppContext();
+
+    const [isLinkHovered, setIsLinkHovered] = useState(false);
+    const [isLogoutHovered, setIsLogoutHovered] = useState(false);
 
     const getData = async () => {
-
+        setLoading(false);
+        setSettingsData({});
     }
+
+    const handleLogout = async () => {
+        try {
+            setLoading(true);
+            const { data, error: apiError } = await api.post('/logout');
+            
+            if (apiError) {
+                setError(apiError);
+                setLoading(false);
+                return;
+            }
+            
+            // these are not right
+            window.location.href = '/login';
+        } catch (err) {
+            setError('Failed to log out');
+            setLoading(false);
+        }
+    };
+
+    const handleLinkWithGoogle = async () => {
+        try {
+            setLoading(true);
+            // these are not right
+            const { data, error: apiError } = await api.get('/auth/google/link');
+            
+            if (apiError) {
+                setError(apiError);
+                setLoading(false);
+                return;
+            }
+            
+            // these are not right
+            window.location.href = data.authUrl || '/auth/google';
+        } catch (err) {
+            setError('Failed to link with Google');
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         getData();
@@ -23,24 +69,51 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
 
     return (
         <Modal showModal={showWindow} hideModal={hideWindow}>
-            {loading ? <Loading/> :
-                <>
-                    <div className='w-100 d-flex flex-row justify-content-between align-items-center mb-3'>
-                        <h3 className='h3 m-0'>Settings</h3>
-                        <div className='d-flex flex-row'>
-                            <CustomButton
-                                text='Cancel'
-                                className='btn-danger mr-1'
-                                onClick={hideWindow}
-                                />
-                            <CustomButton
-                                text='Save'
-                                onClick={hideWindow}
-                                />
+            <div className='w-100 d-flex flex-column p-4 rounded' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
+                {loading ? <Loading/> :
+                    <>
+                        <div className='w-100 d-flex flex-row justify-content-between align-items-center mb-3'>
+                            <h3 className='h3 m-0'>Settings</h3>
+                            <div className='d-flex flex-row'>
+                                <button
+                                    className="btn p-0 border-0"
+                                    onClick={hideWindow}
+                                >
+                                <FaTimes size={20} color={context.colorScheme.textColor} />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </>
-            }
+                        
+                        <h4 className="mt-3 mb-2">Account</h4>
+                        <div className="card p-3 mb-4" style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
+                            <div className="d-flex flex-column">
+                                <CustomButton
+                                    text='Link with Google'
+                                    className='btn-primary mb-3'
+                                    onClick={handleLinkWithGoogle}
+                                    style={{
+                                        backgroundColor: isLinkHovered ? context.colorScheme.accentHover : context.colorScheme.accentColor,
+                                        color: context.colorScheme.textColor
+                                    }}
+                                    onMouseEnter={() => setIsLinkHovered(true)}
+                                    onMouseLeave={() => setIsLinkHovered(false)}
+                                />
+                                <CustomButton
+                                    text='Logout'
+                                    className='btn-danger'
+                                    onClick={handleLogout}
+                                    style={{
+                                        backgroundColor: isLogoutHovered ? context.colorScheme.accentHover : context.colorScheme.danger,
+                                        color: context.colorScheme.textColor
+                                    }}
+                                    onMouseEnter={() => setIsLogoutHovered(true)}
+                                    onMouseLeave={() => setIsLogoutHovered(false)}
+                                />
+                            </div>
+                        </div>
+                    </>
+                }
+            </div>
         </Modal>
     );
 }

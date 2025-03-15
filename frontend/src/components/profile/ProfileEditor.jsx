@@ -7,9 +7,10 @@ import Alert from '../utility/Alert';
 import Modal from '../utility/Modal';
 import PictureUpload from './PictureUpload';
 import api from '../../lib/api';
-
+import { useAppContext } from '../../lib/context';
 
 export default function ProfileEditor({ showEditor, hideEditor }) {
+    const context = useAppContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userData, setUserData] = useState(null);
@@ -57,22 +58,22 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
     return (
         <Modal showModal={showEditor} hideModal={hideEditor}>
             {loading ? <Loading/> :
-                <div className='w-100'>
-                    <div className='w-100 mb-3 d-flex flex-row justify-content-between align-items-center'>
-                        <h3 className='h3 m-0'>Edit profile</h3>
+                <div className='w-100 p-4 rounded' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
+                    <div className='w-100 mb-3 d-flex flex-row justify-content-between align-items-center' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
+                        <h3 className='h3 m-0' style={{color: context.colorScheme.textColor}}>Edit profile</h3>
                         <div>
                             <CustomButton className='mr-1 btn-danger' text='Cancel' onClick={hideEditor}/>
                             <CustomButton text='Save' onClick={handleSaveProfile}/>
                         </div>
                     </div>
-                    <label className='m-0 w-100' htmlFor='profile-picture'>Profile picture</label>
+                    <label className='m-0 w-100' htmlFor='profile-picture' style={{color: context.colorScheme.textColor}}>Profile picture</label>
                     <PictureUpload
                         id='profile-picture'
-                        className='mb-3'
+                        className='mb-4'
                         url={userData.profile_picture}
                         setUrl={url => handleUpdateField('profile_picture', url)}
                     />
-                    <label className='m-0 w-100' htmlFor='name'>Name</label>
+                    <label className='m-0 w-100' htmlFor='name' style={{color: context.colorScheme.textColor}}>Name</label>
                     <CustomTextInput
                         id='name'
                         type='text'
@@ -81,7 +82,7 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
                         onChange={text => handleUpdateField('name', text)}
                         className='mb-2 w-100'
                     />
-                    <label className='m-0 w-100' htmlFor='username'>Username</label>
+                    <label className='m-0 w-100' htmlFor='username' style={{color: context.colorScheme.textColor}}>Username</label>
                     <CustomTextInput
                         id='username'
                         type='text'
@@ -90,7 +91,7 @@ export default function ProfileEditor({ showEditor, hideEditor }) {
                         onChange={text => handleUpdateField('username', text)}
                         className='mb-2 w-100'
                     />
-                    <label className='m-0 w-100' htmlFor='bio'>Bio</label>
+                    <label className='m-0 w-100' htmlFor='bio' style={{color: context.colorScheme.textColor}}>Bio</label>
                     <CustomTextarea
                         id='bio'
                         value={userData.bio || ''}

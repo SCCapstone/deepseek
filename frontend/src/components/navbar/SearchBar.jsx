@@ -6,11 +6,11 @@ import CustomTextInput from '../input/CustomTextInput';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
-
+import { useAppContext } from '../../lib/context';
 
 function UserResult({ user, handleAddFriend, hideResults }) {
     const navigate = useNavigate();
-
+    const context = useAppContext();
     const handleNavigateToProfile = () => {
         hideResults();
         navigate('/profile/' + user.username);

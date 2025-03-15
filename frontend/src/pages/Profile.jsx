@@ -7,6 +7,7 @@ import Modal from '../components/utility/Modal';
 import Loading from '../components/utility/Loading';
 import Alert from '../components/utility/Alert';
 import api from '../lib/api';
+import { useAppContext } from '../lib/context';
 
 
 export default function ProfilePage() {
@@ -15,6 +16,7 @@ export default function ProfilePage() {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const context = useAppContext();
 
     const showEditor = () => setEditing(true);
 
@@ -39,7 +41,7 @@ export default function ProfilePage() {
             <div
                 className='container my-3 w-100 rounded
                 d-flex flex-column justify-content-start align-items-stretch'
-                style={{ backgroundColor: '#eee' }}
+                style={{ backgroundColor: context.colorScheme.secondaryBackground }}
             >
                 <ProfileHeader userData={userData} showEditor={username ? null : () => setEditing(true)}/>
                 <ProfileTabs username={username}/>

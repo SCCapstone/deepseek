@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useAppContext } from '../../lib/context';
 
 
 export default function SideBar({ children, ...props }) {
+    const context = useAppContext();
     const MIN_SIDEBAR_WIDTH = 200;
     const MAX_SIDEBAR_WIDTH = 1000;
     const DEFAULT_SIDEBAR_WIDTH = 300;
@@ -52,10 +54,10 @@ export default function SideBar({ children, ...props }) {
         <div
             ref={sidebarRef}
             className='d-flex flex-row'
-            style={{width: sidebarWidth}}
+            style={{width: sidebarWidth, backgroundColor: context.colorScheme.backgroundColor}}
         >
             <div
-                style={{width: 4, cursor: 'ew-resize', backgroundColor: '#eee'}}
+                style={{width: 4, cursor: 'ew-resize', backgroundColor: context.colorScheme.tertiaryBackground}}
                 onMouseDown={startResizing}
             ></div>
             <div className='flex-grow-1 d-flex flex-column' style={{overflowY: 'hidden'}}>

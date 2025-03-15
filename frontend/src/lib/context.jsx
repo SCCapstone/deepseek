@@ -2,46 +2,53 @@ import {
     useContext,
     createContext,
     useState,
+    useEffect,
 } from 'react';
-import { Themes } from './themes';
+import { lightTheme, darkTheme } from './themes';
 
+// Create the app context
+const AppContext = createContext();
 
-export const AppContext = createContext(null);
-
-export const useAppContext = () => useContext(AppContext);
-
+// Provider component
 export function AppContextProvider({ children }) {
-    const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('theme') || 'light';
-    });
+    // Use the light theme as default
+    const [colorScheme, setColorScheme] = useState(darkTheme);
+    const [user, setUser] = useState(null);
 
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light'
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
-    }
-    
-    const colorScheme = Themes[theme];
-    const [user, _setUser] = useState(() => {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser)
-            return JSON.parse(savedUser);
-        return null;
-    })
-    const setUser = (_user) => {
-        localStorage.setItem('user', JSON.stringify(_user));
-        _setUser(_user);
-    }
+    // Toggle between light and dark themes
+    const toggleColorScheme = () => {
+        setColorScheme(prevScheme => 
+            prevScheme.name === 'light' ? darkTheme : lightTheme
+        );
+    };
+
+    // Load user preference for color scheme from local storage
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setColorScheme(savedTheme === 'dark' ? darkTheme : lightTheme);
+        } else {
+            // Check system preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setColorScheme(prefersDark ? darkTheme : lightTheme);
+        }
+    }, []);
+
+    // Save theme preference when it changes
+    useEffect(() => {
+        localStorage.setItem('theme', colorScheme.name);
+    }, [colorScheme]);
 
     return (
-        <AppContext.Provider value={{
-            theme,
-            toggleTheme,
-            colorScheme,
-            user,
-            setUser,
-        }}>
+        <AppContext.Provider value={{ colorScheme, toggleColorScheme, user, setUser }}>
             {children}
         </AppContext.Provider>
     );
 }
+
+// Custom hook to use the app context
+export function useAppContext() {
+    return useContext(AppContext);
+}
+
+export default AppContext;

@@ -1,10 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAppContext } from '../lib/context';
 
 export default function Home() {
+    const context = useAppContext();
     return (
         <div style={{height: '100vh'}} className='d-flex justify-content-center align-items-center'>
-            <div className='d-flex flex-column align-items-center'>
+            <div className='d-flex flex-column align-items-center' style={{backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
                 <h1 className='h1'>CalendarMedia</h1>
                 <p>Look at what other people are doing!</p>
                 <div>

@@ -3,6 +3,7 @@ Flask routes for authentication-related API endpoints
 """
 from datetime import datetime
 from flask import Blueprint, request, make_response
+import pytz
 
 from db import User
 from utils.data_utils import *
@@ -34,11 +35,12 @@ def register():
 
     # hashing password
     hashed_password = hash_password(password)
+    created_at = datetime.now(pytz.timezone('US/Eastern'))
     new_user = User.create(
         username=username,
         email=email,
         hashed_password=hashed_password,
-        created_at=datetime.now(),
+        created_at=created_at,
     )
 
     # generating auth token and storing in database

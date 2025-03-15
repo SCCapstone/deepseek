@@ -1,18 +1,28 @@
 import { useState } from 'react';
 import EventsTab from './EventsTab';
 import FriendsTab from './FriendsTab';
+import { useAppContext } from '../../lib/context';
 
 
 function TabButton({ active, label, onClick }) {
+    const context = useAppContext();
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
-        <button className='w-100 p-3 font-weight-bold' onClick={onClick} style={{
+        <button className='w-100 p-3 font-weight-bold' onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} style={{
             borderTopWidth: 0,
             borderRightWidth: 0,
             borderLeftWidth: 0,
             borderBottomWidth: (active ? 4 : 0),
-            borderColor: 'rgb(100, 100, 255)',
+            borderColor: context.colorScheme.accentColor,
             outline: 'none',
-            backgroundColor: (active ? 'rgb(215, 215, 215)' : null)
+            backgroundColor: isHovered 
+                ? context.colorScheme.accentHover + '20'
+                : context.colorScheme.tertiaryBackground,
+            color: isHovered 
+                ? context.colorScheme.accentColor 
+                : context.colorScheme.textColor,
+            transition: 'all 0.2s ease',
         }}>{label}</button>
     );
 }
@@ -34,7 +44,7 @@ export default function ProfileTabs({ username }) {
     return (
         <div>
             <div
-                className='p-1 mb-3 d-flex flex-row justify-content-between align-items-center'
+                className='p-1 mb-3 d-flex flex-row justify-content-between align-items-center rounded'
                 style={{gap: 10}}
             >
                 <TabButton active={tab === 'events'} onClick={() => setTab('events')} label='Events'/>
