@@ -6,12 +6,16 @@ import Modal from '../utility/Modal';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
-
+import { useAppContext } from '../../lib/context';
 
 export default function SettingsWindow({ showWindow, hideWindow }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [settingsData, setSettingsData] = useState(null);
+    const context = useAppContext();
+
+    const [isLinkHovered, setIsLinkHovered] = useState(false);
+    const [isLogoutHovered, setIsLogoutHovered] = useState(false);
 
     const getData = async () => {
         setLoading(false);
@@ -65,7 +69,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
 
     return (
         <Modal showModal={showWindow} hideModal={hideWindow}>
-            <div className='w-100 d-flex flex-column bg-white p-4 rounded shadow'>
+            <div className='w-100 d-flex flex-column p-4 rounded' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
                 {loading ? <Loading/> :
                     <>
                         <div className='w-100 d-flex flex-row justify-content-between align-items-center mb-3'>
@@ -75,23 +79,35 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
                                     className="btn p-0 border-0"
                                     onClick={hideWindow}
                                 >
-                                    <FaTimes size={20} color="black" />
+                                <FaTimes size={20} color={context.colorScheme.textColor} />
                                 </button>
                             </div>
                         </div>
                         
                         <h4 className="mt-3 mb-2">Account</h4>
-                        <div className="card p-3 mb-4">
+                        <div className="card p-3 mb-4" style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
                             <div className="d-flex flex-column">
                                 <CustomButton
                                     text='Link with Google'
                                     className='btn-primary mb-3'
                                     onClick={handleLinkWithGoogle}
+                                    style={{
+                                        backgroundColor: isLinkHovered ? context.colorScheme.accentHover : context.colorScheme.accentColor,
+                                        color: context.colorScheme.textColor
+                                    }}
+                                    onMouseEnter={() => setIsLinkHovered(true)}
+                                    onMouseLeave={() => setIsLinkHovered(false)}
                                 />
                                 <CustomButton
                                     text='Logout'
                                     className='btn-danger'
                                     onClick={handleLogout}
+                                    style={{
+                                        backgroundColor: isLogoutHovered ? context.colorScheme.accentHover : context.colorScheme.danger,
+                                        color: context.colorScheme.textColor
+                                    }}
+                                    onMouseEnter={() => setIsLogoutHovered(true)}
+                                    onMouseLeave={() => setIsLogoutHovered(false)}
                                 />
                             </div>
                         </div>

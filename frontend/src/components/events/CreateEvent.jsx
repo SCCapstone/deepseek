@@ -6,7 +6,7 @@ import Loading from '../utility/Loading';
 import Modal from '../utility/Modal';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
-
+import { useAppContext } from '../../lib/context';
 
 const BLANK_EVENT = {
     title: '',
@@ -23,6 +23,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [eventData, setEventData] = useState(BLANK_EVENT);
+    const context = useAppContext();
 
     const handleUpdateField = (field, value) => {
         let tmp = {}
@@ -48,17 +49,53 @@ export default function CreateEvent({ showEditor, hideEditor }) {
 
     return (
         <Modal showModal={showEditor} hideModal={hideEditor}>
-            <form className='w-100 d-flex flex-column bg-white p-4 rounded shadow'>
+            <form className='w-100 d-flex flex-column p-4 rounded' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
                 {loading ? <Loading className='mb-3'/> :
                     <>
                         <div className='w-100 d-flex flex-row justify-content-between align-items-center mb-3'>
                             <h3 className='h3 m-0'>Create event</h3>
                             <div className='d-flex flex-row'>
-                                <button className='btn btn-danger mr-1' onClick={hideEditor}>Cancel</button>
-                                <button className='btn btn-primary' onClick={handleSubmit}>Save</button>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-secondary mr-1" 
+                                    data-dismiss="modal" 
+                                    onClick={hideEditor}
+                                    style={{
+                                        transition: 'background-color 0.2s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#5a6268';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#6c757d';
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-primary"
+                                    onClick={handleSubmit}
+                                    disabled={loading}
+                                    style={{
+                                        transition: 'background-color 0.2s ease, transform 0.1s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        if (!loading) {
+                                            e.currentTarget.style.backgroundColor = '#0069d9';
+                                            e.currentTarget.style.transform = 'scale(1.03)';
+                                        }
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#007bff';
+                                        e.currentTarget.style.transform = 'scale(1)';
+                                    }}
+                                >
+                                    {loading ? 'Saving...' : 'Save'}
+                                </button>
                             </div>
                         </div>
-                        <label htmlFor='title' className='m-0'>Title</label>
+                        <label htmlFor='title' className='m-0' style={{color: context.colorScheme.textColor}}>Title</label>
                         <CustomTextInput
                             id='title'
                             placeholder='TITLE'
@@ -66,7 +103,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                             value={eventData.title}
                             onChange={text => handleUpdateField('title', text)}
                         />
-                        <label htmlFor='location' className='m-0'>Location</label>
+                        <label htmlFor='location' className='m-0' style={{color: context.colorScheme.textColor}}>Location</label>
                         <CustomTextInput
                             id='location'
                             placeholder='LOCATION'
@@ -74,7 +111,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                             value={eventData.location}
                             onChange={text => handleUpdateField('location', text)}
                         />
-                        <label htmlFor='description' className='m-0'>Description</label>
+                        <label htmlFor='description' className='m-0' style={{color: context.colorScheme.textColor}}>Description</label>
                         <CustomTextarea
                             id='description'
                             className='mb-3'
@@ -88,7 +125,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                                     maxWidth: '200px',
                                 }}
                             >
-                                <label htmlFor='date' className='m-0'>Date</label>
+                                <label htmlFor='date' className='m-0' style={{color: context.colorScheme.textColor}}>Date</label>
                                 <input
                                     id='date'
                                     type='date'
@@ -99,7 +136,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                                 />
                             </div>
                             <div className='d-flex flex-column align-items-start mr-3'>
-                                <label htmlFor='start-time' className='m-0'>Start time</label>
+                                <label htmlFor='start-time' className='m-0' style={{color: context.colorScheme.textColor}}>Start time</label>
                                 <input
                                     id='start-time'
                                     type='time'
@@ -109,7 +146,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                                 />
                             </div>
                             <div className='d-flex flex-column align-items-start'>
-                                <label htmlFor='end-time' className='m-0'>End time</label>
+                                <label htmlFor='end-time' className='m-0' style={{color: context.colorScheme.textColor}}>End time</label>
                                 <input
                                     id='end-time'
                                     type='time'
@@ -130,7 +167,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                                     checked={eventData.set_reminder}
                                     onChange={event => handleUpdateField('set_reminder', !eventData.set_reminder)}
                                 />
-                                <label className='m-0 w-100' htmlFor='set-reminder'>Set reminder</label>
+                                <label className='m-0 w-100' htmlFor='set-reminder' style={{color: context.colorScheme.textColor}}>Set reminder</label>
                             </div>
                             <div className='form-control d-flex flex-row align-items-center'>
                                 <input
@@ -140,7 +177,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                                     checked={eventData.public}
                                     onChange={event => handleUpdateField('public', !eventData.public)}
                                 />
-                                <label className='m-0 w-100' htmlFor='public'>Public</label>
+                                <label className='m-0 w-100' htmlFor='public' style={{color: context.colorScheme.textColor}}>Public</label>
                             </div>
                         </div>
                     </>

@@ -1,12 +1,46 @@
-export const Themes = {
-    light: {
-        backgroundColor: '#fff',
-        accentColor: '#eee',
-        textColor: '#000',
-    },
-    dark: {
-        backgroundColor: '#222',
-        accentColor: '#444',
-        textColor: '#fff',
-    },
-}
+// Define standardized color schemes for light and dark modes
+
+export const lightTheme = {
+    name: 'light',
+    // Background colors
+    backgroundColor: '#ffffff',           // Main background
+    secondaryBackground: '#f5f5f5',       // Secondary background (cards, panels)
+    tertiaryBackground: '#e9ecef',        // Tertiary background (headers, footers)
+    // Text colors
+    textColor: '#212529',                 // Primary text
+    secondaryText: '#6c757d',             // Secondary text
+    // Accent colors
+    accentColor: '#007bff',               // Primary accent (buttons, links)
+    accentHover: '#0069d9',               // Accent hover state
+    // Border colors
+    borderColor: '#dee2e6',               // Standard borders
+    // Status colors
+    success: '#28a745',
+    danger: '#dc3545',
+    warning: '#ffc107',
+    info: '#17a2b8',
+};
+
+export const darkTheme = {
+    name: 'dark',
+    // Background colors
+    backgroundColor: '#121212',           // Main background
+    secondaryBackground: '#1e1e1e',       // Secondary background (cards, panels)
+    tertiaryBackground: '#2d2d2d',        // Tertiary background (headers, footers)
+    // Text colors
+    textColor: '#f8f9fa',                 // Primary text
+    secondaryText: '#adb5bd',             // Secondary text
+    // Accent colors
+    accentColor: '#0d6efd',               // Primary accent (buttons, links)
+    accentHover: '#0b5ed7',               // Accent hover state
+    // Border colors
+    borderColor: '#343a40',               // Standard borders
+    // Status colors
+    success: '#198754',
+    danger: '#dc3545',
+    warning: '#ffc107',
+    info: '#0dcaf0',
+};
+
+// Export default light theme
+export default lightTheme;

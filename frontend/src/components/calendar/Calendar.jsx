@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 import { useAppContext } from '../../lib/context';
 import { formatDate } from '../utility/dateUtils';
+import { useNavigate } from 'react-router-dom';
 
 // Debug code to check if this file exists and what components it imports
 console.log('Calendar component file exists');
@@ -42,20 +43,21 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
     const today = new Date();
     const context = useAppContext();
     const [view, setView] = useState(0);
+    const navigate = useNavigate();
 
     const styles = {
         calendarHeader: {
             color: context.colorScheme.textColor,
         },
         calendar: {
-
+            backgroundColor: context.colorScheme.backgroundColor,
         },
         arrow: {
             color: context.colorScheme.textColor,
         },
         weekDays: {
             color: context.colorScheme.textColor,
-            backgroundColor: context.colorScheme.accentColor,
+            backgroundColor: context.colorScheme.tertiaryBackground,
             display: 'grid',
             gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
         },
@@ -70,6 +72,7 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
+            borderColor: context.colorScheme.borderColor,
         },
         dayNumber: {
             fontWeight: 'bold',
@@ -108,10 +111,26 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
         moreEvents: {
             fontSize: '0.75rem',
             textAlign: 'center',
-            color: context.colorScheme.textColor,
+            color: context.colorScheme.secondaryText,
         },
         otherMonthDay: {
             opacity: 0.5,
+        },
+        todayButton: {
+            backgroundColor: context.colorScheme.accentColor,
+            color: 'white',
+            transition: 'background-color 0.2s ease',
+        },
+        viewButton: {
+            backgroundColor: context.colorScheme.secondaryBackground,
+            color: context.colorScheme.textColor,
+            borderColor: context.colorScheme.borderColor,
+            transition: 'background-color 0.2s ease',
+        },
+        arrowButton: {
+            color: context.colorScheme.textColor,
+            transition: 'background-color 0.2s ease',
+            borderRadius: '50%',
         }
     }
 
@@ -208,8 +227,17 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
     // Function to handle event click
     const handleEventClick = (event, e) => {
         e.stopPropagation(); // Prevent day click from triggering
-        if (onEventSelect) {
-            onEventSelect(event);
+        
+        // Navigate to event page
+        const eventId = event._id || event.id;
+        if (eventId) {
+            navigate(`/events/${eventId}`);
+        } else {
+            console.error('Event has no ID, cannot navigate');
+            // Fall back to using onEventSelect
+            if (onEventSelect) {
+                onEventSelect(event);
+            }
         }
     };
 
@@ -224,41 +252,52 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
     };
 
     // Determine how many events to show based on day cell height
-    // For simplicity, we'll use a fixed number, but this could be dynamic
     const getMaxEventsToShow = () => {
         return view === 0 ? 3 : 5; // Show more events in week/day view
     };
 
     return (
-        <div className='d-flex flex-column w-100 h-100'>
+        <div className='d-flex flex-column w-100 h-100' style={{ backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor }}>
             <div className='d-flex flex-row p-3' style={styles.calendarHeader}>
                 <button
                     onClick={() => onChange(new Date())}
-                    className='btn btn-primary shadow-none mr-1'>
+                    className='btn shadow-none mr-1'
+                    style={styles.todayButton}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}cc`}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = context.colorScheme.accentColor}>
                     Today</button>
                     <div className='dropdown'>
                         <button
-                            className='btn btn-secondary dropdown-toggle mr-1 shadow-none'
+                            className='btn dropdown-toggle mr-1 shadow-none'
                             type='button'
                             id='dropdownMenuButton'
                             data-toggle='dropdown'
                             aria-haspopup='true'
-                            aria-expanded='false'>
+                            aria-expanded='false'
+                            style={styles.viewButton}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = `${context.colorScheme.secondaryBackground}cc`}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = context.colorScheme.secondaryBackground}>
                             {views[view]}</button>
-                        <div className='dropdown-menu' aria-labelledby='dropdownMenuButton'>
-                            <button onClick={() => setView(0)} className='dropdown-item'>Month</button>
-                            <button onClick={() => setView(1)} className='dropdown-item'>Week</button>
-                            <button onClick={() => setView(2)} className='dropdown-item'>Day</button>
+                        <div className='dropdown-menu' aria-labelledby='dropdownMenuButton' style={{ backgroundColor: context.colorScheme.secondaryBackground }}>
+                            <button onClick={() => setView(0)} className='dropdown-item' style={{ color: context.colorScheme.textColor }}>Month</button>
+                            <button onClick={() => setView(1)} className='dropdown-item' style={{ color: context.colorScheme.textColor }}>Week</button>
+                            <button onClick={() => setView(2)} className='dropdown-item' style={{ color: context.colorScheme.textColor }}>Day</button>
                         </div>
                     </div>
                 <button
                     onClick={lastMonth}
-                    className='btn d-flex justify-content-center align-items-center shadow-none'>
+                    className='btn d-flex justify-content-center align-items-center shadow-none'
+                    style={styles.arrowButton}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                     <AiFillCaretLeft size={20} style={styles.arrow}/>
                 </button>
                 <button
                     onClick={nextMonth}
-                    className='btn d-flex justify-content-center align-items-center shadow-none mr-1'>
+                    className='btn d-flex justify-content-center align-items-center shadow-none mr-1'
+                    style={styles.arrowButton}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                     <AiFillCaretRight size={20} style={styles.arrow}/>
                 </button>
                 <h3 className='h3 mb-0'>{monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}</h3>
@@ -298,7 +337,7 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                         // Determine day number style based on state
                         const dayNumberStyle = {
                             ...styles.dayNumber,
-                            backgroundColor: isSelected ? '#007bff' : isToday ? '#6c757d' : 'transparent',
+                            backgroundColor: isSelected ? context.colorScheme.accentColor : isToday ? context.colorScheme.secondaryText : 'transparent',
                             color: (isSelected || isToday) ? 'white' : context.colorScheme.textColor,
                         };
                         
@@ -308,10 +347,26 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                                 style={{
                                     ...styles.day,
                                     ...(isCurrentMonth ? {} : styles.otherMonthDay),
-                                    backgroundColor: isSelected ? 'rgba(0, 123, 255, 0.1)' : isToday ? 'rgba(108, 117, 125, 0.1)' : 'transparent',
+                                    backgroundColor: isSelected ? `${context.colorScheme.accentColor}20` : isToday ? `${context.colorScheme.secondaryText}20` : context.colorScheme.backgroundColor,
+                                    cursor: 'pointer',
+                                    transition: 'background-color 0.2s ease',
                                 }}
                                 className='border p-1'
-                                onClick={() => onChange(day.date)}>
+                                onClick={() => onChange(day.date)}
+                                onMouseOver={(e) => {
+                                    if (!isSelected) {
+                                        e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                            ? 'rgba(255, 255, 255, 0.05)'
+                                            : 'rgba(0, 0, 0, 0.03)';
+                                    }
+                                }}
+                                onMouseOut={(e) => {
+                                    if (!isSelected) {
+                                        e.currentTarget.style.backgroundColor = isToday 
+                                            ? `${context.colorScheme.secondaryText}20` 
+                                            : context.colorScheme.backgroundColor;
+                                    }
+                                }}>
                                 <div style={dayNumberStyle}>
                                     {day.date.getDate()}
                                 </div>
@@ -328,9 +383,25 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                                         return (
                                             <div 
                                                 key={eventIndex} 
-                                                style={eventPreviewStyle}
+                                                style={{
+                                                    ...eventPreviewStyle,
+                                                    cursor: 'pointer',
+                                                    transition: 'transform 0.1s ease, background-color 0.2s ease',
+                                                }}
                                                 onClick={(e) => handleEventClick(event, e)}
                                                 title={event.title}
+                                                onMouseOver={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1.02)';
+                                                    e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                                        ? 'rgba(255, 255, 255, 0.15)' 
+                                                        : 'rgba(0, 0, 0, 0.08)';
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1)';
+                                                    e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                                        ? 'rgba(255, 255, 255, 0.1)' 
+                                                        : 'rgba(0, 0, 0, 0.05)';
+                                                }}
                                             >
                                                 <div 
                                                     style={{
@@ -346,10 +417,20 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                                     })}
                                     {dayEvents.length > maxEventsToShow && (
                                         <div 
-                                            style={styles.moreEvents}
+                                            style={{
+                                                ...styles.moreEvents,
+                                                cursor: 'pointer',
+                                                transition: 'color 0.2s ease',
+                                            }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onChange(day.date);
+                                            }}
+                                            onMouseOver={(e) => {
+                                                e.currentTarget.style.color = context.colorScheme.accentColor;
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.currentTarget.style.color = context.colorScheme.secondaryText;
                                             }}
                                         >
                                             +{dayEvents.length - maxEventsToShow} more

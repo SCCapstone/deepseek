@@ -1,22 +1,14 @@
-import {
-    useEffect,
-    useState,
-    useContext,
-    useRef,
-    useCallback,
- } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import EventCard from './EventCard';
+import EventView from './EventView';
 import { useAppContext } from '../../lib/context';
 import { formatDate, formatTimeRange } from '../utility/dateUtils';
-
-// Debug code to check if this file exists
-console.log('EventList in events folder exists');
 
 export default function EventList({ events, selectedEvent: propSelectedEvent, setSelectedEvent: propSetSelectedEvent }) {
     const navigate = useNavigate();
     const context = useAppContext();
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [hoveredEventId, setHoveredEventId] = useState(null);
 
     // Update local state when prop changes
     useEffect(() => {
@@ -49,6 +41,10 @@ export default function EventList({ events, selectedEvent: propSelectedEvent, se
     };
 
     const styles = {
+        container: {
+            backgroundColor: context.colorScheme.backgroundColor,
+            color: context.colorScheme.textColor,
+        },
         text: {
             color: context.colorScheme.textColor,
         },
@@ -63,36 +59,42 @@ export default function EventList({ events, selectedEvent: propSelectedEvent, se
             justifyContent: 'center',
             alignItems: 'center',
             height: '100%',
-            color: context.colorScheme.textColor,
+            color: context.colorScheme.secondaryText,
             opacity: 0.7,
             textAlign: 'center',
             padding: '2rem',
         },
-        backButton: {
-            color: context.colorScheme.textColor,
-        },
         eventDetail: {
-            backgroundColor: context.colorScheme.name === 'dark' ? '#2d2d2d' : '#f8f9fa',
+            backgroundColor: context.colorScheme.secondaryBackground,
             padding: '15px',
             borderRadius: '8px',
             boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
-        }
+            transition: 'all 0.3s cubic-bezier(.25,.8,.25,1)',
+        },
+        eventItem: (isHovered) => ({
+            transition: 'all 0.2s ease-in-out',
+            transform: isHovered ? 'translateX(5px)' : 'translateX(0)',
+            cursor: 'pointer',
+        })
     }
     
     const sortedEvents = events && events.length > 0 
         ? [...events].sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
         : [];
 
-    // Render event details when an event is selected
     const renderEventDetails = () => {
-        // Use our centralized date formatter
         const formattedDate = formatDate(selectedEvent.date);
         
         return (
             <div style={styles.eventDetail}>
-                <div className='d-flex flex-row justify-content-start align-items-center mb-3'>
-                    <button className='btn' onClick={handleClearSelection} style={styles.backButton}>&#x2190;</button>
+                <div className='d-flex flex-row justify-content-between align-items-center mb-3'>
                     <h3 className='h3 m-0' style={styles.text}>{selectedEvent.title}</h3>
+                    <button 
+                        className='btn btn-sm btn-outline-secondary' 
+                        onClick={handleClearSelection}
+                    >
+                        Back to list
+                    </button>
                 </div>
                 {selectedEvent.description && (
                     <p style={styles.text}>{selectedEvent.description}</p>
@@ -111,7 +113,7 @@ export default function EventList({ events, selectedEvent: propSelectedEvent, se
         );
     };
 
-    // Render empty state when no events are available
+
     const renderEmptyState = () => {
         return (
             <div style={styles.emptyState}>
@@ -130,22 +132,33 @@ export default function EventList({ events, selectedEvent: propSelectedEvent, se
 
         return (
             <div>
-                {sortedEvents.map((event, i) =>
-                    <EventCard 
-                        key={i}
-                        onClick={() => handleEventClick(event)}
-                        event={{
-                            ...event,
-                            formattedTime: formatTimeRange(event.start_time, event.end_time)
-                        }}
-                    />
-                )}
+                {sortedEvents.map((event, i) => {
+                    const eventId = event._id || event.id || i;
+                    const isHovered = hoveredEventId === eventId;
+                    
+                    return (
+                        <div
+                            key={eventId}
+                            onMouseEnter={() => setHoveredEventId(eventId)}
+                            onMouseLeave={() => setHoveredEventId(null)}
+                            style={styles.eventItem(isHovered)}
+                        >
+                            <EventView 
+                                onClick={() => handleEventClick(event)}
+                                event={{
+                                    ...event,
+                                    formattedTime: formatTimeRange(event.start_time, event.end_time)
+                                }}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         );
     };
 
     return (
-        <div className='p-3 d-flex flex-column w-100 h-100'>
+        <div className='p-3 d-flex flex-column w-100 h-100' style={styles.container}>
             {selectedEvent ? renderEventDetails() : renderEventList()}
         </div>
     );

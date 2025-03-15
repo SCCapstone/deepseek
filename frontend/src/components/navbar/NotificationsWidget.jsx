@@ -3,11 +3,12 @@ import { FaBell } from "react-icons/fa";
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
-
+import { useAppContext } from '../../lib/context';
 
 function Notification({ item }) {
+    const context = useAppContext();
     return (
-        <div className='p-3 bg-light rounded-lg mb-2 w-100'>
+        <div className='p-3 rounded-lg mb-2 w-100' style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
             {item.message}
         </div>
     );
@@ -19,7 +20,7 @@ export default function NotificationsWidget({ className }) {
     const [error, setError] = useState(null);
     const [notifications, setNotifications] = useState(null);
     const [showNotifications, setShowNotifications] = useState(false);
-
+    const context = useAppContext();
     const getData = async () => {
         setLoading(true);
         const { data, error: apiError } = await api.get('/events/notifications');
@@ -47,7 +48,7 @@ export default function NotificationsWidget({ className }) {
             <div className='position-relative' onClick={() => setShowNotifications(true)} style={{cursor: 'pointer'}}>
                 <FaBell
                     size={24}
-                    color='black'
+                    color={context.colorScheme.textColor}
                 />
                 {(notifications && notifications.length > 0) ?
                     <div
@@ -61,9 +62,9 @@ export default function NotificationsWidget({ className }) {
             {showNotifications ?
                 <>
                     <div
-                        className='position-absolute mt-4 p-2 bg-white shadow rounded-lg
+                        className='position-absolute mt-4 p-2   rounded-lg
                         d-flex flex-column align-items-center border'
-                        style={{right: 0, width: '280px', maxHeight: '400px', zIndex: 1020}}
+                        style={{right: 0, width: '280px', maxHeight: '400px', zIndex: 1020, backgroundColor: context.colorScheme.secondaryBackground}}
                     >
                         {loading ? <Loading/> :
                             <>
@@ -77,7 +78,8 @@ export default function NotificationsWidget({ className }) {
                                         <div className='pt-2 w-100'>
                                             <button
                                                 onClick={handleClearNotifications}
-                                                className='w-100 btn border bg-danger text-white'
+                                                className='w-100 btn border'
+                                                style={{backgroundColor: context.colorScheme.danger, color: context.colorScheme.textColor}}
                                             >Clear</button>
                                         </div>
                                     </>

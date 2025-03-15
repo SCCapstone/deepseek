@@ -3,13 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import api from '../lib/api';
 import CustomTextInput from '../components/input/CustomTextInput';
 import CustomButton from '../components/input/CustomButton';
-
+import { useAppContext } from '../lib/context';
 
 export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const navigate = useNavigate();
+    const context = useAppContext();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -24,10 +25,13 @@ export default function RegisterPage() {
     }
 
     return (
-        <div style={{height: '100vh'}} className='d-flex align-items-center justify-content-center'>
+        <div style={{height: '100vh'}} className='d-flex align-items-center justify-content-center rounded-lg'>
             <form
-            className='p-3 d-flex flex-column align-items-center
-            border border-black rounded-lg shadow'
+            className='p-3 d-flex flex-column align-items-center'
+            style={{
+                backgroundColor: context.colorScheme.backgroundColor,
+                color: context.colorScheme.textColor,
+            }}
             onSubmit={handleSubmit}>
                 <h3 className='h3'>Register</h3>
                 <div className='mb-3'>
@@ -37,6 +41,10 @@ export default function RegisterPage() {
                         value={email}
                         onChange={text => setEmail(text)}
                         placeholder='EMAIL'
+                        style={{
+                            backgroundColor: context.colorScheme.secondaryBackground,
+                            color: context.colorScheme.textColor,
+                        }}
                     />
                     <CustomTextInput
                         className='mb-2'
@@ -44,6 +52,10 @@ export default function RegisterPage() {
                         value={username}
                         onChange={text => setUsername(text)}
                         placeholder='USERNAME'
+                        style={{
+                            backgroundColor: context.colorScheme.secondaryBackground,
+                            color: context.colorScheme.textColor,
+                        }}
                     />
                     <CustomTextInput
                         className='mb-2'
@@ -51,10 +63,14 @@ export default function RegisterPage() {
                         value={password}
                         onChange={text => setPassword(text)}
                         placeholder='PASSWORD'
+                        style={{
+                            backgroundColor: context.colorScheme.secondaryBackground,
+                            color: context.colorScheme.textColor,
+                        }}
                     />
                 </div>
                 <CustomButton className='mb-2' onClick={handleSubmit} text='Submit'/>
-                <Link className='' to='/login'>Login</Link>
+                <Link className='text-muted' to='/login'>Login</Link>
             </form>
         </div>
     );

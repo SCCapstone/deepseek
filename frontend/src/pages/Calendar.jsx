@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import Calendar from '../components/calendar/Calendar';
 
 import Sidebar from '../components/utility/Sidebar';
-import EventList from '../components/events/EventList';
-import EventFeed from '../components/events/EventFeed';
+import EventList from '../components/calendar/EventList';
+import EventFeed from '../components/calendar/EventFeed';
 import Loading from '../components/utility/Loading';
 import Alert from '../components/utility/Alert';
 import api from '../lib/api';
+import { useAppContext } from '../lib/context';
 
 
 export default function CalendarPage() {
@@ -17,6 +18,7 @@ export default function CalendarPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [tab, setTab] = useState('selected-date');
+    const context = useAppContext();
 
     async function getData() {
         const { data, error: apiError } = await api.get('/get-events');
@@ -60,7 +62,7 @@ export default function CalendarPage() {
     if (loading) return <Loading/>
 
     return (
-        <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{overflowY: 'hidden'}}>
+        <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{overflowY: 'hidden', backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
             <div className='w-100 h-100'>
                 <Calendar
                     onChange={handleDateChange}
@@ -70,16 +72,18 @@ export default function CalendarPage() {
                 />
             </div>
             <Sidebar>
-                <div className='d-flex flex-row justify-content-between w-100 border-bottom'>
+                <div className='d-flex flex-row justify-content-between w-100 border-bottom' style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}>
                     <div
                         className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'bg-primary text-white' : '')}
                         onClick={() => setTab('selected-date')}
+                        style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}
                     >
                         {selectedDate.toDateString()}
                     </div>
                     <div
                         className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'bg-primary text-white' : '')}
                         onClick={() => setTab('event-feed')}
+                        style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}
                     >
                         Event feed
                     </div>

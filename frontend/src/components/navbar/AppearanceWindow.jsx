@@ -1,8 +1,11 @@
 import { useAppContext } from '../../lib/context';
 import { FaTimes, FaMoon, FaSun } from 'react-icons/fa';
+import { useState } from 'react';
 
 export default function AppearanceWindow({ showWindow, hideWindow }) {
-    const { theme, toggleTheme } = useAppContext();
+    const context = useAppContext();
+    const [isLightHovered, setIsLightHovered] = useState(false);
+    const [isDarkHovered, setIsDarkHovered] = useState(false);
 
     if (!showWindow) return null;
 
@@ -26,40 +29,72 @@ export default function AppearanceWindow({ showWindow, hideWindow }) {
                 onClick={hideWindow}
             >
                 <div
-                    className="bg-white rounded-lg shadow p-4"
-                    style={{ width: '400px', maxWidth: '90%' }}
+                    className="rounded-lg shadow p-4"
+                    style={{ 
+                        width: '400px', 
+                        maxWidth: '90%',
+                        backgroundColor: context.colorScheme.secondaryBackground,
+                        color: context.colorScheme.textColor 
+                    }}
                     onClick={handleContainerClick}
                 >
                     <div className="d-flex justify-content-between align-items-center mb-4">
-                        <h5 className="m-0 font-weight-bold">Appearance</h5>
+                        <h5 className="m-0 font-weight-bold" style={{color: context.colorScheme.textColor}}>Appearance</h5>
                         <button
                             className="btn p-0 border-0"
                             onClick={hideWindow}
+                            style={{ backgroundColor: 'transparent' }}
                         >
-                            <FaTimes size={20} color="black" />
+                            <FaTimes size={20} style={{color: context.colorScheme.textColor}} />
                         </button>
                     </div>
 
-                    <p className="mb-3">Choose your preferred theme:</p>
+                    <p className="mb-3" style={{color: context.colorScheme.textColor}}>Choose your preferred theme:</p>
 
                     <div className="d-flex flex-row justify-content-around">
                         <div 
-                            className={`d-flex flex-column align-items-center p-3 rounded-lg ${theme === 'light' ? 'bg-primary text-white' : 'bg-light'}`}
+                            className={`d-flex flex-column align-items-center p-3 rounded-lg`}
                             onClick={() => {
-                                if (theme !== 'light') toggleTheme();
+                                if (context.colorScheme.name !== 'light') context.toggleColorScheme();
                             }}
-                            style={{ cursor: 'pointer', width: '45%' }}
+                            onMouseEnter={() => setIsLightHovered(true)}
+                            onMouseLeave={() => setIsLightHovered(false)}
+                            style={{ 
+                                cursor: 'pointer', 
+                                width: '45%',
+                                backgroundColor: context.colorScheme.name === 'light' 
+                                    ? context.colorScheme.accentColor 
+                                    : isLightHovered 
+                                        ? '#ffffff' // Darker shade for hover in light mode
+                                        : '#e9ecef',
+                                color: context.colorScheme.name === 'dark' 
+                                    ? '#212529' 
+                                    : '#f8f9fa'
+                            }}
                         >
                             <FaSun size={24} className="mb-2" />
                             <span>Light Mode</span>
                         </div>
                         
                         <div 
-                            className={`d-flex flex-column align-items-center p-3 rounded-lg ${theme === 'dark' ? 'bg-primary text-white' : 'bg-light'}`}
+                            className={`d-flex flex-column align-items-center p-3 rounded-lg`}
                             onClick={() => {
-                                if (theme !== 'dark') toggleTheme();
+                                if (context.colorScheme.name !== 'dark') context.toggleColorScheme();
                             }}
-                            style={{ cursor: 'pointer', width: '45%' }}
+                            onMouseEnter={() => setIsDarkHovered(true)}
+                            onMouseLeave={() => setIsDarkHovered(false)}
+                            style={{ 
+                                cursor: 'pointer', 
+                                width: '45%',
+                                backgroundColor: context.colorScheme.name === 'dark' 
+                                    ? context.colorScheme.accentColor 
+                                    : isDarkHovered 
+                                        ? '#121212' // Darker shade for hover in dark mode
+                                        : '#2d2d2d',
+                                color: context.colorScheme.name === 'light' 
+                                    ? '#f8f9fa' 
+                                    : '#212529'
+                            }}
                         >
                             <FaMoon size={24} className="mb-2" />
                             <span>Dark Mode</span>

@@ -3,6 +3,7 @@ import EventList from './EventList';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
+import { useAppContext } from '../../lib/context';
 
 
 function Events({ url }) {
@@ -33,21 +34,33 @@ function Events({ url }) {
 
 export default function EventFeed() {
     const [tab, setTab] = useState('my-events');
+    const context = useAppContext();
+
     return (
         <div className='w-100 d-flex flex-column align-items-center overflow-hidden'>
             <div
                 className='my-2 d-flex flex-row justify-content-center rounded-lg border'
                 style={{
                     cursor: 'pointer',
+                    backgroundColor: context.colorScheme.secondaryBackground,
+                    color: context.colorScheme.textColor,
                 }}
             >
                 <div
                     className={'p-2 rounded-left '+(tab === 'my-events' ? 'bg-primary text-white' : '')}
                     onClick={() => setTab('my-events')}
+                    style={{
+                        backgroundColor: context.colorScheme.secondaryBackground,
+                        color: context.colorScheme.textColor,
+                    }}
                 >My events</div>
                 <div
                     className={'p-2 rounded-right '+(tab === 'friends-events' ? 'bg-primary text-white' : '')}
                     onClick={() => setTab('friends-events')}
+                    style={{
+                        backgroundColor: context.colorScheme.secondaryBackground,
+                        color: context.colorScheme.textColor,
+                    }}
                 >Friends events</div>
             </div>
             <div className='w-100 flex-grow-1 flex-shrink-1' style={{overflowY: 'auto'}}>
