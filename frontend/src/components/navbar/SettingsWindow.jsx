@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import CustomButton from '../input/CustomButton';
 import CustomTextInput from '../input/CustomTextInput';
 import Modal from '../utility/Modal';
@@ -70,10 +71,12 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
                         <div className='w-100 d-flex flex-row justify-content-between align-items-center mb-3'>
                             <h3 className='h3 m-0'>Settings</h3>
                             <div className='d-flex flex-row'>
-                                <CustomButton
-                                    text='Close'
+                                <button
+                                    className="btn p-0 border-0"
                                     onClick={hideWindow}
-                                />
+                                >
+                                    <FaTimes size={20} color="black" />
+                                </button>
                             </div>
                         </div>
                         
