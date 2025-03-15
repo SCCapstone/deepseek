@@ -13,6 +13,7 @@ import api from '../lib/api';
 export default function CalendarPage() {
     const [events, setEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [tab, setTab] = useState('selected-date');
@@ -35,6 +36,27 @@ export default function CalendarPage() {
     const handleDateChange = (date) => {
         setSelectedDate(date);
     }
+    
+    const handleEventSelect = (event) => {
+        setSelectedEvent(event);
+        setTab('selected-date'); // Switch to the selected date tab when an event is clicked
+    }
+    
+    // Helper function to compare dates without time component
+    // Adjusts for the day-behind issue
+    const isSameDay = (date1, date2) => {
+        const d1 = new Date(date1);
+        // Add one day to fix the day-behind issue
+        d1.setDate(d1.getDate() + 1);
+        
+        const d2 = new Date(date2);
+        
+        return (
+            d1.getDate() === d2.getDate() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getFullYear() === d2.getFullYear()
+        );
+    };
   
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     if (loading) return <Loading/>
@@ -45,7 +67,8 @@ export default function CalendarPage() {
                 <Calendar
                     onChange={handleDateChange}
                     selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
+                    events={events}
+                    onEventSelect={handleEventSelect}
                 />
             </div>
             <Sidebar>
@@ -66,17 +89,14 @@ export default function CalendarPage() {
                 {tab === 'selected-date' ?
                     <EventList
                         events={events.filter(event => {
-                            const dateObj = new Date();
-                            const timezoneOffset = dateObj.getTimezoneOffset();
-                            const eventDate = new Date(
-                                (new Date(event.date)).getTime() + timezoneOffset * 60 * 1000
-                            );
-                            return (
-                                (eventDate.getDate() == selectedDate.getDate())
-                                && (eventDate.getMonth() == selectedDate.getMonth())
-                                && (eventDate.getFullYear() == selectedDate.getFullYear())
-                            );
+                            // Create a new date object from the event date
+                            const eventDate = new Date(event.date);
+                            console.log(eventDate, selectedDate);
+                            // Compare dates without time component
+                            return isSameDay(eventDate, selectedDate);
                         })}
+                        selectedEvent={selectedEvent}
+                        setSelectedEvent={setSelectedEvent}
                     />
                 : <EventFeed/>}
             </Sidebar>

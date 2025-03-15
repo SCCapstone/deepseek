@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaCog } from 'react-icons/fa';
 import SettingsWindow from './SettingsWindow';
+import AppearanceWindow from './AppearanceWindow';
 
 
 export default function SettingsWidget({ className }) {
     const [showMenu, setShowMenu] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [showAppearance, setShowAppearance] = useState(false);
 
     return (
         <>
@@ -21,6 +23,10 @@ export default function SettingsWidget({ className }) {
                         >
                             <button
                                 className='p-2 border-0 w-100 text-dark text-center'
+                                onClick={() => {
+                                    setShowMenu(false);
+                                    setShowAppearance(true);
+                                }}
                             >Appearance</button>
                             <div className='w-100' style={{height: 1, backgroundColor: '#ccc'}}></div>
                             <button
@@ -41,6 +47,7 @@ export default function SettingsWidget({ className }) {
                 : null}
             </div>
             <SettingsWindow showWindow={showSettings} hideWindow={() => setShowSettings(false)}/>
+            <AppearanceWindow showWindow={showAppearance} hideWindow={() => setShowAppearance(false)}/>
         </>
     );
 }

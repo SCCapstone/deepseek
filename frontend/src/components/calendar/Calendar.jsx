@@ -24,7 +24,18 @@ const views = [
     'Day',
 ];
 
-export default function Calendar({ onChange, selectedDate }) {
+// Event colors for visual distinction
+const eventColors = [
+    '#4285F4', // Blue
+    '#EA4335', // Red
+    '#FBBC05', // Yellow
+    '#34A853', // Green
+    '#8E24AA', // Purple
+    '#F06292', // Pink
+    '#FF9800', // Orange
+];
+
+export default function Calendar({ onChange, selectedDate, events = [], onEventSelect }) {
     const today = new Date();
     const context = useAppContext();
     const [view, setView] = useState(0);
@@ -51,6 +62,53 @@ export default function Calendar({ onChange, selectedDate }) {
         },
         day: {
             color: context.colorScheme.textColor,
+            position: 'relative',
+            height: '100%',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+        },
+        dayNumber: {
+            fontWeight: 'bold',
+            padding: '2px 5px',
+            borderRadius: '50%',
+            width: 'fit-content',
+            marginBottom: '4px',
+            color: context.colorScheme.textColor,
+        },
+        eventPreview: {
+            padding: '2px 4px',
+            marginBottom: '2px',
+            borderRadius: '3px',
+            fontSize: '0.75rem',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            color: context.colorScheme.textColor,
+        },
+        eventColor: {
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            marginRight: '4px',
+            flexShrink: 0,
+        },
+        eventTitle: {
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            flex: 1,
+        },
+        moreEvents: {
+            fontSize: '0.75rem',
+            textAlign: 'center',
+            color: context.colorScheme.textColor,
+        },
+        otherMonthDay: {
+            opacity: 0.5,
         }
     }
 
@@ -88,6 +146,60 @@ export default function Calendar({ onChange, selectedDate }) {
             current.setDate(current.getDate() + 1);
         }
     }
+
+    // Function to get events for a specific day
+    const getEventsForDay = (day) => {
+        if (!events || events.length === 0) return [];
+        
+        return events.filter(event => {
+            // Fix for ISO date format and timezone issues
+            const eventDate = new Date(event.date);
+            
+            // Adjust for timezone offset to ensure correct day
+            const adjustedEventDate = new Date(eventDate);
+            adjustedEventDate.setDate(eventDate.getDate() + 1); // Add one day to fix the day-behind issue
+            
+            // Create date objects with only year, month, and day for comparison
+            const eventDateOnly = new Date(
+                adjustedEventDate.getFullYear(),
+                adjustedEventDate.getMonth(),
+                adjustedEventDate.getDate()
+            );
+            
+            const dayDateOnly = new Date(
+                day.date.getFullYear(),
+                day.date.getMonth(),
+                day.date.getDate()
+            );
+            
+            // Compare dates without time component
+            return eventDateOnly.getTime() === dayDateOnly.getTime();
+        });
+    };
+
+    // Function to handle event click
+    const handleEventClick = (event, e) => {
+        e.stopPropagation(); // Prevent day click from triggering
+        if (onEventSelect) {
+            onEventSelect(event);
+        }
+    };
+
+    // Function to get a consistent color for an event based on its ID or title
+    const getEventColor = (event) => {
+        // Use event ID or title to generate a consistent color
+        const identifier = event.id || event.title;
+        const hash = identifier.split('').reduce((acc, char) => {
+            return char.charCodeAt(0) + ((acc << 5) - acc);
+        }, 0);
+        return eventColors[Math.abs(hash) % eventColors.length];
+    };
+
+    // Determine how many events to show based on day cell height
+    // For simplicity, we'll use a fixed number, but this could be dynamic
+    const getMaxEventsToShow = () => {
+        return view === 0 ? 3 : 5; // Show more events in week/day view
+    };
 
     return (
         <div className='d-flex flex-column w-100 h-100'>
@@ -148,17 +260,77 @@ export default function Calendar({ onChange, selectedDate }) {
                     </div>
                 </div>
                 <div style={styles.calendarGrid} className='flex-grow-1'>
-                    {days.map((day, i) =>
-                        <div
-                            key={i}
-                            style={styles.day}
-                            className={'border p-1 ' +
-                            (selectedDate.toDateString() === day.date.toDateString() ?
-                                'bg-primary' : day.date.toDateString() === today.toDateString() ?
-                                'bg-secondary' : null)}
-                            onClick={() => onChange(day.date)}>
-                            {day.date.getDate()}</div>
-                    )}
+                    {days.map((day, i) => {
+                        const isCurrentMonth = day.date.getMonth() === selectedDate.getMonth();
+                        const isSelected = selectedDate.toDateString() === day.date.toDateString();
+                        const isToday = day.date.toDateString() === today.toDateString();
+                        const dayEvents = getEventsForDay(day);
+                        const maxEventsToShow = getMaxEventsToShow();
+                        
+                        // Determine day number style based on state
+                        const dayNumberStyle = {
+                            ...styles.dayNumber,
+                            backgroundColor: isSelected ? '#007bff' : isToday ? '#6c757d' : 'transparent',
+                            color: (isSelected || isToday) ? 'white' : context.colorScheme.textColor,
+                        };
+                        
+                        return (
+                            <div
+                                key={i}
+                                style={{
+                                    ...styles.day,
+                                    ...(isCurrentMonth ? {} : styles.otherMonthDay),
+                                    backgroundColor: isSelected ? 'rgba(0, 123, 255, 0.1)' : isToday ? 'rgba(108, 117, 125, 0.1)' : 'transparent',
+                                }}
+                                className='border p-1'
+                                onClick={() => onChange(day.date)}>
+                                <div style={dayNumberStyle}>
+                                    {day.date.getDate()}
+                                </div>
+                                <div className='flex-grow-1'>
+                                    {dayEvents.slice(0, maxEventsToShow).map((event, eventIndex) => {
+                                        const eventColor = getEventColor(event);
+                                        const eventPreviewStyle = {
+                                            ...styles.eventPreview,
+                                            backgroundColor: context.colorScheme.name === 'dark' 
+                                                ? 'rgba(255, 255, 255, 0.1)' 
+                                                : 'rgba(0, 0, 0, 0.05)',
+                                        };
+                                        
+                                        return (
+                                            <div 
+                                                key={eventIndex} 
+                                                style={eventPreviewStyle}
+                                                onClick={(e) => handleEventClick(event, e)}
+                                                title={event.title}
+                                            >
+                                                <div 
+                                                    style={{
+                                                        ...styles.eventColor,
+                                                        backgroundColor: eventColor
+                                                    }} 
+                                                />
+                                                <div style={styles.eventTitle}>
+                                                    {event.title}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                    {dayEvents.length > maxEventsToShow && (
+                                        <div 
+                                            style={styles.moreEvents}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onChange(day.date);
+                                            }}
+                                        >
+                                            +{dayEvents.length - maxEventsToShow} more
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
