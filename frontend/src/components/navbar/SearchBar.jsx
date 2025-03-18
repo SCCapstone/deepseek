@@ -4,6 +4,8 @@
 
 import React from 'react';
 
+import Loading from '../utility/Loading';
+import Alert from '../utility/Alert';
 import SearchInput from './search/SearchInput';
 import SearchResults from './search/SearchResults';
 
@@ -11,6 +13,9 @@ import useSearch from '../utility/componentUtils/searchUtils';
 
 export default function SearchBar(props) {
     const { 
+        loading,
+        error,
+        setError,
         search, 
         results, 
         showResults, 
@@ -20,6 +25,8 @@ export default function SearchBar(props) {
         showSearchResults,
         handleAddFriend
     } = useSearch();
+
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     
     return (
         <div className='position-relative' {...props}>
