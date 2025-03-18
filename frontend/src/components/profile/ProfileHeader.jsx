@@ -1,5 +1,11 @@
+// this is the profile header component
+// it displays the profile header for the profile page, all of the main
+// details about the user
+
 import CustomButton from '../input/CustomButton';
+
 import DefaultPFP from '../../assets/default-pfp.jpg';
+
 import { useAppContext } from '../../lib/context';
 
 
@@ -18,7 +24,7 @@ export default function ProfileHeader({ userData, showEditor }) {
             {showEditor ?
                 <div className='w-100 d-flex flex-row justify-content-end'>
                     <CustomButton
-                        style={{top: 0, right: 0}}
+                        style={{top: 0, right: 0, backgroundColor: context.colorScheme.accentColor}}
                         text='Edit profile'
                         onClick={showEditor}
                     />

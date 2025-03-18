@@ -1,5 +1,11 @@
+// this is the events grid component
+// it displays the events in a grid format for the profile page
+// renders a card for each event, with the event details under event tab
+
 import { useNavigate } from 'react-router-dom';
-import { formatDate, formatTime } from '../utility/dateUtils';
+
+import { formatDate, formatTime } from '../utility/componentUtils/dateUtils';
+
 import { useAppContext } from '../../lib/context';
 
 function EventCard({ event }) {

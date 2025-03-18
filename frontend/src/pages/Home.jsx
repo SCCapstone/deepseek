@@ -1,19 +1,135 @@
-import React from "react";
-import { Link } from "react-router-dom";
+// this is the home page component
+// it displays the calendar and the sidebar
+
+import { useState, useEffect } from 'react';
+
+import Calendar from '../components/calendar/Calendar';
+import Sidebar from '../components/utility/Sidebar';
+import EventList from '../components/calendar/sidebar/EventList';
+import EventFeed from '../components/calendar/sidebar/EventFeed';
+import Loading from '../components/utility/Loading';
+import Alert from '../components/utility/Alert';
+
+import api from '../lib/api';
 import { useAppContext } from '../lib/context';
 
+
 export default function Home() {
+    const [events, setEvents] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [tab, setTab] = useState('selected-date');
     const context = useAppContext();
+
+    async function getData() {
+        const { data, error: apiError } = await api.get('/get-events');
+        if (apiError) {
+            setError(apiError);
+        }
+        else {
+            setEvents(data);
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getData();
+    }, [selectedDate]);
+  
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    }
+    
+    const handleEventSelect = (event) => {
+        setSelectedEvent(event);
+        setTab('selected-date');
+    }
+
+    // something is off with the date
+    const isSameDay = (date1, date2) => {
+        const d1 = new Date(date1);
+        d1.setDate(d1.getDate() + 1);
+        
+        const d2 = new Date(date2);
+        
+        return (
+            d1.getDate() === d2.getDate() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getFullYear() === d2.getFullYear()
+        );
+    };
+  
+    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
+    if (loading) return <Loading/>
+
     return (
-        <div style={{height: '100vh'}} className='d-flex justify-content-center align-items-center'>
-            <div className='d-flex flex-column align-items-center' style={{backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
-                <h1 className='h1'>CalendarMedia</h1>
-                <p>Look at what other people are doing!</p>
-                <div>
-                    <Link className='btn btn-primary mr-3' to='/login'>Login</Link>
-                    <Link className='btn btn-secondary' to='/register'>Register</Link>
-                </div>
+        <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{overflowY: 'hidden', backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
+            <div className='w-100 h-100'>
+                <Calendar
+                    onChange={handleDateChange}
+                    selectedDate={selectedDate}
+                    events={events}
+                    onEventSelect={handleEventSelect}
+                />
             </div>
+            <Sidebar>
+                <div className='d-flex flex-row justify-content-between w-100 border-bottom' style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}>
+                    <div
+                        className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'text-white' : '')}
+                        onClick={() => setTab('selected-date')}
+                        style={{backgroundColor: tab === 'selected-date' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground, 
+                            color: context.colorScheme.textColor, 
+                            cursor: 'pointer'}}
+                        onMouseOver={(e) => {
+                            if (tab === 'selected-date') {
+                                e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}dd`;
+                            } else {
+                                e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                    ? 'rgba(255, 255, 255, 0.1)'
+                                    : 'rgba(0, 0, 0, 0.05)';
+                            }
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = tab === 'selected-date' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground;
+                        }}
+                    >
+                        {selectedDate.toDateString()}
+                    </div>
+                    <div
+                        className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'text-white' : '')}
+                        onClick={() => setTab('event-feed')}
+                        style={{backgroundColor: tab === 'event-feed' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground, 
+                            color: context.colorScheme.textColor, 
+                            cursor: 'pointer'}}
+                        onMouseOver={(e) => {
+                            if (tab === 'event-feed') {
+                                e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}dd`;
+                            } else {
+                                e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                    ? 'rgba(255, 255, 255, 0.1)'
+                                    : 'rgba(0, 0, 0, 0.05)';
+                            }
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = tab === 'event-feed' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground;
+                        }}
+                    >
+                        Event feed
+                    </div>
+                </div>
+                {tab === 'selected-date' ?
+                    <EventList
+                        events={events.filter(event => {
+                            const eventDate = new Date(event.date);
+                            return isSameDay(eventDate, selectedDate);
+                        })}
+                        selectedEvent={selectedEvent}
+                        setSelectedEvent={setSelectedEvent}
+                    />
+                : <EventFeed/>}
+            </Sidebar>
         </div>
     );
 }

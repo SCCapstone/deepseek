@@ -1,6 +1,12 @@
-import { useAppContext } from '../../lib/context';
+// this is the appearance window component
+// it displays the appearance window for the navbar
+
+// still need to sort out the colors and hover effects
+
 import { FaTimes, FaMoon, FaSun } from 'react-icons/fa';
 import { useState } from 'react';
+
+import { useAppContext } from '../../lib/context';
 
 export default function AppearanceWindow({ showWindow, hideWindow }) {
     const context = useAppContext();

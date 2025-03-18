@@ -1,6 +1,11 @@
+// base component for the profile tabs
+// it displays the tabs for the profile page
+
 import { useState } from 'react';
+
 import EventsTab from './EventsTab';
 import FriendsTab from './FriendsTab';
+
 import { useAppContext } from '../../lib/context';
 
 
@@ -8,22 +13,30 @@ function TabButton({ active, label, onClick }) {
     const context = useAppContext();
     const [isHovered, setIsHovered] = useState(false);
 
+    const styles = {
+        tab: {
+            backgroundColor: context.colorScheme.tertiaryBackground,
+            transition: 'background-color 0.2s ease',
+        },
+        tabHovered: {
+            backgroundColor: `${context.colorScheme.tertiaryBackground}ee`,
+        },
+    };
+
     return (
-        <button className='w-100 p-3 font-weight-bold' onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} style={{
+        <button className='w-100 p-3 font-weight-bold' onClick={onClick} style={{
             borderTopWidth: 0,
             borderRightWidth: 0,
             borderLeftWidth: 0,
             borderBottomWidth: (active ? 4 : 0),
             borderColor: context.colorScheme.accentColor,
             outline: 'none',
-            backgroundColor: isHovered 
-                ? context.colorScheme.accentHover + '20'
-                : context.colorScheme.tertiaryBackground,
-            color: isHovered 
-                ? context.colorScheme.accentColor 
-                : context.colorScheme.textColor,
+            ...styles.tab,
+            ...(isHovered ? styles.tabHovered : {}),
+            color: context.colorScheme.textColor,
             transition: 'all 0.2s ease',
-        }}>{label}</button>
+            borderRadius: '3px',
+        }} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>{label}</button>
     );
 }
 

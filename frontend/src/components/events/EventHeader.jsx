@@ -1,10 +1,13 @@
+// this is the event header component
+// it displays the event details at the top of the event page
+
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaLocationArrow, FaClock, FaInfoCircle, FaBell } from 'react-icons/fa';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
-import { formatDate, formatTimeRange, formatDateTime } from '../utility/dateUtils';
+import { formatDate, formatTimeRange, formatDateTime } from '../utility/componentUtils/dateUtils';
 import { useAppContext } from '../../lib/context';
 
 export default function EventHeader({ eventId }) {

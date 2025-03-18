@@ -3,14 +3,11 @@ import { AppContextProvider, useAppContext } from './lib/context';
 import NavBar from './components/navbar/NavBar';
 import Login from './pages/Login'
 import Register from './pages/Register';
-import Home from './pages/Home';
+import Landing from './pages/Landing';
 import Profile from './pages/Profile';
-import Calendar from './pages/Calendar';
 import Event from './pages/Event';
 import { useEffect } from 'react';
-
-// Debug code to check the App component imports and routing
-console.log('App component file exists');
+import Home from './pages/Home';
 
 function AppContent() {
     const context = useAppContext();
@@ -40,12 +37,12 @@ function AppContent() {
         >
             <NavBar/>
             <Routes>
-                <Route path='/' element={<Home />} /> 
+                <Route path='/' element={<Landing />} /> 
                 <Route path='/login' element={<Login />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/profile' element={<Profile/>} />
                 <Route path='/profile/:username' element={<Profile/>} />
-                <Route path='/calendar' element={<Calendar/>} />
+                <Route path='/calendar' element={<Home/>} />
                 <Route path='/events/:id' element={<Event/>} />
             </Routes>
         </div>

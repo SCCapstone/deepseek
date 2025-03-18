@@ -1,8 +1,15 @@
+// this is the event list component for the calendar sidebar
+// it displays a list of events in a card format
+// these are the events for the selected day
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import EventView from './EventView';
-import { useAppContext } from '../../lib/context';
-import { formatDate, formatTimeRange } from '../utility/dateUtils';
+
+import { useAppContext } from '../../../lib/context';
+
+import { formatDate, formatTimeRange } from '../../utility/componentUtils/dateUtils';
 
 export default function EventList({ events, selectedEvent: propSelectedEvent, setSelectedEvent: propSetSelectedEvent }) {
     const navigate = useNavigate();
@@ -19,13 +26,12 @@ export default function EventList({ events, selectedEvent: propSelectedEvent, se
 
     // Navigate to event page when an event is clicked
     const handleEventClick = (event) => {
-        // Navigate to event page
         const eventId = event._id || event.id;
         if (eventId) {
             navigate(`/events/${eventId}`);
         } else {
+            // idk hopefully this never happens not sure what would cause this
             console.error('Event has no ID, cannot navigate');
-            // Fall back to showing event details in the sidebar
             setSelectedEvent(event);
             if (propSetSelectedEvent) {
                 propSetSelectedEvent(event);

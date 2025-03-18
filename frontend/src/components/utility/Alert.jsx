@@ -1,4 +1,5 @@
 import CustomButton from '../input/CustomButton';
+
 import { useAppContext } from '../../lib/context';
 
 export default function Alert({ message, hideAlert }) {

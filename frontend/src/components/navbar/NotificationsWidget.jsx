@@ -1,7 +1,12 @@
+// this is the notifications widget component
+// it displays the notifications widget for the navbar
+
 import { useState, useEffect } from 'react';
 import { FaBell } from "react-icons/fa";
+
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
+
 import api from '../../lib/api';
 import { useAppContext } from '../../lib/context';
 
@@ -20,6 +25,7 @@ export default function NotificationsWidget({ className }) {
     const [error, setError] = useState(null);
     const [notifications, setNotifications] = useState(null);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [isIconHovered, setIsIconHovered] = useState(false);
     const context = useAppContext();
     const getData = async () => {
         setLoading(true);
@@ -49,6 +55,14 @@ export default function NotificationsWidget({ className }) {
                 <FaBell
                     size={24}
                     color={context.colorScheme.textColor}
+                    style={{
+                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                        transform: isIconHovered ? 'scale(1.15)' : 'scale(1)',
+                        boxShadow: isIconHovered ? `0 0 8px ${context.colorScheme.accentColor}40` : 'none',
+                        borderRadius: '50%'
+                    }}
+                    onMouseEnter={() => setIsIconHovered(true)}
+                    onMouseLeave={() => setIsIconHovered(false)}
                 />
                 {(notifications && notifications.length > 0) ?
                     <div
@@ -75,11 +89,15 @@ export default function NotificationsWidget({ className }) {
                                                 <Notification key={i} item={item}/>
                                             ))}
                                         </div>
-                                        <div className='pt-2 w-100'>
+                                        <div className='pt-1 w-100'>
                                             <button
                                                 onClick={handleClearNotifications}
-                                                className='w-100 btn border'
-                                                style={{backgroundColor: context.colorScheme.danger, color: context.colorScheme.textColor}}
+                                                className='w-100 btn'
+                                                style={
+                                                    {backgroundColor: context.colorScheme.danger, 
+                                                    color: 'white',
+                                                    border: 'none'}
+                                                }
                                             >Clear</button>
                                         </div>
                                     </>

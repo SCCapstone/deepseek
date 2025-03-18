@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from '../lib/api';
+
 import CustomTextInput from '../components/input/CustomTextInput';
 import CustomButton from '../components/input/CustomButton';
+
+import api from '../lib/api';
 import { useAppContext } from '../lib/context';
 
 export default function RegisterPage() {

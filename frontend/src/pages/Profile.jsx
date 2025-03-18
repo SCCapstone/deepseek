@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileEditor from '../components/profile/ProfileEditor';
 import ProfileTabs from '../components/profile/ProfileTabs';
 import Modal from '../components/utility/Modal';
 import Loading from '../components/utility/Loading';
 import Alert from '../components/utility/Alert';
+
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
 
@@ -39,9 +41,9 @@ export default function ProfilePage() {
     return (
         <div className='w-100' style={{ overflowY: 'auto' }}>
             <div
-                className='container my-3 w-100 rounded
+                className='container my-3 w-100 rounded-lg
                 d-flex flex-column justify-content-start align-items-stretch'
-                style={{ backgroundColor: context.colorScheme.secondaryBackground }}
+                style={{ backgroundColor: context.colorScheme.secondaryBackground, paddingTop: '15px'}}
             >
                 <ProfileHeader userData={userData} showEditor={username ? null : () => setEditing(true)}/>
                 <ProfileTabs username={username}/>
