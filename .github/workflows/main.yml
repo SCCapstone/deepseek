@@ -1,0 +1,78 @@
+name: Deploy app
+run-name: ${{ github.actor }} is deploying the app
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-frontend:
+    name: Build frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+      
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          working-directory: frontend
+
+      - name: Building frontend
+        run: npm run build
+        working-directory: frontend
+
+      - name: Sending files
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -a
+          path: frontend/build/
+          remote_path: /usr/local/deepseek-frontend/
+          remote_user: root
+          remote_host: ${{ vars.SERVER_HOSTNAME }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  build-backend:
+    name: Build backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile.prod
+          tags: deepseek-backend:latest
+          outputs: type=oci,dest=deepseek-backend.tar
+
+      - name: Upload image
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -ra
+          path: deepseek-backend.tar
+          remote_path: /deepseek-backend/image.tar
+          remote_user: root
+          remote_host: ${{ vars.SERVER_HOSTNAME }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      - name: Start container
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.SERVER_HOSTNAME }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo 'testing' > /test.txt

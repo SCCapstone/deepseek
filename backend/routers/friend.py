@@ -40,6 +40,9 @@ def add_friend(current_user: User, friend_username: str):
     if not other_user:
         raise NotFoundError('No user with username `%s`' % friend_username)
     
+    if other_user == current_user:
+        raise InvalidInputError('You cannot friend yourself')
+    
     # accepting or sending request
     current_user.add_friend(other_user)
     return make_response({'message': 'Success'}, 201)

@@ -54,6 +54,7 @@ export default function searchUtils() {
         results,
         loading,
         error,
+        setError,
         showResults,
         inputRef,
         updateSearch,
