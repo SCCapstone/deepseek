@@ -76,7 +76,7 @@ def upload_picture(current_user: User):
     # saving file in uploads folder
     _, suffix = file.mimetype.split('/')
     filename = str(uuid4()) + '.' + suffix
-    upload_folder = os.environ.get('UPLOADS_FOLDER', './uploads')
+    upload_folder = os.environ.get('UPLOADS_FOLDER', '/uploads')
     if not os.path.isdir(upload_folder):
         os.mkdir(upload_folder)
     save_path = os.path.join(upload_folder, filename)
@@ -92,7 +92,7 @@ def upload_picture(current_user: User):
 
 @user_router.route('/pictures/<filename>')
 def get_picture(filename: str):
-    upload_folder = os.environ.get('UPLOADS_FOLDER', './uploads')
+    upload_folder = os.environ.get('UPLOADS_FOLDER', '/uploads')
     return send_from_directory(upload_folder, filename)
 
 
