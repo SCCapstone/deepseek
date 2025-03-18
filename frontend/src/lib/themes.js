@@ -1,4 +1,5 @@
 // Define standardized color schemes for light and dark modes
+const accentColor = '#390099';
 
 export const lightTheme = {
     name: 'light',
@@ -10,8 +11,8 @@ export const lightTheme = {
     textColor: '#212529',                 // Primary text
     secondaryText: '#6c757d',             // Secondary text
     // Accent colors
-    accentColor: '#007bff',               // Primary accent (buttons, links)
-    accentHover: '#0069d9',               // Accent hover state
+    accentColor: accentColor,               // Primary accent (buttons, links)
+    accentHover: accentColor + '20',               // Accent hover state
     // Border colors
     borderColor: '#dee2e6',               // Standard borders
     // Status colors
@@ -31,8 +32,8 @@ export const darkTheme = {
     textColor: '#f8f9fa',                 // Primary text
     secondaryText: '#adb5bd',             // Secondary text
     // Accent colors
-    accentColor: '#0d6efd',               // Primary accent (buttons, links)
-    accentHover: '#0b5ed7',               // Accent hover state
+    accentColor: accentColor,               // Primary accent (buttons, links)
+    accentHover: accentColor + '20',               // Accent hover state
     // Border colors
     borderColor: '#343a40',               // Standard borders
     // Status colors

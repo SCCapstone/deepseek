@@ -1,7 +1,13 @@
+// this is the events tab component
+// it displays the events tab for the profile page
+
 import { useState, useEffect } from 'react';
+
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
+
 import EventsGrid from './EventsGrid';
+
 import api from '../../lib/api';
 import { useAppContext } from '../../lib/context';
 
@@ -38,7 +44,7 @@ export default function EventsTab({ username }) {
                     <EventsGrid events={events}/>
                 </div>
             :
-                <div className='p-5 d-flex flex-column justify-content-center align-items-center'
+                <div className='p-2 d-flex flex-column justify-content-center align-items-center'
                     style={{
                         borderRadius: '8px',
                         backgroundColor: context.colorScheme.tertiaryBackground,

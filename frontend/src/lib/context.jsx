@@ -4,6 +4,7 @@ import {
     useState,
     useEffect,
 } from 'react';
+
 import { lightTheme, darkTheme } from './themes';
 
 // Create the app context

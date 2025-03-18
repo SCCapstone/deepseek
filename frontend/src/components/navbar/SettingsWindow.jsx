@@ -1,10 +1,15 @@
+// this is the settings window component
+// it displays the settings window for the navbar
+
 import { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
+
 import CustomButton from '../input/CustomButton';
-import CustomTextInput from '../input/CustomTextInput';
+
 import Modal from '../utility/Modal';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
+
 import api from '../../lib/api';
 import { useAppContext } from '../../lib/context';
 
@@ -72,7 +77,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
             <div className='w-100 d-flex flex-column p-4 rounded' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
                 {loading ? <Loading/> :
                     <>
-                        <div className='w-100 d-flex flex-row justify-content-between align-items-center mb-3'>
+                        <div className='d-flex justify-content-between align-items-center mb-4'>
                             <h3 className='h3 m-0'>Settings</h3>
                             <div className='d-flex flex-row'>
                                 <button

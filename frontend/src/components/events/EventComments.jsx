@@ -1,3 +1,6 @@
+// this is the event comments component
+// it displays the comments for an event, below the event details
+
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Loading from '../utility/Loading';
@@ -83,20 +86,30 @@ export default function EventComments({ eventId }) {
                     placeholder='COMMENT'
                     value={commentInput}
                     onChange={event => setCommentInput(event.target.value)}
+                    style={{
+                        backgroundColor: context.colorScheme.tertiaryBackground,
+                        border: 'none',
+                        color: context.colorScheme.textColor
+                    }}
                 />
                 <button 
                     disabled={commentInput.length === 0}
                     onClick={handleComment} 
                     className='btn btn-primary d-flex justify-content-center align-items-center'
                     style={{
-                        transition: 'background-color 0.2s ease, transform 0.1s ease'
+                        transition: 'background-color 0.2s ease, transform 0.1s ease',
+                        backgroundColor: context.colorScheme.accentColor,
+                        cursor: commentInput.length === 0 ? 'not-allowed' : 'pointer',
+                        border: 'none',
                     }}
                     onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = '#0069d9';
-                        e.currentTarget.style.transform = 'scale(1.03)';
+                        if (commentInput.length > 0) {
+                            e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}cc`;
+                            e.currentTarget.style.transform = 'scale(1.03)';
+                        }
                     }}
                     onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = '#007bff';
+                        e.currentTarget.style.backgroundColor = context.colorScheme.accentColor;
                         e.currentTarget.style.transform = 'scale(1)';
                     }}
                 >

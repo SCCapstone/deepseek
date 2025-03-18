@@ -1,12 +1,19 @@
+// this is the navbar component
+// it displays the navbar at the top of the page
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
+
 import SearchBar from './SearchBar';
 import ProfileIcon from './ProfileIcon';
 import NotificationsWidget from './NotificationsWidget';
 import SettingsWidget from './SettingsWidget';
-import CreateEvent from '../events/CreateEvent';
+
+import CreateEvent from '../events/create/CreateEvent';
+
 import CalendarIcon from '../../assets/calendar.png';
+
 import { useAppContext } from '../../lib/context';
 
 

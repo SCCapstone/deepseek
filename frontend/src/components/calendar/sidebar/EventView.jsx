@@ -1,34 +1,13 @@
-import React from 'react';
-import { useAppContext } from '../../lib/context';
-import { formatDate } from '../utility/dateUtils';
+// this is the event view component for the calendar sidebar
+// it displays the event details in a card format
 
-// Event colors for visual distinction
-const eventColors = [
-    '#4285F4', // Blue
-    '#EA4335', // Red
-    '#FBBC05', // Yellow
-    '#34A853', // Green
-    '#8E24AA', // Purple
-    '#F06292', // Pink
-    '#FF9800', // Orange
-];
+import React from 'react';
+
+import { useAppContext } from '../../../lib/context';
 
 export default function EventView({ event, onClick }) {
     const context = useAppContext();
     const { title, description, location, date, formattedTime } = event;
-
-    // Function to get a consistent color for an event based on its ID or title
-    const getEventColor = (event) => {
-        const identifier = event.user_id;
-        const hash = String(identifier).split('').reduce((acc, char) => {
-            return char.charCodeAt(0) + ((acc << 5) - acc);
-        }, 0);
-        return eventColors[Math.abs(hash) % eventColors.length];
-    };
-
-    const eventColor = getEventColor(event);
-
-    const formattedDate = formatDate(date);
 
     const styles = {
         card: {
@@ -64,7 +43,6 @@ export default function EventView({ event, onClick }) {
         }
     };
     
-    // Handle hover state
     const [isHovered, setIsHovered] = React.useState(false);
     
     return (

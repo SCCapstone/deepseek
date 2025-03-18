@@ -1,11 +1,18 @@
+// this is the profile editor component
+// it shows the profile editor for the profile page
+
 import { useState, useEffect } from 'react';
+
 import CustomButton from '../input/CustomButton';
 import CustomTextInput from '../input/CustomTextInput';
 import CustomTextarea from '../input/CustomTextarea';
+
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import Modal from '../utility/Modal';
+
 import PictureUpload from './PictureUpload';
+
 import api from '../../lib/api';
 import { useAppContext } from '../../lib/context';
 
