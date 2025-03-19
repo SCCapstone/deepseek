@@ -3,7 +3,7 @@ services:
         container_name: deepseek-backend
         build:
             context: backend
-            dockerfile: Dockerfile.dev
+            dockerfile: Dockerfile
         restart: on-failure
         volumes:
             - ./backend:/app
@@ -14,13 +14,14 @@ services:
             - 5000:5000
         environment:
             FLASK_RUN_PORT: 5000
-            FRONTEND_URL: 'http://localhost:4000'
-            UPLOADS_FOLDER: '/uploads'
+            FRONTEND_URL: "http://localhost:4000"
+            UPLOADS_FOLDER: "/uploads"
+        command: ["flask", "run", "--host=0.0.0.0", "--debug"]
     frontend:
         container_name: deepseek-frontend
         build:
             context: frontend
-            dockerfile: Dockerfile.dev
+            dockerfile: Dockerfile
         restart: on-failure
         volumes:
             - ./frontend:/app:delegated
@@ -31,7 +32,8 @@ services:
             - 4000:4000
         environment:
             PORT: 4000
-            VITE_API_URL: 'http://localhost:5000'
+            VITE_API_URL: "http://localhost:5000"
+        command: ["npm", "run", "dev"]
     mongo:
         container_name: deepseek-mongo
         image: mongo
