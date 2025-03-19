@@ -15,7 +15,7 @@ REACT_APP_API_URL = os.getenv('REACT_APP_API_URL')
 
 # google calendar setup and handling
 googlecalendar = GoogleCalendar(
-    client_secrets_file="googlesecret.json",
+    client_secrets_file="./utils/googlesecret.json",
     scopes=["https://www.googleapis.com/auth/calendar.readonly"],
     redirect_uri=f"{REACT_APP_API_URL}/googlecallback",
 )

@@ -13,6 +13,7 @@ TOKEN_SIZE_BYTES = 32
 db = Database()
 db.connect()
 
+
 # flask app setup
 app = Flask(__name__)
 app.secret_key = secrets.token_bytes(TOKEN_SIZE_BYTES)
