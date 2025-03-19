@@ -14,11 +14,12 @@ export default function ProfileHeader({ userData, showEditor }) {
 
     return (
         <div
-            className='w-100 p-3 d-flex flex-column
+            className='w-100 d-flex flex-column
             justify-content-center align-items-center rounded-lg'
             style={{
-                backgroundColor: context.colorScheme.tertiaryBackground,
+                backgroundColor: context.colorScheme.quaternaryBackground,
                 color: context.colorScheme.textColor,
+                padding: '15px'
             }}
         >
             {showEditor ?

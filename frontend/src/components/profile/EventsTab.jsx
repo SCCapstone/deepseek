@@ -44,12 +44,12 @@ export default function EventsTab({ username }) {
                     <EventsGrid events={events}/>
                 </div>
             :
-                <div className='p-2 d-flex flex-column justify-content-center align-items-center'
+                <div className='p-3 d-flex flex-column justify-content-center align-items-center'
                     style={{
-                        borderRadius: '8px',
+                        borderRadius: '12px',
                         backgroundColor: context.colorScheme.tertiaryBackground,
                         transition: 'background-color 0.2s ease'
-                    }}
+                    }}  
                 >
                     <p className='m-0'>Nothing to see here!</p>
                 </div>

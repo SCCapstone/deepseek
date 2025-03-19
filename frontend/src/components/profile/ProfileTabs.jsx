@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import EventsTab from './EventsTab';
 import FriendsTab from './FriendsTab';
-
 import { useAppContext } from '../../lib/context';
 
 
@@ -19,7 +18,7 @@ function TabButton({ active, label, onClick }) {
             transition: 'background-color 0.2s ease',
         },
         tabHovered: {
-            backgroundColor: `${context.colorScheme.tertiaryBackground}ee`,
+            backgroundColor: `${context.colorScheme.tertiaryBackground}65`,
         },
     };
 
@@ -52,13 +51,18 @@ function Tab({ tab, username }) {
 }
 
 export default function ProfileTabs({ username }) {
+    const context = useAppContext();
     const [tab, setTab] = useState('events');
 
     return (
         <div>
             <div
-                className='p-1 mb-3 d-flex flex-row justify-content-between align-items-center rounded'
-                style={{gap: 10}}
+                className='w-100 d-flex flex-row justify-content-between align-items-center'
+                style={{gap: 15,
+                    padding: '15px',
+                    backgroundColor: 'transparent',
+                }}
+
             >
                 <TabButton active={tab === 'events'} onClick={() => setTab('events')} label='Events'/>
                 <TabButton active={tab === 'reposts'} onClick={() => setTab('reposts')} label='Reposts'/>

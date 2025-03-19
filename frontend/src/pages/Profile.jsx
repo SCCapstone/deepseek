@@ -43,10 +43,22 @@ export default function ProfilePage() {
             <div
                 className='container my-3 w-100 rounded-lg
                 d-flex flex-column justify-content-start align-items-stretch'
-                style={{ backgroundColor: context.colorScheme.secondaryBackground, paddingTop: '15px'}}
+                style={{ backgroundColor: context.colorScheme.secondaryBackground, 
+                    paddingTop: '15px',
+                    borderRadius: '12px',
+                    overflow: 'hidden'
+                    }}
             >
                 <ProfileHeader userData={userData} showEditor={username ? null : () => setEditing(true)}/>
-                <ProfileTabs username={username}/>
+                <div className='w-100' style={{backgroundColor: context.colorScheme.quaternaryBackground, 
+                    borderRadius: '12px', 
+                    overflow: 'hidden',
+                    padding: '15px',
+                    marginTop: '15px',
+                    marginBottom: '15px'
+                }}>
+                    <ProfileTabs username={username}/>
+                </div>
             </div>
             <ProfileEditor showEditor={editing} hideEditor={() => setEditing(false)}/>
         </div>
