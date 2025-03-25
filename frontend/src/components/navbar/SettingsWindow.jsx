@@ -49,17 +49,9 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
     const handleLinkWithGoogle = async () => {
         try {
             setLoading(true);
-            // these are not right
-            const { data, error: apiError } = await api.get('/auth/google/link');
-            
-            if (apiError) {
-                setError(apiError);
-                setLoading(false);
-                return;
-            }
-            
-            // these are not right
-            window.location.href = data.authUrl || '/auth/google';
+            // Direct window location to the googlelogin endpoint
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            window.location.href = `${API_URL}/googlelogin`;
         } catch (err) {
             setError('Failed to link with Google');
             setLoading(false);
