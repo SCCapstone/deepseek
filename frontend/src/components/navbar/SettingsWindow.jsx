@@ -39,6 +39,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
             }
             
             // these are not right
+            context.setUser(null);
             window.location.href = '/login';
         } catch (err) {
             setError('Failed to log out');

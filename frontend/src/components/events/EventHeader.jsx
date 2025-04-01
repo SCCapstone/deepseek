@@ -2,7 +2,7 @@
 // it displays the event details at the top of the event page
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FaLocationArrow, FaClock, FaInfoCircle, FaBell, FaHeart, FaRegHeart } from 'react-icons/fa';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
@@ -19,6 +19,7 @@ export default function EventHeader({ eventId }) {
     const [likeError, setLikeError] = useState(null);
 
     const context = useAppContext();
+    const navigate = useNavigate();
 
     const getData = async () => {
         setLoading(true);
@@ -60,6 +61,10 @@ export default function EventHeader({ eventId }) {
         }
     };
 
+    const handleEditClick = () => {
+        navigate(`/update-event/${eventId}`);
+    };
+
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     if (loading) return <Loading/>
     if (!eventData) return null;
@@ -91,6 +96,14 @@ export default function EventHeader({ eventId }) {
                         {isLiked ? <FaHeart size={20} color="red" /> : <FaRegHeart size={20} />}
                     </button>
                     <span style={{color: context.colorScheme.textColor, paddingLeft: '4px'}}>{likeCount}</span>
+                    {context.user?.username === eventData.user?.username && (
+                        <button 
+                            onClick={handleEditClick} 
+                            className='btn btn-sm btn-outline-secondary ms-3'
+                        >
+                            Edit
+                        </button>
+                    )}
                 </div>
             </div>
             
