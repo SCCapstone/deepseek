@@ -58,6 +58,14 @@ class Database:
         return self._db[collection].delete_one({'_id': _id})
 
     @handle_database_error
+    def push_to_array(self, collection: str, _id: ObjectId, field: str, value):
+        return self._db[collection].update_one({'_id': _id}, {'$push': {field: value}})
+
+    @handle_database_error
+    def pull_from_array(self, collection: str, _id: ObjectId, field: str, value):
+        return self._db[collection].update_one({'_id': _id}, {'$pull': {field: value}})
+
+    @handle_database_error
     def search(self, collection: str, query: str):
         return self._db[collection].find({'$text': {'$search': query}})
 

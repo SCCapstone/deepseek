@@ -1,5 +1,5 @@
 // Define standardized color schemes for light and dark modes
-const accentColor = '#390099';
+const accentColor = '#433eb6';
 
 export const lightTheme = {
     name: 'light',
@@ -25,7 +25,7 @@ export const lightTheme = {
 export const darkTheme = {
     name: 'dark',
     // Background colors
-    backgroundColor: '#121212',           // Main background
+    backgroundColor: '#141415',           // Main background
     secondaryBackground: '#1e1e1e',       // Secondary background (cards, panels)
     tertiaryBackground: '#2d2d2d',        // Tertiary background (headers, footers)
     // Text colors

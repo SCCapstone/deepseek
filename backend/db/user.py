@@ -8,7 +8,7 @@ from typing import List, Dict, Self, Union
 from bson.objectid import ObjectId
 
 from utils.error_utils import *
-from .database import DatabaseObject
+from .database import DatabaseObject, Database
 from .event import Event
 from .friend_relation import FriendRelation
 from .notification import Notification
@@ -27,6 +27,7 @@ class User(DatabaseObject):
         'bio': {'type': Union[str, None]},
         'default_event_visibility': {'type': bool, 'default': False},
         'created_at': {'type': datetime},
+        'liked_events': {'type': list, 'default': []},  # List of event ObjectIds
     }
     
     @property
@@ -165,6 +166,31 @@ class User(DatabaseObject):
         friend_rels = sorted(friend_rels, key=lambda x: x.created_at)
         friend_rel = friend_rels[-1]
         return friend_rel.status
+
+    def like_event(self, event_id: ObjectId) -> None:
+        # find event in database
+        event = Event.find_one(_id=event_id)
+        if not event:
+            raise NotFoundError('Event with id `%s` not found' % event_id)
+
+        if event_id not in self.liked_events:
+            db = Database()
+            db.push_to_array(self.get_table_name(), self._id, 'liked_events', event_id)
+            # Update the local object state as well
+            self.liked_events.append(event_id)
+            event.add_like(self._id)
+
+    def unlike_event(self, event_id: ObjectId) -> None:
+        event = Event.find_one(_id=event_id)
+        if not event:
+            raise NotFoundError('Event with id `%s` not found' % event_id)
+
+        if event_id in self.liked_events:
+            db = Database()
+            db.pull_from_array(self.get_table_name(), self._id, 'liked_events', event_id)
+             # Update the local object state as well
+            self.liked_events.remove(event_id)
+            event.remove_like(self._id)
 
 
 def hash_password(password: str) -> str:

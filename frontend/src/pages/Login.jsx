@@ -14,6 +14,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const context = useAppContext();
+
     async function handleSubmit(event) {
         event.preventDefault();
         const { data, error } = await api.post('/login', { username, password });
@@ -22,6 +23,8 @@ export default function LoginPage() {
             alert(error);
         }
         else {
+            // Set the nested user object into context
+            context.setUser(data.user);
             navigate('/calendar');
         }
     };

@@ -7,7 +7,7 @@ import { useAppContext } from '../../../lib/context';
 
 export default function EventView({ event, onClick }) {
     const context = useAppContext();
-    const { title, description, location, date, formattedTime } = event;
+    const { title, description, location, date, formattedTime, isOwnEvent, user } = event;
 
     const styles = {
         card: {
@@ -40,6 +40,11 @@ export default function EventView({ event, onClick }) {
         description: {
             marginTop: '5px',
             fontSize: '0.9rem',
+        },
+        username: {
+            color: context.colorScheme.secondaryText,
+            fontSize: '0.85rem',
+            marginTop: '3px',
         }
     };
     
@@ -55,7 +60,11 @@ export default function EventView({ event, onClick }) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <div style={styles.title}>{title}</div>
+            <div style={styles.title}>{title}
+                {!isOwnEvent && user?.username && (
+                <div style={styles.username}>@{user.username}</div>
+            )}</div>
+            
             {formattedTime && <div style={styles.time}>{formattedTime}</div>}
             {location && <div style={styles.location}>Location: {location}</div>}
             {description && (

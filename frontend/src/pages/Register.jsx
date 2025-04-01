@@ -22,6 +22,8 @@ export default function RegisterPage() {
             alert(error);
         }
         else {
+            // Set the nested user object into context
+            context.setUser(data.user);
             navigate('/calendar');
         }
     }
