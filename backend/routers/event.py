@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 def add_event(current_user: User):
     event_data = request.json
     event_data['user_id'] = current_user._id
+    event_data['created_at'] = datetime.now()
     Event.create(**event_data)
     return make_response({'message': 'Event created'}, 201)
 
@@ -74,6 +75,8 @@ def get_event(current_user: User, event_id: str):
     event_user_data = event_user.profile
     event_data = event.to_dict()
     event_data['user'] = event_user_data
+    # for frontend to check if the current user has liked the event
+    event_data['liked_by_current_user'] = event._id in current_user.liked_events
     return make_response({'data': event_data})
 
 
@@ -85,7 +88,7 @@ def get_event(current_user: User, event_id: str):
     'end_time': {'type': str},
     'description': {'type': str},
     'location': {'type': str},
-    'reminder': {'type': bool},
+    'set_reminder': {'type': bool},
     'public': {'type': bool},
 })
 def update_event(current_user: User, event_id: str):
@@ -180,3 +183,44 @@ def get_friends_events(current_user: User):
         _event_data['user'] = user_data
 
     return make_response({'message': 'Friends events retrieved', 'data': event_data})
+
+
+@event_router.route('/event/<event_id>/like', methods=['POST'])
+@login_required
+def like_event(current_user: User, event_id: str):
+    try:
+        event_object_id = ObjectId(event_id)
+    except Exception:
+        raise NotFoundError('Invalid event id `%s`' % event_id)
+
+    # Check if the event exists and user has access (similar logic to get_event)
+    event = Event.find_one(_id=event_object_id)
+    if not event:
+        raise NotFoundError('Invalid event id `%s`' % event_id)
+    
+    event_user = User.find_one(_id=event.user_id)
+    if event_user != current_user:
+        friend_status = current_user.get_friend_status(event_user)
+        # Allow liking public events or events of friends
+        if not event.public and friend_status != 'friend':
+             raise ForbiddenError('You do not have permission to like this event')
+
+    current_user.like_event(event_object_id)
+    return make_response({'message': 'Event liked successfully'}, 200)
+
+
+@event_router.route('/event/<event_id>/unlike', methods=['POST'])
+@login_required
+def unlike_event(current_user: User, event_id: str):
+    try:
+        event_object_id = ObjectId(event_id)
+    except Exception:
+        raise NotFoundError('Invalid event id `%s`' % event_id)
+        
+    # Basic check if event exists, User.unlike_event handles the rest
+    event = Event.find_one(_id=event_object_id)
+    if not event:
+        raise NotFoundError('Invalid event id `%s`' % event_id)
+        
+    current_user.unlike_event(event_object_id)
+    return make_response({'message': 'Event unliked successfully'}, 200)

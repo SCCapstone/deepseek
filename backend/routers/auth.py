@@ -90,3 +90,9 @@ def login():
     res = make_response({'message': 'User authenticated', 'data': {'user': profile}})
     res.set_cookie('auth_token', auth_token)
     return res
+
+@auth_router.route('/logout', methods=['POST'])
+def logout():
+    res = make_response({'message': 'User logged out'})
+    res.set_cookie('auth_token', '', expires=0)
+    return res

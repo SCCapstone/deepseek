@@ -9,9 +9,9 @@ export default function EventOptions({ eventData, onUpdateField }) {
     const context = useAppContext();
     
     const checkboxStyle = {
-        backgroundColor: context.colorScheme.secondaryBackground,
+        backgroundColor: context.colorScheme.tertiaryBackground,
         color: context.colorScheme.textColor,
-        borderColor: context.colorScheme.borderColor
+        border: 'none',
     };
     
     return (

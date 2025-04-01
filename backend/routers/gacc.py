@@ -8,28 +8,33 @@ from db import User
 from utils.gacc_utils import *
 from utils.auth_utils import *
 
+# Add this line to allow OAuth over HTTP in development
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  
+
 gacc_router = Blueprint('gacc_router', __name__)
-FRONTEND_URL = os.getenv('FRONTEND_URL')
-REACT_APP_API_URL = os.getenv('REACT_APP_API_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL') or 'http://localhost:4000'
+REACT_APP_API_URL = os.getenv('REACT_APP_API_URL') or 'http://localhost:5000'
 
 
 # google calendar setup and handling
 googlecalendar = GoogleCalendar(
-    client_secrets_file="googlesecret.json",
+    client_secrets_file="./utils/googlesecret.json",
     scopes=["https://www.googleapis.com/auth/calendar.readonly"],
     redirect_uri=f"{REACT_APP_API_URL}/googlecallback",
 )
 
 @gacc_router.route('/googlelogin')
 def google_login():
-    session['return_to'] = request.args.get('return_to', '/myprofile')
+    session['return_to'] = request.args.get('return_to', '/calendar')
     auth_url = googlecalendar.get_authorization_url(session)
     return redirect(auth_url)
 
 @gacc_router.route('/googlecallback')
 @login_required
 def google_callback(current_user):
-    if not current_user._id:
+    print(f"current_user: {current_user}")
+    print(f"session: {session}")
+    if not current_user or not current_user._id:
         return redirect(f"{FRONTEND_URL}/login?error=Unauthorized")
 
     events_added, error = googlecalendar.handle_callback(

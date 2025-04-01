@@ -58,6 +58,7 @@ export default function CreateEvent({ showEditor, hideEditor }) {
                                 onSubmit={handleSubmit}
                                 isFormValid={isEventFormValid(eventData)}
                                 loading={loading}
+                                submitText="Create"
                             />
                         </div>
                         

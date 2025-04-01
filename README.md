@@ -39,13 +39,21 @@ The app is currently deployed on a [DigitalOcean](https://digitalocean.com) virt
 The ReactJS files are being served statically and the backend is being served through
 a docker container over a reverse proxy using [Nginx](https://nginx.org/).
 
-### MongoDB
-
-Install and start MongoDB using their [guide](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/)
-
 ### Docker
 
 Install and start Docker using their [guide](https://docs.docker.com/engine/install/ubuntu/)
+
+### MongoDB
+
+1. Install and start MongoDB using their [guide](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/)
+
+2. Create a text index for the users collection using
+
+    ```
+    db = new Mongo().getDB('appdb')
+    db.createCollection('users')
+    db.users.createIndex({username: 'text', name: 'text', bio: 'text'})
+    ```
 
 ### Nginx
 

@@ -9,9 +9,9 @@ export default function EventDateTime({ eventData, onUpdateField }) {
     const context = useAppContext();
     
     const inputStyle = {
-        backgroundColor: context.colorScheme.secondaryBackground,
+        backgroundColor: context.colorScheme.tertiaryBackground,
         color: context.colorScheme.textColor,
-        borderColor: context.colorScheme.borderColor
+        border: 'none',
     };
     
     return (

@@ -24,12 +24,46 @@ export default function Home() {
     const context = useAppContext();
 
     async function getData() {
-        const { data, error: apiError } = await api.get('/get-events');
-        if (apiError) {
-            setError(apiError);
-        }
-        else {
-            setEvents(data);
+        setLoading(true);
+        setError(null); // Clear previous errors
+        try {
+            // Fetch user's events and friends' events concurrently
+            const [userEventsResponse, friendEventsResponse] = await Promise.all([
+                api.get('/get-events'),
+                api.get('/get-friends-events')
+            ]);
+
+            // Check for errors in user events response
+            if (userEventsResponse.error) {
+                throw new Error(`Failed to load your events: ${userEventsResponse.error}`);
+            }
+            // Check for errors in friend events response
+            if (friendEventsResponse.error) {
+                throw new Error(`Failed to load friends' events: ${friendEventsResponse.error}`);
+            }
+
+            // Add flag to distinguish user's events
+            const userEvents = (userEventsResponse.data || []).map(event => ({ 
+                ...event, 
+                isOwnEvent: true 
+            }));
+            
+            // Add flag to distinguish friends' events
+            const friendEvents = (friendEventsResponse.data || []).map(event => ({ 
+                ...event, 
+                isOwnEvent: false 
+            }));
+
+            // Combine events, maybe filter duplicates if necessary (e.g., if an event could appear in both lists)
+            // Simple concatenation for now
+            const allEvents = [...userEvents, ...friendEvents];
+            
+            setEvents(allEvents);
+
+        } catch (err) {
+            console.error("Error fetching events:", err);
+            setError(err.message || 'Could not load all event data.');
+        } finally {
             setLoading(false);
         }
     }
