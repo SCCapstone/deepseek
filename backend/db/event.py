@@ -6,7 +6,7 @@ from datetime import datetime
 from bson import ObjectId
 
 from utils.error_utils import *
-from .database import DatabaseObject
+from .database import DatabaseObject, Database
 from .event_comment import EventComment
 
 
@@ -24,6 +24,7 @@ class Event(DatabaseObject):
         'set_reminder': {'type': bool, 'required': True, 'default': False},
         'reminder_sent': {'type': bool, 'required': True, 'default': False},
         'location': {'type': str},
+        'likes': {'type': list, 'required': True, 'default': []},  # List of user ObjectIds
     }
 
     def to_dict(self) -> Dict:
@@ -38,6 +39,7 @@ class Event(DatabaseObject):
             'public': self.public,
             'set_reminder': self.set_reminder,
             'location': self.location,
+            'like_count': len(self.likes),
         }
     
     @property
@@ -52,4 +54,18 @@ class Event(DatabaseObject):
             created_at=datetime.now(),
         )
         return comment
+    
+    def add_like(self, user_id: ObjectId):
+        if user_id not in self.likes:
+            db = Database()
+            db.push_to_array(self.get_table_name(), self._id, 'likes', user_id)
+            # Update the local object state as well
+            self.likes.append(user_id)
+
+    def remove_like(self, user_id: ObjectId):
+        if user_id in self.likes:
+            db = Database()
+            db.pull_from_array(self.get_table_name(), self._id, 'likes', user_id)
+            # Update the local object state as well
+            self.likes.remove(user_id)
     

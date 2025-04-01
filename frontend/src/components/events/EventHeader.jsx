@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaLocationArrow, FaClock, FaInfoCircle, FaBell } from 'react-icons/fa';
+import { FaLocationArrow, FaClock, FaInfoCircle, FaBell, FaHeart, FaRegHeart } from 'react-icons/fa';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
@@ -14,21 +14,55 @@ export default function EventHeader({ eventId }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [eventData, setEventData] = useState(null);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
+    const [likeError, setLikeError] = useState(null);
+
     const context = useAppContext();
 
     const getData = async () => {
+        setLoading(true);
+        setError(null);
+        setLikeError(null);
         const { data, error: apiError } = await api.get('/get-event/' + eventId);
-        setEventData(data);
+        if (data) {
+            setEventData(data);
+            setIsLiked(data.liked_by_current_user);
+            setLikeCount(data.like_count);
+        }
         setError(apiError);
         setLoading(false);
     }
 
     useEffect(() => {
-        getData();
+        if (eventId) {
+            getData();
+        }
     }, [eventId]);
+
+    const handleLikeToggle = async () => {
+        setLikeError(null);
+        const originalIsLiked = isLiked;
+        const originalLikeCount = likeCount;
+
+        const newIsLiked = !isLiked;
+        const newLikeCount = newIsLiked ? likeCount + 1 : likeCount - 1;
+        setIsLiked(newIsLiked);
+        setLikeCount(newLikeCount);
+
+        const endpoint = newIsLiked ? `/event/${eventId}/like` : `/event/${eventId}/unlike`;
+        const { error: likeApiError } = await api.post(endpoint);
+
+        if (likeApiError) {
+            setLikeError(likeApiError);
+            setIsLiked(originalIsLiked);
+            setLikeCount(originalLikeCount);
+        }
+    };
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
     if (loading) return <Loading/>
+    if (!eventData) return null;
 
     const formattedDate = formatDate(eventData.date);
     const formattedTime = eventData.start_time && eventData.end_time 
@@ -37,9 +71,27 @@ export default function EventHeader({ eventId }) {
 
     return (
         <div className='container p-3 rounded-lg' style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
-            <div className='d-flex flex-row justify-content-between align-items-center mb-3'>
-                <h3 className='h3 m-0' style={{color: context.colorScheme.textColor}}>{eventData.title}</h3>
-                <button className='btn btn-danger'>Edit</button>
+            {likeError && <Alert message={likeError} type="danger" hideAlert={() => setLikeError(null)} className="mb-2"/>}
+            <div className='d-flex flex-row justify-content-between align-items-start mb-2'>
+                <div>
+                    <h3 className='h3 m-0' style={{color: context.colorScheme.textColor}}>{eventData.title}</h3>
+                    {eventData.user?.username && (
+                        <p className='m-0' style={{color: context.colorScheme.secondaryText, fontSize: '0.9rem'}}>
+                            Created by: @{eventData.user.username}
+                        </p>
+                    )}
+                </div>
+                <div className='d-flex align-items-center pt-1'>
+                    <button 
+                        onClick={handleLikeToggle} 
+                        className='btn btn-link p-0 me-2' 
+                        style={{color: context.colorScheme.textColor, border: 'none', background: 'none', cursor: 'pointer'}}
+                        aria-label={isLiked ? 'Unlike event' : 'Like event'}
+                    >
+                        {isLiked ? <FaHeart size={20} color="red" /> : <FaRegHeart size={20} />}
+                    </button>
+                    <span style={{color: context.colorScheme.textColor, paddingLeft: '4px'}}>{likeCount}</span>
+                </div>
             </div>
             
             <div className='mb-3 d-flex align-items-center'>

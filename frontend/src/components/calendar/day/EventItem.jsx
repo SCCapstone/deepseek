@@ -10,6 +10,7 @@ import { useAppContext } from '../../../lib/context';
 export default function EventItem({ event, onClick }) {
     const context = useAppContext();
     const eventColor = getEventColor(event, eventColors);
+    const isOwnEvent = event.isOwnEvent;
     
     const styles = {
         eventPreview: {
@@ -24,9 +25,9 @@ export default function EventItem({ event, onClick }) {
             display: 'flex',
             alignItems: 'center',
             color: context.colorScheme.textColor,
-            backgroundColor: context.colorScheme.name === 'dark' 
-                ? 'rgba(255, 255, 255, 0.1)' 
-                : 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: isOwnEvent 
+                ? (context.colorScheme.name === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
+                : (context.colorScheme.name === 'dark' ? 'rgba(100, 100, 255, 0.1)' : 'rgba(200, 200, 255, 0.2)'),
             transition: 'transform 0.1s ease, background-color 0.2s ease',
         },
         eventColor: {
@@ -42,21 +43,31 @@ export default function EventItem({ event, onClick }) {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             flex: 1,
+        },
+        eventUsername: {
+            fontSize: '0.75rem',
+            color: context.colorScheme.secondaryText,
+            marginLeft: '5px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
         }
     };
 
     const handleMouseOver = (e) => {
         e.currentTarget.style.transform = 'scale(1.02)';
-        e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
-            ? 'rgba(255, 255, 255, 0.15)' 
-            : 'rgba(0, 0, 0, 0.08)';
+        const hoverBgColor = isOwnEvent
+            ? (context.colorScheme.name === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)')
+            : (context.colorScheme.name === 'dark' ? 'rgba(100, 100, 255, 0.15)' : 'rgba(200, 200, 255, 0.25)');
+        e.currentTarget.style.backgroundColor = hoverBgColor;
     };
 
     const handleMouseOut = (e) => {
         e.currentTarget.style.transform = 'scale(1)';
-        e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
-            ? 'rgba(255, 255, 255, 0.1)' 
-            : 'rgba(0, 0, 0, 0.05)';
+        const originalBgColor = isOwnEvent
+            ? (context.colorScheme.name === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
+            : (context.colorScheme.name === 'dark' ? 'rgba(100, 100, 255, 0.1)' : 'rgba(200, 200, 255, 0.2)');
+        e.currentTarget.style.backgroundColor = originalBgColor;
     };
 
     return (
@@ -70,6 +81,9 @@ export default function EventItem({ event, onClick }) {
             <div style={styles.eventColor} />
             <div style={styles.eventTitle}>
                 {event.title}
+                {!isOwnEvent && event.user?.username && (
+                    <span style={styles.eventUsername}>@{event.user.username}</span>
+                )}
             </div>
         </div>
     );
