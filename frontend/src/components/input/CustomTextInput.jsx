@@ -1,7 +1,15 @@
 import { useAppContext } from '../../lib/context';
 
-export default function CustomTextInput({ value, onChange, placeholder, type, ...props }) {
+export default function CustomTextInput({ value, onChange, placeholder, type, style: incomingStyle = {}, ...props }) {
     const context = useAppContext();
+
+    const defaultInputStyle = {
+        backgroundColor: context.colorScheme.tertiaryBackground,
+        color: context.colorScheme.textColor,
+        border: 'none',
+    };
+
+    const mergedInputStyle = { ...defaultInputStyle, ...incomingStyle };
 
     return (
         <div
@@ -9,12 +17,12 @@ export default function CustomTextInput({ value, onChange, placeholder, type, ..
             {...props}
         >
             <input
-                className='w-100 p-2 border rounded-lg'
+                className='w-100 p-2 rounded-lg'
                 type={type}
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
-                style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}
+                style={mergedInputStyle}
             />
         </div>
     );

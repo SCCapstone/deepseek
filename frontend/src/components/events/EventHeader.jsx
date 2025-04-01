@@ -2,15 +2,16 @@
 // it displays the event details at the top of the event page
 
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { FaLocationArrow, FaClock, FaInfoCircle, FaBell, FaHeart, FaRegHeart } from 'react-icons/fa';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
 import { formatDate, formatTimeRange, formatDateTime } from '../utility/componentUtils/dateUtils';
 import { useAppContext } from '../../lib/context';
+import CustomButton from '../input/CustomButton';
 
-export default function EventHeader({ eventId }) {
+export default function EventHeader({ eventId, onEditClick }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [eventData, setEventData] = useState(null);
@@ -19,7 +20,6 @@ export default function EventHeader({ eventId }) {
     const [likeError, setLikeError] = useState(null);
 
     const context = useAppContext();
-    const navigate = useNavigate();
 
     const getData = async () => {
         setLoading(true);
@@ -62,7 +62,11 @@ export default function EventHeader({ eventId }) {
     };
 
     const handleEditClick = () => {
-        navigate(`/update-event/${eventId}`);
+        if (onEditClick) {
+            onEditClick();
+        } else {
+            console.error("onEditClick prop not provided to EventHeader");
+        }
     };
 
     if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
@@ -75,9 +79,9 @@ export default function EventHeader({ eventId }) {
         : null;
 
     return (
-        <div className='container p-3 rounded-lg' style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
-            {likeError && <Alert message={likeError} type="danger" hideAlert={() => setLikeError(null)} className="mb-2"/>}
-            <div className='d-flex flex-row justify-content-between align-items-start mb-2'>
+        <div className='container p-3 rounded-lg' style={{ backgroundColor: context.colorScheme.tertiaryBackground, position: 'relative' }}>
+            {likeError && <Alert message={likeError} type="danger" hideAlert={() => setLikeError(null)} className="mb-2" />}
+            <div className='mb-2'>
                 <div>
                     <h3 className='h3 m-0' style={{color: context.colorScheme.textColor}}>{eventData.title}</h3>
                     {eventData.user?.username && (
@@ -86,27 +90,23 @@ export default function EventHeader({ eventId }) {
                         </p>
                     )}
                 </div>
-                <div className='d-flex align-items-center pt-1'>
-                    <button 
-                        onClick={handleLikeToggle} 
-                        className='btn btn-link p-0 me-2' 
-                        style={{color: context.colorScheme.textColor, border: 'none', background: 'none', cursor: 'pointer'}}
-                        aria-label={isLiked ? 'Unlike event' : 'Like event'}
-                    >
-                        {isLiked ? <FaHeart size={20} color="red" /> : <FaRegHeart size={20} />}
-                    </button>
-                    <span style={{color: context.colorScheme.textColor, paddingLeft: '4px'}}>{likeCount}</span>
-                    {context.user?.username === eventData.user?.username && (
-                        <button 
-                            onClick={handleEditClick} 
-                            className='btn btn-sm btn-outline-secondary ms-3'
-                        >
-                            Edit
-                        </button>
-                    )}
-                </div>
             </div>
+
+            {context.user?.username === eventData.user?.username && (
+                <div style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem', 
+                }}>
+                    <CustomButton
+                        style={{ backgroundColor: context.colorScheme.accentColor }}
+                        text='Edit event'
+                        onClick={handleEditClick}
+                    />
+                </div>
+            )}
             
+            {/* Date/Time Info */}
             <div className='mb-3 d-flex align-items-center'>
                 <FaClock size={16} className="mr-2" style={{color: context.colorScheme.textColor}} />
                 <p className='m-0' style={{color: context.colorScheme.textColor}}>
@@ -135,6 +135,25 @@ export default function EventHeader({ eventId }) {
                     <p className='m-0' style={{color: context.colorScheme.textColor}}>You have set a reminder for this event</p>
                 </div>
             )}
+
+            <div 
+                className='d-flex align-items-center'
+                style={{
+                    position: 'absolute',
+                    bottom: '1rem',
+                    right: '1rem',
+                }}
+            >
+                <button
+                    onClick={handleLikeToggle}
+                    className='btn btn-link p-0 me-1'
+                    style={{ color: context.colorScheme.textColor, border: 'none', background: 'none', cursor: 'pointer' }}
+                    aria-label={isLiked ? 'Unlike event' : 'Like event'}
+                >
+                    {isLiked ? <FaHeart size={20} color={context.colorScheme.accentColor}/> : <FaRegHeart size={20} />}
+                </button>
+                <span style={{ color: context.colorScheme.textColor }}>{likeCount}</span>
+            </div>
         </div>
     );
 }

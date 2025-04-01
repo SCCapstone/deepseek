@@ -88,7 +88,7 @@ def get_event(current_user: User, event_id: str):
     'end_time': {'type': str},
     'description': {'type': str},
     'location': {'type': str},
-    'reminder': {'type': bool},
+    'set_reminder': {'type': bool},
     'public': {'type': bool},
 })
 def update_event(current_user: User, event_id: str):
