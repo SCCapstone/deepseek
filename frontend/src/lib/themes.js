@@ -7,12 +7,13 @@ export const lightTheme = {
     backgroundColor: '#ffffff',           // Main background
     secondaryBackground: '#f5f5f5',       // Secondary background (cards, panels)
     tertiaryBackground: '#e9ecef',        // Tertiary background (headers, footers)
+    quaternaryBackground: '#d1e7dd',      // New quaternary background (light greenish)
     // Text colors
     textColor: '#212529',                 // Primary text
     secondaryText: '#6c757d',             // Secondary text
     // Accent colors
     accentColor: accentColor,               // Primary accent (buttons, links)
-    accentHover: accentColor + '20',               // Accent hover state
+    accentHover: accentColor + '20',       // Accent hover state
     // Border colors
     borderColor: '#dee2e6',               // Standard borders
     // Status colors
@@ -28,12 +29,13 @@ export const darkTheme = {
     backgroundColor: '#141415',           // Main background
     secondaryBackground: '#1e1e1e',       // Secondary background (cards, panels)
     tertiaryBackground: '#2d2d2d',        // Tertiary background (headers, footers)
+    quaternaryBackground: '#242424',      // New quaternary background (light blue)
     // Text colors
     textColor: '#f8f9fa',                 // Primary text
     secondaryText: '#adb5bd',             // Secondary text
     // Accent colors
     accentColor: accentColor,               // Primary accent (buttons, links)
-    accentHover: accentColor + '20',               // Accent hover state
+    accentHover: accentColor + '20',       // Accent hover state
     // Border colors
     borderColor: '#343a40',               // Standard borders
     // Status colors

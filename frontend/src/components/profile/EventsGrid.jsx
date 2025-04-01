@@ -16,13 +16,14 @@ function EventCard({ event }) {
     return (
         <button
             onClick={() => navigate('/events/' + event.id)}
-            className='p-2 d-flex flex-column justify-content-start
-            border-0 align-items-center rounded'
+            className='rounded border-0'
             style={{
                 backgroundColor: context.colorScheme.tertiaryBackground,
                 color: context.colorScheme.textColor,
                 transition: 'transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                borderRadius: '8px',
+                padding: '12px'
             }}
             onMouseOver={(e) => {
                 e.currentTarget.style.transform = 'translateY(-3px)';
@@ -54,13 +55,18 @@ function EventCard({ event }) {
 }
 
 export default function EventsGrid({ events }) {
+    const context = useAppContext();
     return (
         <div
-            className='p-1'
+            className='event-grid'
             style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                gap: 12,
+                gap: 15,
+                paddingLeft: '15px',
+                paddingRight: '15px',
+                borderRadius: '12px',
+
             }}
         >
             {events.map((event, i) => <EventCard key={i} event={event}/>)}
