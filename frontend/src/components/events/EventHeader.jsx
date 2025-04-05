@@ -3,13 +3,14 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaLocationArrow, FaClock, FaInfoCircle, FaBell, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaLocationArrow, FaClock, FaInfoCircle, FaBell } from 'react-icons/fa';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
 import api from '../../lib/api';
 import { formatDate, formatTimeRange, formatDateTime } from '../utility/componentUtils/dateUtils';
 import { useAppContext } from '../../lib/context';
 import CustomButton from '../input/CustomButton';
+import LikeButton from '../input/LikeButton';
 
 export default function EventHeader({ eventId, onEditClick }) {
     const [loading, setLoading] = useState(true);
@@ -79,7 +80,7 @@ export default function EventHeader({ eventId, onEditClick }) {
         : null;
 
     return (
-        <div className='container p-3 rounded-lg' style={{ backgroundColor: context.colorScheme.tertiaryBackground, position: 'relative' }}>
+        <div className='container p-3 rounded-lg' style={{ backgroundColor: context.colorScheme.tertiaryBackground, position: 'relative', paddingBottom: '3rem' }}>
             {likeError && <Alert message={likeError} type="danger" hideAlert={() => setLikeError(null)} className="mb-2" />}
             <div className='mb-2'>
                 <div>
@@ -136,23 +137,18 @@ export default function EventHeader({ eventId, onEditClick }) {
                 </div>
             )}
 
-            <div 
-                className='d-flex align-items-center'
+            <div
                 style={{
                     position: 'absolute',
                     bottom: '1rem',
                     right: '1rem',
                 }}
             >
-                <button
+                <LikeButton
+                    isLiked={isLiked}
+                    likeCount={likeCount}
                     onClick={handleLikeToggle}
-                    className='btn btn-link p-0 me-1'
-                    style={{ color: context.colorScheme.textColor, border: 'none', background: 'none', cursor: 'pointer' }}
-                    aria-label={isLiked ? 'Unlike event' : 'Like event'}
-                >
-                    {isLiked ? <FaHeart size={20} color={context.colorScheme.accentColor}/> : <FaRegHeart size={20} />}
-                </button>
-                <span style={{ color: context.colorScheme.textColor }}>{likeCount}</span>
+                />
             </div>
         </div>
     );
