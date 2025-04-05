@@ -4,7 +4,7 @@ Flask routes for authentication-related API endpoints
 from datetime import datetime
 from flask import Blueprint, request, make_response
 import pytz
-
+import re
 from db import User
 from utils.data_utils import *
 from utils.auth_utils import hash_password, new_token
@@ -27,11 +27,19 @@ def register():
     email = data['email']
     password = data['password']
 
+    # check if the data is valid
+    if not username or not email or not password:
+        raise InvalidInputError('Please provide all required fields')
+
     # checking for existing user
     if User.find_one(username=username):
         raise InvalidInputError('Existing account with that username')
     if User.find_one(email=email):
         raise InvalidInputError('Existing account with that email')
+    
+    # checking if the email is valid
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+        raise InvalidInputError('Invalid email')
 
     # hashing password
     hashed_password = hash_password(password)
