@@ -5,7 +5,7 @@ import logging
 from bson.objectid import ObjectId
 from flask import Blueprint, request, make_response
 
-from db import Event, User
+from db import Event, User, Notification
 from utils.auth_utils import *
 from utils.data_utils import *
 from utils.error_utils import *
@@ -13,6 +13,7 @@ from utils.error_utils import *
 
 event_router = Blueprint('event_router', __name__)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 @event_router.route('/add-event', methods=['POST'])
@@ -61,6 +62,7 @@ def get_event(current_user: User, event_id: str):
     # finding event in database
     event = Event.find_one(_id=ObjectId(event_id))
     if not event:
+        logger.error('Invalid event id `%s`' % event_id)
         raise NotFoundError('Invalid event id `%s`' % event_id)
     
     # making sure user has read access
@@ -148,6 +150,7 @@ def add_event_comment(current_user: User, event_id: str):
 def get_notifications(current_user: User):
     notifications = current_user.notifications
     notification_data = [x.to_dict() for x in notifications]
+    logger.info('Notifications retrieved: %s' % notification_data)
     return make_response({'message': 'Notifications retrieved', 'data': notification_data})
 
 
@@ -161,6 +164,16 @@ def clear_notifications(current_user: User):
         x.delete()
     return make_response({'message': 'Notifications cleared'})
 
+
+@event_router.route('/events/notifications/clear/<notification_id>', methods=['POST'])
+@login_required
+def clear_notification(current_user: User, notification_id: str):
+    notifications = current_user.notifications
+    for x in notifications:
+        if x._id == ObjectId(notification_id):
+            x.delete()
+            return make_response({'message': 'Notification cleared'})
+    raise NotFoundError('Invalid notification id `%s`' % notification_id)
 
 @event_router.route('/get-friends-events')
 @login_required

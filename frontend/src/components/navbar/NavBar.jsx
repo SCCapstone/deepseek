@@ -7,7 +7,7 @@ import { FaPlus } from 'react-icons/fa';
 
 import SearchBar from './SearchBar';
 import ProfileIcon from './ProfileIcon';
-import NotificationsWidget from './NotificationsWidget';
+import NotificationsWidgetContainer from './notifications/NotificationsWidgetContainer';
 import SettingsWidget from './SettingsWidget';
 
 import CreateEvent from '../events/create/CreateEvent';
@@ -81,7 +81,7 @@ export default function NavBar() {
                 </div>
                 <SearchBar/>
                 <div className='d-flex flex-row align-items-center'>
-                    <NotificationsWidget className='mr-3'/>
+                    <NotificationsWidgetContainer className='mr-3'/>
                     <SettingsWidget className='mr-3'/>
                     <ProfileIcon/>
                 </div>

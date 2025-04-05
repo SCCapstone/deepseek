@@ -2,6 +2,7 @@
 Flask routes for friend-related API endpoints
 """
 from flask import Blueprint, make_response
+from bson.objectid import ObjectId
 
 from utils.auth_utils import *
 from utils.data_utils import *
@@ -34,23 +35,23 @@ def get_user_friends(username: str):
 
 @friend_router.route('/add/<friend_username>', methods=['POST'])
 @login_required
-def add_friend(current_user: User, friend_username: str):
-    # finding other user in database
-    other_user = User.find_one(username=friend_username)
-    if not other_user:
-        raise NotFoundError('No user with username `%s`' % friend_username)
+def add_friend_username(current_user: User, friend_username: str):
+     # finding other user in database
+     other_user = User.find_one(username=friend_username)
+     if not other_user:
+         raise NotFoundError('No user with username `%s`' % friend_username)
     
-    if other_user == current_user:
-        raise InvalidInputError('You cannot friend yourself')
+     if other_user == current_user:
+         raise InvalidInputError('You cannot friend yourself')
     
-    # accepting or sending request
-    current_user.add_friend(other_user)
-    return make_response({'message': 'Success'}, 201)
+     # accepting or sending request
+     current_user.add_friend(other_user)
+     return make_response({'message': 'Success'}, 201)
 
 
 @friend_router.route('/remove/<friend_username>', methods=['POST'])
 @login_required
-def remove_friend(current_user: User, friend_username: str):
+def remove_friend_username(current_user: User, friend_username: str):
     # finding other user in database
     other_user = User.find_one(username=friend_username)
     if not other_user:
@@ -58,4 +59,28 @@ def remove_friend(current_user: User, friend_username: str):
     
     # deleting friend relation records
     current_user.remove_friend(other_user)
+    return make_response({'message': 'Successfuly removed friend'})
+
+# friend requests using IDs
+@friend_router.route('/request/add/<friend_id>', methods=['POST'])
+@login_required
+def add_friend_id(current_user: User, friend_id: str):
+    other_user = User.find_one(_id=ObjectId(friend_id))
+    if not other_user:
+        raise NotFoundError('No user with id `%s`' % friend_id)
+    
+    current_user.add_friend(other_user)
+    current_user.remove_notification(other_user._id)
+    return make_response({'message': 'Successfuly added friend'})
+
+
+@friend_router.route('/request/remove/<friend_id>', methods=['POST'])
+@login_required
+def remove_friend_id(current_user: User, friend_id: str):
+    other_user = User.find_one(_id=ObjectId(friend_id))
+    if not other_user:
+        raise NotFoundError('No user with id `%s`' % friend_id)
+    
+    current_user.remove_friend(other_user)
+    current_user.remove_notification(other_user._id)
     return make_response({'message': 'Successfuly removed friend'})

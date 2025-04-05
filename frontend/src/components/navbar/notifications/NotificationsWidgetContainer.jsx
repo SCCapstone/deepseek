@@ -4,12 +4,12 @@
 import { useState, useEffect } from 'react';
 import { FaBell } from "react-icons/fa";
 
-import Loading from '../../utility/Loading'; // Adjusted path
-import Alert from '../../utility/Alert'; // Adjusted path
-import NotificationItem from './NotificationItem'; // Adjusted path
+import Loading from '../../utility/Loading';
+import Alert from '../../utility/Alert';
+import NotificationItem from './NotificationItem';
 
-import api from '../../../lib/api'; // Adjusted path
-import { useAppContext } from '../../../lib/context'; // Adjusted path
+import api from '../../../lib/api';
+import { useAppContext } from '../../../lib/context';
 
 
 export default function NotificationsWidgetContainer({ className }) {
@@ -22,14 +22,13 @@ export default function NotificationsWidgetContainer({ className }) {
 
     const getData = async () => {
         setLoading(true);
-        setError(null); // Clear previous errors
-        // Ensure API endpoint is correct
+        setError(null);
         const { data, error: apiError } = await api.get('/events/notifications'); 
         if (apiError) {
             setError(apiError.message || 'Failed to fetch notifications');
-            setNotifications([]); // Set to empty array on error?
+            setNotifications([]);
         } else {
-            setNotifications(data || []); // Ensure data is an array
+            setNotifications(data || []);
         }
         setLoading(false);
     }
@@ -41,41 +40,28 @@ export default function NotificationsWidgetContainer({ className }) {
         }
     }, [showNotifications]);
 
-    // Fetch initial count (optional, maybe only fetch when opened)
     useEffect(() => {
-         // Fetch only count initially?
-         // Or rely on push notifications/SSE for real-time count?
-         // For now, let's fetch full data once when component mounts to get initial count
          getData(); 
     }, []);
 
     const handleClearNotifications = async () => {
         setLoading(true);
-        // Ensure API endpoint is correct
         const { error: apiError } = await api.post('/events/notifications/clear');
         if (apiError) {
             setError(apiError.message || 'Failed to clear notifications');
             setLoading(false);
         } else {
-            // Optimistically clear or refetch
             setNotifications([]);
             setShowNotifications(false);
-            // No need to setLoading(false) here if setShowNotifications triggers re-render without loading state
         }
-        // setLoading(false); // May not be needed if setShowNotifications closes the dropdown
     }
 
     const toggleNotifications = () => {
         setShowNotifications(prev => !prev);
     }
 
-    // Calculate unread count (assuming API returns all notifications)
-    // Or API could return the count directly
-    const unreadCount = notifications ? notifications.filter(n => !n.is_read).length : 0;
-
     return (
         <div className={'position-relative '+(className || '')}>
-            {/* Bell Icon Trigger */}
             <div 
                 className='position-relative' 
                 onClick={toggleNotifications} 
@@ -112,7 +98,7 @@ export default function NotificationsWidgetContainer({ className }) {
                             fontWeight: 'bold'
                         }}
                     >
-                        {notifications.length} { /* Or use unreadCount */}
+                        {notifications.length}
                     </div>
                 : null}
             </div>
@@ -145,9 +131,8 @@ export default function NotificationsWidgetContainer({ className }) {
                             <>
                                 {notifications && notifications.length > 0 ?
                                     <>
-                                        <div className='w-100 px-1' style={{overflowY: 'auto', maxHeight: '350px'}}> {/* Limit height for scroll */}
+                                        <div className='w-100 px-1' style={{overflowY: 'auto', maxHeight: '350px'}}>
                                             {notifications.map((item) => (
-                                                // Pass getData function down as a prop
                                                 <NotificationItem
                                                     key={item.id}
                                                     item={item}
