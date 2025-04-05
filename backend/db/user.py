@@ -14,6 +14,7 @@ from .friend_relation import FriendRelation
 from .notification import Notification
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class User(DatabaseObject):
@@ -96,17 +97,20 @@ class User(DatabaseObject):
                 event_msg = 'Reminder: your event \'%s\' starts today!' % event.title
 
                 # sending reminder and updating event to show that reminder has been sent
-                self.add_notification(event_msg)
+                self.add_notification(event_msg, 'event_reminder', event._id)
                 event.update(reminder_sent=True)
 
         # returning all notifications
         return Notification.find(user_id=self._id)
     
-    def add_notification(self, message: str) -> Notification:
+    def add_notification(self, message: str, type: str, event_id: ObjectId = None, friend_id: ObjectId = None) -> Notification:
         notif = Notification.create(
             user_id=self._id,
             message=message,
             created_at=datetime.now(),
+            type=type,
+            event_id=event_id,
+            friend_id=friend_id,
         )
         return notif
     
@@ -115,9 +119,20 @@ class User(DatabaseObject):
         for notif in notifs:
             notif.update(is_read=True)
     
+    def remove_notification(self, friend_id: ObjectId) -> None:
+        notifs = self.notifications
+        for notif in notifs:
+            if notif.friend_id == friend_id:
+                notif.delete()
+
+    
     def add_friend(self, other_user: Self) -> None:
         current_status = self.get_friend_status(other_user)
-        if current_status == 'request_received':
+        logger.info(f"Current status: {current_status} for self: {self.username} and other: {other_user.username}")
+        if current_status == 'friend':
+            # Users are already friends, do nothing
+            return
+        elif current_status == 'request_received':
             # accepting request by creating new records for both users
             FriendRelation.create(
                 user1_id=self._id,
@@ -131,6 +146,8 @@ class User(DatabaseObject):
                 status='friend',
                 created_at=datetime.now(),
             )
+            # friend relation has been made, can send notification to the sender
+            other_user.add_notification('@' + self.username + ' is now your friend!', 'friend_accept')
         
         elif current_status == 'none':
             # sending a new friend request
@@ -146,9 +163,8 @@ class User(DatabaseObject):
                 status='request_received',
                 created_at=datetime.now(),
             )
-            
             # sending a notification to the other user
-            other_user.add_notification('Friend request from @' + self.username)
+            other_user.add_notification('Friend request from @' + self.username, 'friend_request', friend_id=self._id)
     
     def remove_friend(self, other_user: Self) -> None:
         rels = FriendRelation.find(user1_id=self._id, user2_id=other_user._id)

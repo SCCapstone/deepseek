@@ -8,9 +8,10 @@ export default function NotificationItem({ item, onNotificationUpdate }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [clearing, setClearing] = useState(false);
 
     const handleEventClick = () => {
-        if (item.type === 'event_invite' || item.type === 'event_update' || item.type === 'event_reminder') {
+        if (['event_invite', 'event_update', 'event_reminder'].includes(item.type)) {
             if (item.event_id) {
                 navigate(`/events/${item.event_id}`);
             } else {
@@ -19,64 +20,105 @@ export default function NotificationItem({ item, onNotificationUpdate }) {
         }
     };
 
+    const handleClearNotification = async () => {
+        setClearing(true);
+        const url = `/events/notifications/clear/${item.id}`;
+        const { error: apiError } = await api.post(url);
+        if (apiError) {
+            setError(apiError.message || 'Failed to clear notification.');
+            setClearing(false);
+        } else {
+            onNotificationUpdate();
+            setClearing(false);
+        }
+    };
+
     const handleFriendRequest = async (accept) => {
         setLoading(true);
         setError(null);
-        const url = `/friends/requests/${item.sender_id}/${accept ? 'accept' : 'reject'}`;
-        const { error: apiError } = await api.post(url);
-        if (apiError) {
-            setError(apiError.message || 'Failed to process friend request.');
-            setLoading(false);
-        } else {
-            if (onNotificationUpdate) {
+        if (accept) {
+            const url = `/friends/request/add/${item.friend_id}`;
+            const { error: apiError } = await api.post(url);
+            if (apiError) {
+                setError(apiError.message || 'Failed to accept friend request.');
+                setLoading(false);
+            } else {
                 onNotificationUpdate();
+                setLoading(false);
+            }
+        } else {
+            const url = `/friends/request/remove/${item.friend_id}`;
+            const { error: apiError } = await api.post(url);
+            if (apiError) {
+                setError(apiError.message || 'Failed to reject friend request.');
+                setLoading(false);
+            } else {
+                onNotificationUpdate();
+                setLoading(false);
             }
         }
     };
 
-    const isClickable = item.type === 'event_invite' || item.type === 'event_update' || item.type === 'event_reminder';
+    const isClickable = ['event_invite', 'event_update', 'event_reminder'].includes(item.type);
 
-    // Define base style
     const baseStyle = {
         backgroundColor: context.colorScheme.tertiaryBackground,
     };
 
-    // Define conditional style for cursor
     const clickableStyle = isClickable ? { cursor: 'pointer' } : {};
 
     return (
         <div
-            className={`p-3 rounded-lg mb-2 w-100`}
-            style={{ ...baseStyle, ...clickableStyle }}
-            onClick={isClickable ? handleEventClick : null}
+            className={`p-3 rounded-lg mb-2 w-100 d-flex justify-content-between align-items-start`}
+            style={{ ...baseStyle }}
         >
-            <p className="m-0">{item.message}</p>
-            {item.type === 'friend_request' && (
-                <div className="mt-2 d-flex justify-content-end">
-                    {error && <p className="text-danger mr-2 small">{error}</p>}
-                    <button 
-                        className="btn btn-sm btn-success mr-2" 
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleFriendRequest(true);
-                        }}
-                        disabled={loading}
-                        style={{backgroundColor: context.colorScheme.success, color: 'white', border: 'none'}}
-                    >
-                        {loading ? '...' : 'Accept'}
-                    </button>
-                    <button 
-                        className="btn btn-sm btn-danger" 
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleFriendRequest(false);
-                        }}
-                        disabled={loading}
-                        style={{backgroundColor: context.colorScheme.danger, color: 'white', border: 'none'}}
-                    >
-                        {loading ? '...' : 'Deny'}
-                    </button>
-                </div>
+            <div
+                style={isClickable ? clickableStyle : {}}
+                onClick={isClickable ? handleEventClick : null}
+                className="flex-grow-1 mr-2"
+            >
+                <p className="m-0">{item.message}</p>
+                {item.type === 'friend_request' && (
+                    <div className="mt-2 d-flex justify-content-end align-items-center">
+                        {error && <p className="text-danger mr-2 mb-0 small" style={{ flexGrow: 1 }}>{error}</p>}
+                        <button 
+                            className="btn btn-sm btn-success mr-2" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleFriendRequest(true);
+                            }}
+                            disabled={loading}
+                            style={{backgroundColor: context.colorScheme.success, color: 'white', border: 'none'}}
+                        >
+                            {loading ? '...' : 'Accept'}
+                        </button>
+                        <button 
+                            className="btn btn-sm btn-danger" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleFriendRequest(false);
+                            }}
+                            disabled={loading}
+                            style={{backgroundColor: context.colorScheme.danger, color: 'white', border: 'none'}}
+                        >
+                            {loading ? '...' : 'Deny'}
+                        </button>
+                    </div>
+                )}
+            </div>
+            {item.type !== 'friend_request' && (
+                <button
+                    className="btn btn-sm btn-outline-secondary"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleClearNotification();
+                    }}
+                    disabled={clearing || loading}
+                    style={{ lineHeight: '1', padding: '0.2rem 0.4rem' }}
+                    aria-label="Clear notification"
+                >
+                    {clearing ? '...' : '×'}
+                </button>
             )}
         </div>
     );

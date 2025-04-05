@@ -1,4 +1,5 @@
 import secrets
+import logging
 from flask import Flask, make_response
 from flask_cors import CORS
 
@@ -8,6 +9,8 @@ from utils.error_utils import handle_error
 
 TOKEN_SIZE_BYTES = 32
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # database setup
 db = Database()
