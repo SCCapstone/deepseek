@@ -4,6 +4,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 
 import CustomTextInput from '../components/input/CustomTextInput';
 import CustomButton from '../components/input/CustomButton';
+import Alert from '../components/utility/Alert';
 
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
@@ -12,25 +13,33 @@ export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [error, setError] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
     const navigate = useNavigate();
     const context = useAppContext();
 
     async function handleSubmit(event) {
         event.preventDefault();
-        const { data, error } = await api.post('/register', {email, username, password});
-        if (error) {
-            // handle error here
-            alert(error);
-        }
-        else {
-            // Set the nested user object into context
+        setError('');
+        setShowAlert(false);
+        const { data, error: apiError } = await api.post('/register', { email, username, password });
+        if (apiError) {
+            setError(apiError || 'An unexpected error occurred.');
+            setShowAlert(true);
+        } else {
             context.setUser(data.user);
             navigate('/calendar');
         }
     }
 
+    const hideAlert = () => {
+        setShowAlert(false);
+        setError('');
+    };
+
     return (
         <div style={{height: '100vh'}} className='d-flex align-items-center justify-content-center'>
+            {showAlert && <Alert message={error} hideAlert={hideAlert} />}
             <form
             className='p-4 d-flex flex-column align-items-center shadow-sm'
             style={{
