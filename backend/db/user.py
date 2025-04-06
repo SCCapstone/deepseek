@@ -27,6 +27,7 @@ class User(DatabaseObject):
         'name': {'type': Union[str, None]},
         'bio': {'type': Union[str, None]},
         'default_event_visibility': {'type': bool, 'default': False},
+        'default_reminder' : {'type': bool, 'default': False},
         'created_at': {'type': datetime},
         'liked_events': {'type': list, 'default': []},  # List of event ObjectIds
     }
@@ -46,6 +47,7 @@ class User(DatabaseObject):
         return {
             'email': self.email,
             'default_event_visibility': self.default_event_visibility,
+            'default_reminder': self.default_reminder
         }
     
     @property

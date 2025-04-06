@@ -23,8 +23,28 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
     const [isLogoutHovered, setIsLogoutHovered] = useState(false);
 
     const getData = async () => {
-        setLoading(false);
-        setSettingsData({});
+        try {
+            setLoading(true);
+            setError(null);
+    
+            const response = await api.get('/get-settings');
+    
+            if (response.error) {
+                setError(response.error);
+            } else if (response.data) {
+                const { email, default_event_visibility, default_reminder } = response.data;
+                setSettingsData({
+                    email,
+                    default_event_visibility: default_event_visibility,
+                    default_reminder: default_reminder
+                });
+            }
+        } catch (err) {
+            console.error('Error fetching settings:', err);
+            setError('Failed to load settings');
+        } finally {
+            setLoading(false);
+        }
     }
 
     const handleLogout = async () => {
@@ -63,7 +83,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
         getData();
     }, []);
 
-    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
+ 
 
     return (
         <Modal showModal={showWindow} hideModal={hideWindow}>
@@ -81,7 +101,79 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
                                 </button>
                             </div>
                         </div>
-                        
+                        <h4 className="mt-4 mb-2">Preferences</h4>
+                        <div className="card p-3 mb-4" style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
+                            <div className="mb-3">
+                                <label className="form-label">Email Address</label>
+                                <input
+                                    type="email"
+                                    className="form-control"
+                                    value={settingsData?.email || ''}
+                                    onChange={e => setSettingsData({...settingsData, email: e.target.value})}
+                                    style={{
+                                        backgroundColor: context.colorScheme.secondaryBackground,
+                                        color: context.colorScheme.textColor,
+                                        border: `1px solid ${context.colorScheme.borderColor}`,
+                                    }}
+                                />
+
+                            </div>
+
+                            <div className="form-check mb-2">
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    id="defaultVisibility"
+                                    checked={!!settingsData?.default_event_visibility}
+                                    onChange={e => setSettingsData({...settingsData, default_event_visibility: e.target.checked})}
+                                />
+                                <label className="form-check-label" htmlFor="defaultVisibility">
+                                    Default Event Visibility
+                                </label>
+                            </div>
+
+                            <div className="form-check mb-3">
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    id="defaultReminder"
+                                    checked={!!settingsData?.default_reminder}
+                                    onChange={e => setSettingsData({...settingsData, default_reminder: e.target.checked})}
+                                />
+                                <label className="form-check-label" htmlFor="defaultReminder">
+                                    Default Event Reminder
+                                </label>
+                            </div>
+
+                            <div className='d-flex justify-content-end'>
+                                <CustomButton
+                                    text='Save Changes'
+                                    className='btn-success'
+                                    onClick={async () => {
+                                        try {
+                                            
+                                            setError(null);  // Reset error state
+
+                                            const response = await api.post('/update-settings', settingsData);
+
+                                            // If the response has an error, set the error state
+                                            if (response.error) {
+                                                setError(response.error);
+                                            } else {
+                                                // Assuming response.data contains the updated user settings
+                                                context.setUser(response.data.user);  // Update user context with the new settings
+                                               
+                                            }
+                                        } catch (err) {
+                                            // Catching any other errors in the request
+                                            setError('Failed to update settings');
+                                        } finally {
+                                            setLoading(false);  // Reset loading state
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
                         <h4 className="mt-3 mb-2">Account</h4>
                         <div className="card p-3 mb-4" style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
                             <div className="d-flex flex-column">
