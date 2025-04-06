@@ -84,6 +84,30 @@ export default function CalendarDay({ day, events, selectedDate, onDayClick, vie
     const handleMoreEventsLeave = (e) => {
         e.currentTarget.style.color = context.colorScheme.secondaryText;
     };
+    
+    const parseEventStartDate = (event) => {
+        const date = new Date(event.date);
+        if (event.start_time && event.start_time.length > 0) {
+            const timeSplit = event.start_time.split(':');
+            const hours = parseInt(timeSplit[0]);
+            const mins = parseInt(timeSplit[1]);
+            date.setHours(hours);
+            date.setMinutes(mins);
+        }
+        else {
+            date.setHours(0);
+            date.setMinutes(0);
+        }
+        return date;
+    }
+
+    const sortEventsByDate = (events) => events.sort((a, b) => {
+        const aDate = parseEventStartDate(a);
+        const bDate = parseEventStartDate(b);
+        return aDate - bDate;
+    });
+
+    const sortedEvents = sortEventsByDate(events);
 
     return (
         <div
