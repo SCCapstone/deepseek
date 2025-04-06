@@ -53,6 +53,19 @@ def update_profile(current_user: User):
     current_user.update(**data)
     return make_response({'message': 'Success'})
 
+@user_router.route('/update-settings', methods=['POST'])
+@login_required
+@data_filter({
+    'email': {'type': Union[str, None]},
+    'default_event_visibility': {'type': Union[bool, None]},
+    'default_reminder': {'type': Union[bool, None]},
+})
+def update_settings(current_user: User):
+    data = request.json
+    current_user.update(**data)
+    return make_response({'message': 'Settings updated successfully'})
+
+
 
 @user_router.route('/delete-account', methods=['POST'])
 @login_required
