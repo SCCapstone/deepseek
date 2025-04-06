@@ -1,7 +1,7 @@
 // this is the main calendar component
 // it contains the header, the grid, and the day
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CalendarHeader from './CalendarHeader';
@@ -12,9 +12,31 @@ import WeekViewGrid from './week/WeekViewGrid'; // adjust path if needed
 import { useAppContext } from '../../lib/context';
 
 export default function Calendar({ onChange, selectedDate, events = [], onEventSelect }) {
-    const [view, setView] = useState(0);
-    const context = useAppContext();
-    const navigate = useNavigate();
+   // Try to get the saved view from localStorage or default to 0 (month view)
+   const savedView = localStorage.getItem('calendarView');
+   const initialView = savedView !== null ? Number(savedView) : 0;
+   
+   const [view, setView] = useState(initialView);  // Initialize with the saved or default value
+   const context = useAppContext();
+   const navigate = useNavigate();
+
+   // Load the saved view from localStorage when the component mounts
+   useEffect(() => {
+       const savedView = localStorage.getItem('calendarView');
+       if (savedView !== null) {
+           const parsedView = Number(savedView);
+           if (!isNaN(parsedView)) {
+               setView(parsedView);  // Set the view based on the saved value
+           }
+       }
+   }, []);
+
+   // Save the view to localStorage whenever it changes
+   useEffect(() => {
+       localStorage.setItem('calendarView', view);
+   }, [view]);
+
+   
 
     const handleDayClick = (day) => {
         onChange(day.date);
