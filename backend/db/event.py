@@ -46,12 +46,14 @@ class Event(DatabaseObject):
     def comments(self) -> List[EventComment]:
         return EventComment.find(event_id=self._id)
     
-    def add_comment(self, user_id: ObjectId, body: str) -> EventComment:
+    def add_comment(self, user_id: ObjectId, body: str, reply_to_who: ObjectId=None, reply_to_when: datetime=None) -> EventComment:
         comment = EventComment.create(
             event_id=self._id,
             user_id=user_id,
             body=body,
             created_at=datetime.now(),
+            reply_to_who=reply_to_who,
+            reply_to_when=reply_to_when,
         )
         return comment
     

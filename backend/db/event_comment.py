@@ -27,6 +27,16 @@ class EventComment(DatabaseObject):
         'created_at': {
             'type': datetime,
         },
+        #User ID of original comment, if comment is a reply
+        'reply_to_who': {
+            'type': ObjectId,
+            'required': True,
+        },
+        #Timestamp of original comment, if comment is a reply
+        'reply_to_when': {
+            'type' : datetime,
+            'required' : True,
+        },
     }
 
     def to_dict(self) -> Dict:
@@ -34,4 +44,6 @@ class EventComment(DatabaseObject):
             'body': self.body,
             'created_at': self.created_at,
             'user_id': self.user_id,
+            'reply_to_who' : self.reply_to_who,
+            'reply_to_when' : self.reply_to_when,
         }

@@ -141,3 +141,25 @@ def get_liked_events(current_user: User):
             # current_user.unlike_event(event_id) # This might be too aggressive without confirmation
             
     return make_response({'message': 'Liked events retrieved', 'data': liked_events})
+
+@user_router.route('/get-commented-events')
+@login_required
+def get_commented_events(current_user: User):
+    liked_event_ids = current_user.liked_events
+    liked_events = []
+    for event_id in liked_event_ids:
+        event = Event.find_one(_id=event_id)
+        if event:
+            event_data = event.to_dict()
+            # Optionally fetch and add user profile data to each event
+            event_user = User.find_one(_id=event.user_id)
+            if event_user:
+                event_data['user'] = event_user.profile
+            liked_events.append(event_data)
+        else:
+            return make_response({'message': 'Event not found', 'data': []})
+            # Handle case where event ID exists in user's liked list but event is deleted
+            # Optionally remove the stale ID from the user's list
+            # current_user.unlike_event(event_id) # This might be too aggressive without confirmation
+            
+    return make_response({'message': 'Liked events retrieved', 'data': liked_events})

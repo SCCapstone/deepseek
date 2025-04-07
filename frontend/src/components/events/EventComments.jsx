@@ -33,6 +33,7 @@ function Comment({ commentData }) {
                     className='m-0 text-muted'
                     style={{color: context.colorScheme.textColor}}
                 >@{commentData.user.username}</Link>
+                ${(commentData.replied_user.username != null) ? "replied to " + commentData.replied_user.username : ''}               
                 <p className='m-0' style={{color: context.colorScheme.textColor}}>{commentData.body}</p>
             </div>
         </div>

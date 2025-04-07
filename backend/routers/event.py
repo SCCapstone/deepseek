@@ -118,17 +118,20 @@ def get_event_comments(current_user: User, event_id: str):
     comments = event.comments
     comment_data = [x.to_dict() for x in comments]
     for x in comment_data:
-        comment_user = User.find_one(_id=x['user_id'])
-        x['user'] = comment_user.profile
+        commenting_user = User.find_one(_id=x['user_id'])
+        x['user'] = commenting_user.profile
         del x['user_id']
-    
+        if x['reply_to_who'] is not None and x['reply_to_when'] is not None:
+            commented_user = User.find_one(_id=x['reply_to_who'])
+            x['replied_user'] = commented_user.profile
+            del x['reply_to_who']
     return make_response({'data': comment_data})
 
 
 @event_router.route('/add-event-comment/<event_id>', methods=['POST'])
 @login_required
 @data_filter({'body': {'type': str}})
-def add_event_comment(current_user: User, event_id: str):
+def add_event_comment(current_user: User, event_id: str, reply_who: ObjectId=None, reply_when: datetime=None):
     event = Event.find_one(_id=ObjectId(event_id))
     if not event:
         raise NotFoundError('Invalid event id `%s`' % event_id)
@@ -141,7 +144,7 @@ def add_event_comment(current_user: User, event_id: str):
     
     data = request.json
     body = data['body']
-    event.add_comment(current_user._id, body)
+    event.add_comment(current_user._id, body, reply_who, reply_when)
     return make_response({'message': 'Successfully commented on event'}, 201)
 
 

@@ -6,6 +6,7 @@ import { useState } from 'react';
 import EventsTab from './EventsTab';
 import FriendsTab from './FriendsTab';
 import LikedEventsTab from './LikedEventsTab';
+import CommentsTab from './CommentsTab';
 
 import { useAppContext } from '../../lib/context';
 
@@ -49,6 +50,8 @@ function Tab({ tab, username }) {
             return <FriendsTab username={username}/>
         case 'liked-events':
             return <LikedEventsTab username={username}/>
+        case 'comments':
+            return <CommentsTab username={username}/>
         default:
             return null;
     }
@@ -70,6 +73,7 @@ export default function ProfileTabs({ username }) {
             >
                 <TabButton active={tab === 'events'} onClick={() => setTab('events')} label='Events'/>
                 <TabButton active={tab === 'liked-events'} onClick={() => setTab('liked-events')} label='Liked Events'/>
+                <TabButton active={tab === 'comments'} onClick={() => setTab('comments')} label='Comments'/>
                 <TabButton active={tab === 'friends'} onClick={() => setTab('friends')} label='Friends'/>
             </div>
             <div className='mb-3'>
