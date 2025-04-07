@@ -6,7 +6,9 @@ import { useNavigate } from 'react-router-dom';
 
 import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './day/CalendarGrid';
-import WeekViewGrid from './week/WeekViewGrid'; // adjust path if needed
+import WeekViewGrid from './week/WeekViewGrid';
+import DayViewGrid from './day/DayViewGrid';
+import DayViewHeader from './day/DayViewHeader';
 
 
 import { useAppContext } from '../../lib/context';
@@ -75,24 +77,28 @@ export default function Calendar({ onChange, selectedDate, events = [], onEventS
                 style={{ backgroundColor: context.colorScheme.backgroundColor }} 
                 className='h-100 d-flex flex-column'
             >
-                {view === 0 ? (
-                    <CalendarGrid 
-                        selectedDate={selectedDate}
-                        events={events}
-                        onDayClick={handleDayClick}
-                        view={view}
-                        onEventClick={handleEventClick}
-                    />
-                ) : view === 1 ? (
-                    <WeekViewGrid 
-                        selectedDate={selectedDate}
-                        events={events}
-                        onEventClick={handleEventClick}
-                    />
-                ) : (
-                    <div className="text-center mt-5">View not implemented</div>
-                )}
-
+                    {view === 0 ? (
+                        <CalendarGrid 
+                            selectedDate={selectedDate}
+                            events={events}
+                            onDayClick={handleDayClick}
+                            view={view}
+                            onEventClick={handleEventClick}
+                        />
+                    ) : view === 1 ? (
+                        <WeekViewGrid 
+                            selectedDate={selectedDate}
+                            events={events}
+                            onEventClick={handleEventClick}
+                        />
+                    ) : view === 2 ? (
+                        <>
+                       <DayViewHeader selectedDate={selectedDate} onDateChange={onChange} />
+                       <DayViewGrid selectedDate={selectedDate} events={events} onEventClick={handleEventClick} />
+                   </>
+                    ) : (
+                        <div className="text-center mt-5">View not implemented</div>
+                    )}
             </div>
         </div>
     );
