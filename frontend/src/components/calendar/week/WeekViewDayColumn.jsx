@@ -25,7 +25,7 @@ export default function WeekViewDayColumn({ day, events, onEventClick, backgroun
                 position: 'relative',
                 display: 'flex',
                 borderLeft: `1px solid ${borderColor}`,
-                borderTop: `1px solid ${borderColor}`, // 👈 This adds the horizontal row line!
+                borderTop: `1px solid ${borderColor}`, 
                 backgroundColor: backgroundColor,
                 height: '60px',
             }}
@@ -56,6 +56,7 @@ export default function WeekViewDayColumn({ day, events, onEventClick, backgroun
                             overflow: 'hidden',
                             whiteSpace: 'nowrap',
                             textOverflow: 'ellipsis',
+                            color: 'black',
                         }}
                         onClick={() => onEventClick(event)}
                     >
