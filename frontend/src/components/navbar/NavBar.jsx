@@ -17,7 +17,7 @@ import CalendarIcon from '../../assets/calendar.png';
 import { useAppContext } from '../../lib/context';
 
 
-export default function NavBar() {
+export default function NavBar({ onEventCreated }) {
     const [creatingEvent, setCreatingEvent] = useState(false);
     const context = useAppContext();
     const { pathname } = useLocation();
@@ -86,7 +86,11 @@ export default function NavBar() {
                     <ProfileIcon/>
                 </div>
             </header>
-            <CreateEvent showEditor={creatingEvent} hideEditor={() => setCreatingEvent(false)}/>
+            <CreateEvent 
+                showEditor={creatingEvent} 
+                hideEditor={() => setCreatingEvent(false)}
+                onEventCreated={onEventCreated}
+            />
         </>
     );
 };
