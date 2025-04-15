@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import EventHeader from '../components/events/EventHeader';
 import EventComments from '../components/events/EventComments';
 import UpdateEvent from '../components/events/update/UpdateEvent';
+import NavBar from '../components/navbar/NavBar';
 
 import { useAppContext } from '../lib/context';
 
@@ -16,15 +17,8 @@ export default function Event() {
     const handleHideUpdateModal = () => setShowUpdateModal(false);
 
     return (
-        <div 
-            className='w-100 h-100' 
-            style={{
-                overflowY: 'auto', 
-                backgroundColor: context.colorScheme.backgroundColor, 
-                color: context.colorScheme.textColor,
-                height: 'calc(100vh - 48px)' // for the navbar
-            }}
-        >
+        <>
+            <NavBar/>
             <div
                 className='container my-3 w-100 rounded
                 d-flex flex-column justify-content-start align-items-stretch'
@@ -43,6 +37,6 @@ export default function Event() {
                 hideEditor={handleHideUpdateModal}
                 eventId={id}
             />
-        </div>
+        </>
     );
 }

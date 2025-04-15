@@ -1,6 +1,5 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { AppContextProvider, useAppContext } from './lib/context';
-import NavBar from './components/navbar/NavBar';
 import Login from './pages/Login'
 import Register from './pages/Register';
 import Landing from './pages/Landing';
@@ -8,7 +7,7 @@ import Profile from './pages/Profile';
 import Event from './pages/Event';
 import { useEffect } from 'react';
 import Home from './pages/Home';
-
+import NavBar from './components/navbar/NavBar';
 function AppContent() {
     const context = useAppContext();
     const location = useLocation();
@@ -35,7 +34,6 @@ function AppContent() {
                 color: context.colorScheme.textColor,
             }}
         >
-            <NavBar/>
             <Routes>
                 <Route path='/' element={<Landing />} /> 
                 <Route path='/login' element={<Login />} />

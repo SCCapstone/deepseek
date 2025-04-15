@@ -10,7 +10,7 @@ import Alert from '../components/utility/Alert';
 
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
-
+import NavBar from '../components/navbar/NavBar';   
 
 export default function ProfilePage() {
     const { username } = useParams();
@@ -39,16 +39,18 @@ export default function ProfilePage() {
     if (loading) return <Loading className='mt-5'/>
 
     return (
-        <div className='w-100' style={{ overflowY: 'auto' }}>
-            <div
-                className='container my-3 w-100 rounded-lg
+        <>
+            <NavBar/>
+            <div className='w-100' style={{ overflowY: 'auto' }}>
+                <div
+                    className='container my-3 w-100 rounded-lg
                 d-flex flex-column justify-content-start align-items-stretch'
                 style={{ backgroundColor: context.colorScheme.secondaryBackground, 
                     paddingTop: '15px',
-                    borderRadius: '12px',
-                    overflow: 'hidden'
+                        borderRadius: '12px',
+                        overflow: 'hidden'
                     }}
-            >
+                >
                 <ProfileHeader userData={userData} showEditor={username ? null : () => setEditing(true)}/>
                 <div className='w-100' style={{backgroundColor: context.colorScheme.quaternaryBackground, 
                     borderRadius: '12px', 
@@ -62,5 +64,6 @@ export default function ProfilePage() {
             </div>
             <ProfileEditor showEditor={editing} hideEditor={() => setEditing(false)}/>
         </div>
+        </>
     );
 }

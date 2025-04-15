@@ -19,7 +19,7 @@ import EventFormActions from './EventFormActions';
 // Import utilities
 import { BLANK_EVENT, isEventFormValid } from '../../utility/componentUtils/eventFormUtils';
 
-export default function CreateEvent({ showEditor, hideEditor }) {
+export default function CreateEvent({ showEditor, hideEditor, onEventCreated }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [eventData, setEventData] = useState(BLANK_EVENT);
@@ -38,6 +38,9 @@ export default function CreateEvent({ showEditor, hideEditor }) {
         setError(apiError);
         setLoading(false);
         if (!apiError) {
+            if (onEventCreated) {
+                onEventCreated();
+            }
             hideEditor();
         }
     }

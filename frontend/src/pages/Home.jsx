@@ -9,6 +9,7 @@ import EventList from '../components/calendar/sidebar/EventList';
 import EventFeed from '../components/calendar/sidebar/EventFeed';
 import Loading from '../components/utility/Loading';
 import Alert from '../components/utility/Alert';
+import NavBar from '../components/navbar/NavBar';
 
 import api from '../lib/api';
 import { useAppContext } from '../lib/context';
@@ -24,7 +25,8 @@ export default function Home() {
     const context = useAppContext();
 
     async function getData() {
-        setLoading(true);
+        // getData is called on each time a day is selected
+        // however do not show the refresh
         setError(null); // Clear previous errors
         try {
             // Fetch user's events and friends' events concurrently
@@ -99,71 +101,74 @@ export default function Home() {
     if (loading) return <Loading/>
 
     return (
-        <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{overflowY: 'hidden', backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
-            <div className='w-100 h-100'>
-                <Calendar
-                    onChange={handleDateChange}
-                    selectedDate={selectedDate}
-                    events={events}
-                    onEventSelect={handleEventSelect}
-                />
-            </div>
-            <Sidebar>
-                <div className='d-flex flex-row justify-content-between w-100 border-bottom' style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}>
-                    <div
-                        className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'text-white' : '')}
-                        onClick={() => setTab('selected-date')}
-                        style={{backgroundColor: tab === 'selected-date' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground, 
-                            color: context.colorScheme.textColor, 
-                            cursor: 'pointer'}}
-                        onMouseOver={(e) => {
-                            if (tab === 'selected-date') {
-                                e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}dd`;
-                            } else {
-                                e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
-                                    ? 'rgba(255, 255, 255, 0.1)'
-                                    : 'rgba(0, 0, 0, 0.05)';
-                            }
-                        }}
-                        onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = tab === 'selected-date' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground;
-                        }}
-                    >
-                        {selectedDate.toDateString()}
-                    </div>
-                    <div
-                        className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'text-white' : '')}
-                        onClick={() => setTab('event-feed')}
-                        style={{backgroundColor: tab === 'event-feed' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground, 
-                            color: context.colorScheme.textColor, 
-                            cursor: 'pointer'}}
-                        onMouseOver={(e) => {
-                            if (tab === 'event-feed') {
-                                e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}dd`;
-                            } else {
-                                e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
-                                    ? 'rgba(255, 255, 255, 0.1)'
-                                    : 'rgba(0, 0, 0, 0.05)';
-                            }
-                        }}
-                        onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = tab === 'event-feed' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground;
-                        }}
-                    >
-                        Event feed
-                    </div>
-                </div>
-                {tab === 'selected-date' ?
-                    <EventList
-                        events={events.filter(event => {
-                            const eventDate = new Date(event.date);
-                            return isSameDay(eventDate, selectedDate);
-                        })}
-                        selectedEvent={selectedEvent}
-                        setSelectedEvent={setSelectedEvent}
+        <>
+            <NavBar onEventCreated={getData} />
+            <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{overflowY: 'hidden', backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
+                <div className='w-100 h-100'>
+                    <Calendar
+                        onChange={handleDateChange}
+                        selectedDate={selectedDate}
+                        events={events}
+                        onEventSelect={handleEventSelect}
                     />
-                : <EventFeed/>}
-            </Sidebar>
-        </div>
+                </div>
+                <Sidebar>
+                    <div className='d-flex flex-row justify-content-between w-100 border-bottom' style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}>
+                        <div
+                            className={'p-2 w-100 text-center '+(tab === 'selected-date' ? 'text-white' : '')}
+                            onClick={() => setTab('selected-date')}
+                            style={{backgroundColor: tab === 'selected-date' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground, 
+                                color: context.colorScheme.textColor, 
+                                cursor: 'pointer'}}
+                            onMouseOver={(e) => {
+                                if (tab === 'selected-date') {
+                                    e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}dd`;
+                                } else {
+                                    e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                        ? 'rgba(255, 255, 255, 0.1)'
+                                        : 'rgba(0, 0, 0, 0.05)';
+                                }
+                            }}
+                            onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor = tab === 'selected-date' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground;
+                            }}
+                        >
+                            {selectedDate.toDateString()}
+                        </div>
+                        <div
+                            className={'p-2 w-100 text-center '+(tab === 'event-feed' ? 'text-white' : '')}
+                            onClick={() => setTab('event-feed')}
+                            style={{backgroundColor: tab === 'event-feed' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground, 
+                                color: context.colorScheme.textColor, 
+                                cursor: 'pointer'}}
+                            onMouseOver={(e) => {
+                                if (tab === 'event-feed') {
+                                    e.currentTarget.style.backgroundColor = `${context.colorScheme.accentColor}dd`;
+                                } else {
+                                    e.currentTarget.style.backgroundColor = context.colorScheme.name === 'dark' 
+                                        ? 'rgba(255, 255, 255, 0.1)'
+                                        : 'rgba(0, 0, 0, 0.05)';
+                                }
+                            }}
+                            onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor = tab === 'event-feed' ? context.colorScheme.accentColor : context.colorScheme.secondaryBackground;
+                            }}
+                        >
+                            Event feed
+                        </div>
+                    </div>
+                    {tab === 'selected-date' ?
+                        <EventList
+                            events={events.filter(event => {
+                                const eventDate = new Date(event.date);
+                                return isSameDay(eventDate, selectedDate);
+                            })}
+                            selectedEvent={selectedEvent}
+                            setSelectedEvent={setSelectedEvent}
+                        />
+                    : <EventFeed/>}
+                </Sidebar>
+            </div>
+        </>
     );
 }

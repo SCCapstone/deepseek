@@ -4,6 +4,7 @@
 import React from 'react';
 
 import { useAppContext } from '../../../lib/context';
+import DefaultPFP from '../../../assets/default-pfp.jpg';
 
 export default function SearchResults({ results, onAddFriend, onHideResults, visible }) {
     const context = useAppContext();
@@ -76,9 +77,10 @@ function UserResult({ user, handleAddFriend, hideResults }) {
             >
                 <img
                     className='mr-2'
-                    src={user.profile_picture || 'DefaultPFP'}
+                    src={user.profile_picture || DefaultPFP}
                     style={{
                         width: '40px',
+                        height: '40px',
                         borderRadius: 1000,
                     }}
                     alt={user.username}
