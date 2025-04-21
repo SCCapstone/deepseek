@@ -1,6 +1,7 @@
 import React from 'react';
-
+import { useAppContext } from '../../../lib/context';
 export default function DayViewEventColumn({ selectedDate, events, onEventClick, hour }) {
+    const context = useAppContext();
     const parseEventDateTime = (dateStr, timeStr) => {
         const [year, month, day] = dateStr.split('-').map(Number);
         const [hr, min] = timeStr.split(':').map(Number);
@@ -23,7 +24,7 @@ export default function DayViewEventColumn({ selectedDate, events, onEventClick,
                 display: 'flex',
                 borderLeft: '1px solid #555',
                 borderTop: '1px solid #555',
-                backgroundColor: '#000',
+                backgroundColor: context.colorScheme.secondaryBackground,
                 height: '60px',
             }}
         >
@@ -45,7 +46,9 @@ export default function DayViewEventColumn({ selectedDate, events, onEventClick,
                             left: '4px',
                             right: '4px',
                             height: `${(height / 60) * 100}%`,
-                            backgroundColor: '#add8e6',
+                            backgroundColor: '#ADD8E6',
+                            zIndex: 2, // Make sure it sits on top
+                            border: '1px solid #000', // For visibility
                             borderRadius: '4px',
                             padding: '2px 4px',
                             fontSize: '0.8rem',
@@ -53,8 +56,9 @@ export default function DayViewEventColumn({ selectedDate, events, onEventClick,
                             overflow: 'hidden',
                             whiteSpace: 'nowrap',
                             textOverflow: 'ellipsis',
-                            color: 'black',
-                        }}
+                            color: 'white', // Force a clear color
+                          }}
+                          
                         onClick={() => onEventClick(event)}
                     >
                         {event.title}

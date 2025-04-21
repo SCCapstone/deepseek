@@ -1,9 +1,10 @@
 import React from 'react';
-
+import { useAppContext } from '../../../lib/context';
 const hours = Array.from({ length: 24 }, (_, i) => i);
 
 
 export default function WeekViewDayColumn({ day, events, onEventClick, backgroundColor, borderColor, hour }) {
+    const context = useAppContext();
     const parseEventDateTime = (dateStr, timeStr) => {
         const [year, month, day] = dateStr.split('-').map(Number);
         const [hr, min] = timeStr.split(':').map(Number);
@@ -26,7 +27,7 @@ export default function WeekViewDayColumn({ day, events, onEventClick, backgroun
                 display: 'flex',
                 borderLeft: `1px solid ${borderColor}`,
                 borderTop: `1px solid ${borderColor}`, 
-                backgroundColor: backgroundColor,
+                backgroundColor: context.colorScheme.secondaryBackground,
                 height: '60px',
             }}
         >
@@ -52,6 +53,7 @@ export default function WeekViewDayColumn({ day, events, onEventClick, backgroun
                             borderRadius: '4px',
                             padding: '2px 4px',
                             fontSize: '0.8rem',
+                            zIndex: 2,
                             cursor: 'pointer',
                             overflow: 'hidden',
                             whiteSpace: 'nowrap',
