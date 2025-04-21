@@ -20,7 +20,7 @@ function getWeekDays(selectedDate) {
 
 export default function WeekViewGrid({ selectedDate, events, onEventClick }) {
     const weekDays = getWeekDays(selectedDate);
-
+    const context = useAppContext();
     return (
         <div style={{ overflowY: 'auto', height: 'calc(100vh - 100px)' }}>
             {/* Day Headers */}
@@ -39,8 +39,8 @@ export default function WeekViewGrid({ selectedDate, events, onEventClick }) {
                             padding: '8px',
                             textAlign: 'center',
                             borderBottom: '1px solid #ccc',
-                            backgroundColor: '#111',
-                            color: '#fff',
+                            backgroundColor: context.colorScheme.tertiaryBackground,
+                            color: context.colorScheme.textColor,
                         }}
                     >
                         {day.toLocaleDateString(undefined, {
@@ -72,8 +72,8 @@ export default function WeekViewGrid({ selectedDate, events, onEventClick }) {
                                 textAlign: 'right',
                                 paddingTop: '2px',
                                 borderTop: '1px solid #555',
-                                backgroundColor: '#000',
-                                color: '#fff',
+                                backgroundColor: context.colorScheme.secondaryBackground,
+                                color: context.colorScheme.textColor,
                             }}
                         >
                             {hour}:00
