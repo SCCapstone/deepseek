@@ -58,7 +58,9 @@ export default function WeekViewGrid({ selectedDate, events, onEventClick }) {
                     display: 'grid',
                     gridTemplateColumns: '60px repeat(7, 1fr)',
                     gridTemplateRows: 'repeat(24, 60px)',
-                    minHeight: '1440px',
+                    height: '100%',  // Take up remaining height in the scrollable area
+                    maxHeight: 'calc(81vh - 35px)',
+                    overflowY: 'auto',
                 }}
             >
                 {hours.map(hour => (

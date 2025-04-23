@@ -11,16 +11,15 @@ export default function DayViewGrid({ selectedDate, events, onEventClick }) {
     const formattedDate = `${weekday} ${month} ${day}`;
 
     return (
-        <div style={{ overflowY: 'auto', height: 'calc(100vh - 100px)' }}>
+        <div style={{ overflowY: 'auto', height: '80vh', maxHeight: '80vh' }}>
             {/* Grid Header */}
             <div
                 style={{
                     display: 'grid',
                     gridTemplateColumns: '60px 1fr',
-                    height: '40px',
+                    height: '35px',
                 }}
             >
-                {/* Day Label */}
                 <div
                     style={{
                         padding: '8px',
@@ -35,18 +34,19 @@ export default function DayViewGrid({ selectedDate, events, onEventClick }) {
                 <div />
             </div>
 
-            {/* Grid Body with Hours and Events */}
+            {/* Scrollable Grid Body */}
             <div
                 style={{
                     display: 'grid',
                     gridTemplateColumns: '60px 1fr',
-                    gridTemplateRows: 'repeat(24, 60px)', // 24 hours in a day
-                    minHeight: '1440px',
+                    gridTemplateRows: 'repeat(24, 60px)', // Adjust height of hour slots
+                    height: '100%',  // Take up remaining height in the scrollable area
+                    maxHeight: 'calc(76vh - 35px)', // Reduce height for grid content to fit in the 80vh space
+                    overflowY: 'auto',
                 }}
             >
                 {hours.map(hour => (
                     <React.Fragment key={hour}>
-                        {/* Hour Label */}
                         <div
                             style={{
                                 height: '60px',
@@ -62,13 +62,11 @@ export default function DayViewGrid({ selectedDate, events, onEventClick }) {
                             {hour}:00
                         </div>
 
-                        {/* Event Column for this hour */}
                         <DayViewEventColumn
-                            key={hour}
                             selectedDate={selectedDate}
                             events={events}
                             onEventClick={onEventClick}
-                            hour={hour} // Pass current hour
+                            hour={hour}
                         />
                     </React.Fragment>
                 ))}

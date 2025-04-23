@@ -128,7 +128,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
                                     onChange={e => setSettingsData({...settingsData, default_event_visibility: e.target.checked})}
                                 />
                                 <label className="form-check-label" htmlFor="defaultVisibility">
-                                    Default Event Visibility
+                                    Make new events public by default
                                 </label>
                             </div>
 
@@ -141,7 +141,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
                                     onChange={e => setSettingsData({...settingsData, default_reminder: e.target.checked})}
                                 />
                                 <label className="form-check-label" htmlFor="defaultReminder">
-                                    Default Event Reminder
+                                    Default reminders for events to on
                                 </label>
                             </div>
 
