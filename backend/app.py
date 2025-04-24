@@ -6,6 +6,7 @@ from flask_cors import CORS
 from db import *
 from routers import *
 from utils.error_utils import handle_error
+from utils.database_utils import ensure_text_index
 
 TOKEN_SIZE_BYTES = 32
 
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 # database setup
 db = Database()
 db.connect()
-
+ensure_text_index(db)
 
 # flask app setup
 app = Flask(__name__)
