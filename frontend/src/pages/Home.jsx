@@ -102,9 +102,9 @@ export default function Home() {
 
     return (
         <>
-            <NavBar onEventCreated={getData} />
-            <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{overflowY: 'hidden', backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
-                <div className='w-100 h-100'>
+            <NavBar onEventCreated={getData} /> 
+            <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
+                <div className="flex-grow-1 d-flex flex-column" style={{ overflowY: 'auto', height: 'calc(100vh - 56px)', width: '100%' }}>
                     <Calendar
                         onChange={handleDateChange}
                         selectedDate={selectedDate}
