@@ -19,6 +19,7 @@ import { isEventFormValid } from '../../utility/componentUtils/eventFormUtils';
 // Define which fields are updatable based on backend route
 const UPDATABLE_FIELDS = [
     'title',
+    'date',
     'start_time',
     'end_time',
     'description',

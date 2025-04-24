@@ -171,3 +171,4 @@ to test out the build config locally before pushing to Github.
 - Jacob Robertson (jacobr10183@gmail.com)
 - Dominic Colin Gaines (dcolingaines@gmail.com)
 - Ian Turner (i.r.turner55@gmail.com)
+- Joe Zelinsky (jzelinsky1818@gmail.com)
