@@ -8,6 +8,7 @@ import Event from './pages/Event';
 import { useEffect } from 'react';
 import Home from './pages/Home';
 import NavBar from './components/navbar/NavBar';
+
 function AppContent() {
     const context = useAppContext();
     const location = useLocation();
@@ -28,21 +29,22 @@ function AppContent() {
                 left: 0,
                 height: '100vh',
                 width: '100vw',
-                maxHeight: '100vh',
-                maxWidth: '100vw',
                 backgroundColor: context.colorScheme.backgroundColor,
                 color: context.colorScheme.textColor,
+                overflowY: 'auto',
             }}
         >
-            <Routes>
-                <Route path='/' element={<Landing />} /> 
-                <Route path='/login' element={<Login />} />
-                <Route path='/register' element={<Register />} />
-                <Route path='/profile' element={<Profile/>} />
-                <Route path='/profile/:username' element={<Profile/>} />
-                <Route path='/calendar' element={<Home/>} />
-                <Route path='/events/:id' element={<Event/>} />
-            </Routes>
+            <div style={{ flexGrow: 1 }}>
+                <Routes>
+                    <Route path='/' element={<Landing />} /> 
+                    <Route path='/login' element={<Login />} />
+                    <Route path='/register' element={<Register />} />
+                    <Route path='/profile' element={<Profile/>} />
+                    <Route path='/profile/:username' element={<Profile/>} />
+                    <Route path='/calendar' element={<Home/>} />
+                    <Route path='/events/:id' element={<Event/>} />
+                </Routes>
+            </div>
         </div>
     );
 }
