@@ -97,10 +97,27 @@ def update_event(current_user: User, event_id: str):
     data = request.json
     event = Event.find_one(_id=ObjectId(event_id), user_id=current_user._id)
     if not event:
+        logger.error('Invalid event id `%s`' % event_id)
         raise NotFoundError('Invalid event id `%s`' % event_id)
     event.update(**data)
+    logger.info('Event updated: %s' % event_id)
     return make_response({'message': 'Event updated'})
 
+
+@event_router.route('/delete-event/<event_id>', methods=['POST'])
+@login_required
+def delete_event(current_user: User, event_id: str):
+    event = Event.find_one(_id=ObjectId(event_id), user_id=current_user._id)
+    if not event:   
+        raise NotFoundError('Invalid event id `%s`' % event_id)
+    event.delete()
+    logger.info('Event deleted: %s' % event_id)
+    notifications = current_user.notifications
+    for notif in notifications:
+        if notif.event_id == event._id:
+            notif.delete()
+            logger.info('Notification deleted: %s' % notif._id)
+    return make_response({'message': 'Event deleted'})
 
 @event_router.route('/get-event-comments/<event_id>')
 @login_required
