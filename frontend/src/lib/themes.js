@@ -7,7 +7,7 @@ export const lightTheme = {
     backgroundColor: '#ffffff',           // Main background
     secondaryBackground: '#f5f5f5',       // Secondary background (cards, panels)
     tertiaryBackground: '#e9ecef',        // Tertiary background (headers, footers)
-    quaternaryBackground: '#d1e7dd',      // New quaternary background (light greenish)
+    quaternaryBackground: '#d6dbd9',      // New quaternary background 
     // Text colors
     textColor: '#212529',                 // Primary text
     secondaryText: '#6c757d',             // Secondary text

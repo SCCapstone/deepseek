@@ -193,23 +193,22 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
                                     text='Link with Google'
                                     className='btn-primary mb-3'
                                     onClick={handleLinkWithGoogle}
-                                    style={{
-                                        backgroundColor: isLinkHovered ? context.colorScheme.accentHover : context.colorScheme.accentColor,
-                                        color: context.colorScheme.textColor
-                                    }}
                                     onMouseEnter={() => setIsLinkHovered(true)}
                                     onMouseLeave={() => setIsLinkHovered(false)}
+                                    style={{
+                                        color: 'white'
+                                    }}
                                 />
                                 <CustomButton
                                     text='Logout'
                                     className='btn-danger'
                                     onClick={handleLogout}
-                                    style={{
-                                        backgroundColor: isLogoutHovered ? context.colorScheme.accentHover : context.colorScheme.danger,
-                                        color: context.colorScheme.textColor
-                                    }}
                                     onMouseEnter={() => setIsLogoutHovered(true)}
                                     onMouseLeave={() => setIsLogoutHovered(false)}
+                                    style={{
+                                        backgroundColor: isLogoutHovered ? '#8c2f39'+'dd' : '#8c2f39',
+                                        color: 'white'
+                                    }}
                                 />
                             </div>
                         </div>
