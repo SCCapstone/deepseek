@@ -10,6 +10,7 @@ from secrets import token_hex
 from datetime import datetime
 from db import User, AuthToken
 from .error_utils import UnauthorizedError
+import re
 
 AUTH_TOKEN_BYTES = 32
 
@@ -57,3 +58,7 @@ def login_required(func):
 
     func_wrapper.__name__ = func.__name__
     return func_wrapper
+
+def email_check(email: str) -> bool:
+    return re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email) is not None
+
