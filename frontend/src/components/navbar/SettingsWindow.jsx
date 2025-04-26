@@ -15,22 +15,26 @@ import { useAppContext } from '../../lib/context';
 
 export default function SettingsWindow({ showWindow, hideWindow }) {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [alertMessage, setAlertMessage] = useState(null);
     const [settingsData, setSettingsData] = useState(null);
     const context = useAppContext();
 
     const [isLinkHovered, setIsLinkHovered] = useState(false);
     const [isLogoutHovered, setIsLogoutHovered] = useState(false);
 
+    const hideAlert = () => {
+        setAlertMessage(null);
+    }
+
     const getData = async () => {
         try {
             setLoading(true);
-            setError(null);
+            setAlertMessage(null);
     
             const response = await api.get('/get-settings');
     
             if (response.error) {
-                setError(response.error);
+                setAlertMessage(response.error);
             } else if (response.data) {
                 const { email, default_event_visibility, default_reminder } = response.data;
                 setSettingsData({
@@ -41,7 +45,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
             }
         } catch (err) {
             console.error('Error fetching settings:', err);
-            setError('Failed to load settings');
+            setAlertMessage('Failed to load settings');
         } finally {
             setLoading(false);
         }
@@ -50,19 +54,19 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
     const handleLogout = async () => {
         try {
             setLoading(true);
+            setAlertMessage(null);
             const { data, error: apiError } = await api.post('/logout');
             
             if (apiError) {
-                setError(apiError);
+                setAlertMessage(apiError);
                 setLoading(false);
                 return;
             }
             
-            // these are not right
             context.setUser(null);
             window.location.href = '/login';
         } catch (err) {
-            setError('Failed to log out');
+            setAlertMessage('Failed to log out');
             setLoading(false);
         }
     };
@@ -70,23 +74,29 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
     const handleLinkWithGoogle = async () => {
         try {
             setLoading(true);
-            // Direct window location to the googlelogin endpoint
+            setAlertMessage(null);
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
             window.location.href = `${API_URL}/googlelogin`;
         } catch (err) {
-            setError('Failed to link with Google');
+            setAlertMessage('Failed to link with Google');
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        getData();
-    }, []);
-
- 
+        if (showWindow) {
+            getData();
+        }
+    }, [showWindow]);
 
     return (
         <Modal showModal={showWindow} hideModal={hideWindow}>
+            {alertMessage && (
+                <Alert 
+                    message={alertMessage} 
+                    hideAlert={hideAlert} 
+                />
+            )}
             <div className='w-100 d-flex flex-column p-4 rounded' style={{backgroundColor: context.colorScheme.secondaryBackground}}>
                 {loading ? <Loading/> :
                     <>
@@ -147,28 +157,30 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
 
                             <div className='d-flex justify-content-end'>
                                 <CustomButton
-                                    text='Save Changes'
+                                    text={loading ? 'Saving...' : 'Save Changes'}
                                     className='btn-success'
+                                    disabled={loading}
                                     onClick={async () => {
+                                        // calling the api in the html is a little wild but it works and i am not changing it
                                         try {
-                                            
-                                            setError(null);  // Reset error state
+                                            setLoading(true);
+                                            setAlertMessage(null);
 
                                             const response = await api.post('/update-settings', settingsData);
 
-                                            // If the response has an error, set the error state
                                             if (response.error) {
-                                                setError(response.error);
+                                                setAlertMessage(response.error);
                                             } else {
-                                                // Assuming response.data contains the updated user settings
-                                                context.setUser(response.data.user);  // Update user context with the new settings
-                                               
+                                                setAlertMessage(response.data?.message || 'Settings updated successfully!'); 
+                                                console.log('Settings updated successfully:', response.data);
+                                                if (response.data?.user) context.setUser(response.data.user);
                                             }
                                         } catch (err) {
-                                            // Catching any other errors in the request
-                                            setError('Failed to update settings');
+                                            console.error('Failed to update settings:', err);
+                                            const errorMessage = err?.response?.data?.error || err?.message || 'Failed to update settings. Please try again.';
+                                            setAlertMessage(errorMessage);
                                         } finally {
-                                            setLoading(false);  // Reset loading state
+                                            setLoading(false);
                                         }
                                     }}
                                 />

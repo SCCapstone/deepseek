@@ -7,6 +7,7 @@ from uuid import uuid4
 from typing import Union
 from flask import Blueprint, request, make_response, send_from_directory
 from bson import ObjectId
+import re
 
 from db import User, Event
 from utils.auth_utils import *
@@ -50,6 +51,12 @@ def get_settings(current_user: User):
 })
 def update_profile(current_user: User):
     data = request.json
+    
+    if 'email' in data and data['email'] is not None:
+        email = data['email']
+        if not email_check(email):
+            raise InvalidInputError('Invalid email')
+            
     current_user.update(**data)
     return make_response({'message': 'Success'})
 
@@ -62,6 +69,12 @@ def update_profile(current_user: User):
 })
 def update_settings(current_user: User):
     data = request.json
+
+    if 'email' in data and data['email'] is not None:
+        email = data['email']
+        if not email_check(email):
+            raise InvalidInputError('Invalid email')
+        
     current_user.update(**data)
     return make_response({'message': 'Settings updated successfully'})
 
