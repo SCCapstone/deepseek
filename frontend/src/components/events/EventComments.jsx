@@ -13,10 +13,17 @@ import { FaPaperPlane } from 'react-icons/fa';
 
 function Comment({ commentData }) {
     const context = useAppContext();
+    const currentUserUsername = context.user?.username; // Get current user's username from context
+    const commentUsername = commentData.user.username;
+
+    // Determine the correct profile link based on whether the comment author is the current user
+    const profileLink = currentUserUsername === commentUsername 
+        ? '/profile' 
+        : `/profile/${commentUsername}`;
 
     return (
         <div className='w-100 mb-3 p-2 rounded-lg d-flex flex-row justify-content-start align-items-center' style={{backgroundColor: context.colorScheme.tertiaryBackground}}>
-            <Link to={'/profile/' + commentData.user.username}>
+            <Link to={profileLink}>
                 <img
                     className='mr-2'
                     src={commentData.user.profile_picture || DefaultPFP}
@@ -25,14 +32,17 @@ function Comment({ commentData }) {
                         borderRadius: 1000,
                         cursor: 'pointer',
                     }}
+                    alt={`${commentUsername}'s profile picture`}
                 />
             </Link>
             <div>
                 <Link
-                    to={'/profile/' + commentData.user.username}
+                    to={profileLink}
                     className='m-0 text-muted'
                     style={{color: context.colorScheme.textColor}}
-                >@{commentData.user.username}</Link>
+                >
+                    @{commentUsername}
+                </Link>
                 <p className='m-0' style={{color: context.colorScheme.textColor}}>{commentData.body}</p>
             </div>
         </div>
