@@ -21,7 +21,7 @@ those containers so that all developers will be using the same versions.
 
 ### Testing
 1. Make sure docker container is running
-2. Enter the command `docker exec -it deepseek-frontend npm test` to test the frontend
+2. Enter the command `docker exec -it deepseek-frontend npx vitest` to test the frontend
     - Testing folder is located at frontend/src/\_\_tests\_\_
 3. Enter the command `sh scripts/test_backend.sh` to test the backend
    ![test](assets/backend_testing.gif)
