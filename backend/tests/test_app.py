@@ -42,14 +42,20 @@ rand_user2 = generate_random_string(10)
 auth_token1 = None
 auth_token2 = None
 
+# test event data
+test_event = {
+    'title': 'Test event',
+    'date': '2025-03-20',
+    'start_time': '8:30',
+    'end_time': '9:00',
+}
+
 
 @pytest.fixture
 def client():
     """Set up a test client"""
-    print('Setting up client')
     with app.test_client() as client:
         yield client
-    print('Tearing down client')
 
 
 def test_register(client):
@@ -110,7 +116,7 @@ def test_login(client):
     auth_token2 = cookies['auth_token']
 
 
-def test_get_profile(client):
+def test_get_my_profile(client):
     """Testing the /get-profile endpoint"""
 
     # verifying that route works
@@ -121,3 +127,37 @@ def test_get_profile(client):
     # verifying that the data is correct
     data = response.get_json()['data']
     assert data['username'] == rand_user1
+
+
+def test_get_other_profile(client):
+    """Testing the /get-profile/<username> endpoint"""
+
+    # testing route
+    response = client.get('/get-profile/' + rand_user2)
+    assert response.status_code == 200
+
+    # verifying data
+    data = response.get_json()['data']
+    assert data['username'] == rand_user2
+
+
+def test_add_event(client):
+    """Testing the /add-event endpoint"""
+    client.set_cookie('auth_token', auth_token1)
+    response = client.post('/add-event', data=json.dumps(test_event), \
+                           headers={'Content-Type': 'application/json'})
+    assert response.status_code == 201
+
+
+def test_get_events(client):
+    """Testing the /get-events endpoint"""
+
+    # getting user events
+    client.set_cookie('auth_token', auth_token1)
+    response = client.get('/get-events')
+    assert response.status_code == 200
+    
+    # making sure test event is in events
+    data = response.get_json()['data']
+    assert len(data) > 0
+    assert data[0]['title'] == test_event['title']
