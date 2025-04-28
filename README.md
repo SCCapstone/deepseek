@@ -24,6 +24,8 @@ those containers so that all developers will be using the same versions.
 2. Enter the command `docker exec -it deepseek-frontend npm test` to test the frontend
     - Testing folder is located at frontend/src/\_\_tests\_\_
 3. Enter the command `sh scripts/test_backend.sh` to test the backend
+   ![test](assets/backend_testing.gif)
+
 4. The project includes automated Selenium tests located in the `/testing` directory. These tests cover core functionality like user registration, login, event creation, and friend management.
 
 #### Requirements
@@ -183,13 +185,9 @@ Source: [How to Set Up a Firewall with UFW on Ubuntu](https://www.digitalocean.c
    ufw enable
    ```
 
-### Github actions
+### Deployment script
 
-[Github actions](https://github.com/features/actions) allow for automatic building and deployment of the app.
-The configuration for the build is stored in `.github/workflows/main.yml`, and it triggers every time
-there is a push to the main branch.
-If editing the build configuration, you can use [Act](https://github.com/nektos/act)
-to test out the build config locally before pushing to Github.
+To deploy the website, run `sh scripts/deploy.sh`
 
 ## Authors
 - Tristan Shillingford (trshillingford@gmail.com)
