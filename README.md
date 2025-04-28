@@ -24,9 +24,34 @@ those containers so that all developers will be using the same versions.
 2. Enter the command `docker exec -it deepseek-frontend npm test` to test the frontend
     - Testing folder is located at frontend/src/\_\_tests\_\_
 3. Enter the command `sh scripts/test_backend.sh` to test the backend
-4. Navigate to http://localhost:4000 and run selenium IDE
-    - Download tests under /testing directory
-    - Run tests through selenium IDE
+4. The project includes automated Selenium tests located in the `/testing` directory. These tests cover core functionality like user registration, login, event creation, and friend management.
+
+#### Requirements
+- Python 3.x
+- Firefox browser installed
+- Virtual environment (recommended)
+
+#### Running the Tests
+
+**Windows (PowerShell)**
+```powershell
+cd testing
+.\run_tests.ps1
+```
+
+**Linux/MacOS**
+```bash
+cd testing
+chmod +x run_tests.sh
+./run_tests.sh
+```
+
+#### Available Tests
+- `test_register.py` - Tests user registration
+- `test_registerlogin.py` - Tests registration and login flow with error cases
+- `test_createevent.py` - Tests event creation functionality
+- `test_profileflow.py` - Tests profile management features
+- `test_addfriend.py` - Tests friend request and acceptance flow
 
 ### Resources
 - [Docker guide](https://docs.docker.com/get-started/docker-overview/)
