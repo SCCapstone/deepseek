@@ -9,7 +9,7 @@ import { getEventsForDay, getMaxEventsToShow } from '../../utility/componentUtil
 
 import { useAppContext } from '../../../lib/context';
 
-export default function CalendarDay({ day, events, selectedDate, onDayClick, view, onEventClick }) {
+export default function CalendarDay({ day, events, selectedDate, onDayClick, view, onEventClick, onMoreEventsClick }) {
     const context = useAppContext();
     const today = new Date();
     
@@ -136,7 +136,7 @@ export default function CalendarDay({ day, events, selectedDate, onDayClick, vie
                         style={styles.moreEvents}
                         onClick={(e) => {
                             e.stopPropagation();
-                            onDayClick(day);
+                            onMoreEventsClick(day, dayEvents, e);
                         }}
                         onMouseOver={handleMoreEventsHover}
                         onMouseOut={handleMoreEventsLeave}

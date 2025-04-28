@@ -84,8 +84,25 @@ export default function EventList({ events, selectedEvent: propSelectedEvent, se
         })
     }
     
+    const parseEventDateTime = (event) => {
+        const date = new Date(event.date);
+        if (event.start_time && event.start_time.length > 0) {
+            const [hours, minutes] = event.start_time.split(':').map(Number);
+            date.setHours(hours);
+            date.setMinutes(minutes);
+        } else {
+            date.setHours(0);
+            date.setMinutes(0);
+        }
+        return date;
+    };
+
     const sortedEvents = events && events.length > 0 
-        ? [...events].sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
+        ? [...events].sort((a, b) => {
+            const dateA = parseEventDateTime(a);
+            const dateB = parseEventDateTime(b);
+            return dateA - dateB;
+        })
         : [];
 
     const renderEventDetails = () => {
