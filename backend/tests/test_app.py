@@ -34,11 +34,13 @@ def parse_cookies(response):
     return cookies_dict
 
 
-# generating a random string to use for login details
-rand_str = generate_random_string(10)
+# generating random strings to use for login details
+rand_user1 = generate_random_string(10)
+rand_user2 = generate_random_string(10)
 
-# storing authentication token
-auth_token = None
+# storing authentication tokens
+auth_token1 = None
+auth_token2 = None
 
 
 @pytest.fixture
@@ -51,11 +53,23 @@ def client():
 
 
 def test_register(client):
-    """Testing the user register route"""
+    """Testing the /register endpoint"""
+
+    # first user
     data = {
-        'email': '%s@%s.com' % (rand_str, rand_str),
-        'username': rand_str,
-        'password': rand_str,
+        'email': '%s@test.com' % rand_user1,
+        'username': rand_user1,
+        'password': rand_user1,
+    }
+    response = client.post('/register', data=json.dumps(data), \
+                           headers={'Content-Type': 'application/json'})
+    assert response.status_code == 201
+    
+    # second user
+    data = {
+        'email': '%s@test.com' % rand_user2,
+        'username': rand_user2,
+        'password': rand_user2,
     }
     response = client.post('/register', data=json.dumps(data), \
                            headers={'Content-Type': 'application/json'})
@@ -63,10 +77,12 @@ def test_register(client):
 
 
 def test_login(client):
-    """Testing the user login route"""
+    """Testing /login endpoint"""
+
+    # first user
     data = {
-        'username': rand_str,
-        'password': rand_str,
+        'username': rand_user1,
+        'password': rand_user1,
     }
     response = client.post('/login', data=json.dumps(data), \
                            headers={'Content-Type': 'application/json'})
@@ -75,4 +91,33 @@ def test_login(client):
     # parsing cookies
     cookies = parse_cookies(response)
     assert 'auth_token' in cookies
-    auth_token = cookies['auth_token']
+    global auth_token1 # so that we can save auth_token as a global var
+    auth_token1 = cookies['auth_token']
+
+    # second user
+    data = {
+        'username': rand_user2,
+        'password': rand_user2,
+    }
+    response = client.post('/login', data=json.dumps(data), \
+                           headers={'Content-Type': 'application/json'})
+    assert response.status_code == 200
+
+    # parsing cookies
+    cookies = parse_cookies(response)
+    assert 'auth_token' in cookies
+    global auth_token2 # so that we can save auth_token as a global var
+    auth_token2 = cookies['auth_token']
+
+
+def test_get_profile(client):
+    """Testing the /get-profile endpoint"""
+
+    # verifying that route works
+    client.set_cookie('auth_token', auth_token1)
+    response = client.get('/get-profile')
+    assert response.status_code == 200
+
+    # verifying that the data is correct
+    data = response.get_json()['data']
+    assert data['username'] == rand_user1
