@@ -33,7 +33,21 @@ def add_event(current_user: User):
     event_data = request.json
     event_data['user_id'] = current_user._id
     event_data['created_at'] = datetime.now()
+    logger.info(event_data)
+
+    date = datetime.strptime(event_data['date'], '%Y-%m-%d')
+    
+    start_time_obj = datetime.strptime(event_data['start_time'], '%H:%M')
+    end_time_obj = datetime.strptime(event_data['end_time'], '%H:%M')
+    
+    start_datetime = date.replace(hour=start_time_obj.hour, minute=start_time_obj.minute)
+    end_datetime = date.replace(hour=end_time_obj.hour, minute=end_time_obj.minute)
+
+    if end_datetime <= start_datetime:
+        raise ForbiddenError('End time must be greater than start time')
+    
     Event.create(**event_data)
+    logger.info('Event created: %s' % event_data)
     return make_response({'message': 'Event created'}, 201)
 
 
