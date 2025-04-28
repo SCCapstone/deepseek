@@ -22,6 +22,5 @@ export const BLANK_EVENT = {
  */
 export function isEventFormValid(eventData) {
     return eventData.title.trim() !== '' && 
-           eventData.location.trim() !== '' && 
            eventData.date !== '';
 } 
