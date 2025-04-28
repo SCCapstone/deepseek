@@ -23,6 +23,7 @@ beforeAll(() => {
   });
 
 describe('EventsTab', () => {
+  api.get.mockResolvedValue({ data: [], error: null }); 
   it('shows loading spinner initially', () => {
     render(
       <AppContextProvider>
