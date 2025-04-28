@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
-import SettingsWindow from '../components/navbar/SettingsWindow'; // Adjust the import according to your file structure
-import { AppContextProvider } from '../lib/context'; // Assuming you have a context provider for the app
+import SettingsWindow from '../components/navbar/SettingsWindow'; 
+import { AppContextProvider } from '../lib/context'; 
 import '@testing-library/jest-dom';
 import api from '../lib/api'
 
