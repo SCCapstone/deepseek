@@ -4,6 +4,7 @@ import json
 import random
 import string
 import pytest
+from http.cookies import SimpleCookie
 
 # adding the parent directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,8 +21,24 @@ def generate_random_string(length):
     return random_string
 
 
+def parse_cookies(response):
+    """
+    Takes in a pytest response and outputs the cookies as a dict
+    """
+    cookie_string = response.headers.get('Set-Cookie')
+    cookies = SimpleCookie()
+    cookies.load(cookie_string)
+    cookies_dict = {}
+    for key, morsel in cookies.items():
+        cookies_dict[key] = morsel.value
+    return cookies_dict
+
+
 # generating a random string to use for login details
 rand_str = generate_random_string(10)
+
+# storing authentication token
+auth_token = None
 
 
 @pytest.fixture
@@ -54,3 +71,8 @@ def test_login(client):
     response = client.post('/login', data=json.dumps(data), \
                            headers={'Content-Type': 'application/json'})
     assert response.status_code == 200
+
+    # parsing cookies
+    cookies = parse_cookies(response)
+    assert 'auth_token' in cookies
+    auth_token = cookies['auth_token']

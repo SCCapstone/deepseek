@@ -2,4 +2,4 @@
 
 # start the development before running
 
-docker exec -w /app -it deepseek-backend pytest
+docker exec -w /app -it deepseek-backend pytest -s
