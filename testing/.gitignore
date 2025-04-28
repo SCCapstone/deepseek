@@ -1,0 +1,5 @@
+__pycache__
+venv
+geckodriver.zip
+*.side
+.pytest_cache
