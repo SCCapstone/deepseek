@@ -19,8 +19,8 @@ rm geckodriver.tar.gz
 chmod +x venv/bin/geckodriver
 export PATH="$(pwd)/venv/bin:$PATH"
 
-# Run all tests
-pytest test_addfriend.py
+# Run tests
+pytest test_addfriend.py test_createevent.py test_profileflow.py test_register.py test_registerlogin.py
 
 # Deactivate virtual environment
 deactivate
