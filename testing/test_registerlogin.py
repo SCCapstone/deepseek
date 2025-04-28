@@ -20,12 +20,12 @@ class TestRegisterlogin():
   
   def test_registerlogin(self):
     self.driver.get("http://localhost:4000/")
-    self.driver.set_window_size(550, 691)
+    self.driver.set_window_size(1000, 1000)
     self.driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
     self.vars["random"] = self.driver.execute_script("return Math.random()")
     self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(1) > .w-100").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(1) > .w-100").send_keys(self.vars["random"]@email.com)
-    self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(2) > .w-100").send_keys(self.vars["random"])
+    self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(1) > .w-100").send_keys(f"{self.vars['random']}@email.com")
+    self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(2) > .w-100").send_keys(str(self.vars["random"]))
     self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(3) > .w-100").send_keys("register")
     self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
     WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".mr-3 > svg")))
@@ -37,26 +37,39 @@ class TestRegisterlogin():
     WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".btn")))
     elements = self.driver.find_elements(By.CSS_SELECTOR, ".btn")
     assert len(elements) > 0
+    
+    # Click login button first
+    self.driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(1)").click()
+    
+    # Enter username
     self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(1) > .w-100").click()
     self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(1) > .w-100").send_keys(self.vars["random"])
-    self.driver.find_element(By.CSS_SELECTOR, ".justify-content-center").click()
+    
+    # Enter wrong password
     self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(2) > .w-100").click()
     self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(2) > .w-100").send_keys("wrongpassword")
-    self.driver.find_element(By.CSS_SELECTOR, ".p-4").click()
     self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+    
+    # Verify error message
     WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".p-3 > p")))
     elements = self.driver.find_elements(By.CSS_SELECTOR, ".p-3 > p")
     assert len(elements) > 0
     assert self.driver.find_element(By.CSS_SELECTOR, ".p-3 > p").text == "Invalid password"
-    self.driver.find_element(By.CSS_SELECTOR, ".btn-danger").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(2) > .w-100").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(2) > .w-100").send_keys("register")
+    
+    # Clear and enter correct password
+    password_field = self.driver.find_element(By.CSS_SELECTOR, ".mb-2:nth-child(2) > .w-100")
+    password_field.clear()
+    password_field.send_keys("register")
+    
+    # Click the login button
     self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
+    
+    # Wait for successful login (profile icon)
     WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".mr-3 > svg")))
+    
+    # Optional: Verify successful login
     elements = self.driver.find_elements(By.CSS_SELECTOR, ".mr-3 > svg")
     assert len(elements) > 0
-    element = self.driver.find_element(By.CSS_SELECTOR, ".mr-3 > svg")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).perform()
+    
     self.driver.close()
   
