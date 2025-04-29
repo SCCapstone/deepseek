@@ -1,14 +1,17 @@
 """
 Flask routes for authentication-related API endpoints
 """
+import os # Import os
 from datetime import datetime
 from flask import Blueprint, request, make_response
 import pytz
 from db import User
 from utils.data_utils import *
-from utils.auth_utils import hash_password, new_token, email_check
+from utils.auth_utils import hash_password, create_access_token, email_check
 from utils.error_utils import NotFoundError
 
+# Determine if we're in production for cookie settings
+IS_PRODUCTION = os.getenv('ENVIRONMENT') == 'production'
 
 auth_router = Blueprint('auth_router', __name__)
 
@@ -50,14 +53,28 @@ def register():
         created_at=created_at,
     )
 
-    # generating auth token and storing in database
-    auth_token = new_token(new_user)
-
-    # returning result to user
+    # Create JWT access token
     profile = new_user.profile
     profile['profile_picture'] = 'default-profile-picture-url'
-    res = make_response({'message': 'User registered', 'data': {'user': profile}}, 201)
-    res.set_cookie('auth_token', auth_token)
+    access_token = create_access_token({"_id": new_user._id})
+
+    # returning result to user
+    response_data = {
+        'message': 'User registered',
+        'data': {
+            'user': profile,
+            'auth_token': access_token
+        }
+    }
+    res = make_response(response_data, 201)
+    res.set_cookie(
+        'auth_token',
+        access_token,
+        path='/', # Make cookie available site-wide
+        secure=IS_PRODUCTION, # Send only over HTTPS in production
+        httponly=False, # Allow JS access (needed for frontend)
+        samesite='Lax' if IS_PRODUCTION else None # Set SameSite for cross-domain
+    )
     return res
 
 
@@ -91,15 +108,37 @@ def login():
     if user.hashed_password != hashed_password:
         raise InvalidInputError('Invalid password')
 
-    # returning response to user with token as cookie
-    auth_token = new_token(user)
+    # Create JWT access token
     profile = user.profile
-    res = make_response({'message': 'User authenticated', 'data': {'user': profile}})
-    res.set_cookie('auth_token', auth_token)
+    access_token = create_access_token({"_id": user._id})
+    response_data = {
+        'message': 'User authenticated',
+        'data': {
+            'user': profile,
+            'auth_token': access_token
+        }
+    }
+    res = make_response(response_data)
+    res.set_cookie(
+        'auth_token',
+        access_token,
+        path='/', # Make cookie available site-wide
+        secure=IS_PRODUCTION, # Send only over HTTPS in production
+        httponly=False, # Allow JS access (needed for frontend)
+        samesite='Lax' if IS_PRODUCTION else None # Set SameSite for cross-domain
+    )
     return res
 
 @auth_router.route('/logout', methods=['POST'])
 def logout():
     res = make_response({'message': 'User logged out'})
-    res.set_cookie('auth_token', '', expires=0)
+    res.set_cookie(
+        'auth_token', 
+        '', 
+        expires=0, 
+        path='/', # Clear cookie site-wide
+        secure=IS_PRODUCTION,
+        httponly=False,
+        samesite='Lax' if IS_PRODUCTION else None
+        )
     return res

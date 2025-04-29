@@ -102,24 +102,35 @@ def upload_picture(current_user: User):
     # saving file in uploads folder
     _, suffix = file.mimetype.split('/')
     filename = str(uuid4()) + '.' + suffix
-    upload_folder = os.environ.get('UPLOADS_FOLDER', '/uploads')
-    if not os.path.isdir(upload_folder):
-        os.mkdir(upload_folder)
+    
+    # get upload folder path
+    APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+    # Go up one level from routers directory if needed
+    base_dir = os.path.dirname(APP_ROOT) 
+    upload_folder = os.environ.get('UPLOADS_FOLDER', os.path.join(base_dir, 'uploads'))
+    
+    # Create the uploads directory if it doesn't exist
+    os.makedirs(upload_folder, exist_ok=True)
+    
     save_path = os.path.join(upload_folder, filename)
     file.save(save_path)
     
     # returning saved file url to user
     hostname = os.environ.get('BACKEND_URL', 'http://localhost:5000')
+    
+    # Use the static endpoint defined in app.py
+    file_url = hostname + '/static/images/' + filename
+    logger.info(f"Saved image at: {save_path}")
+    logger.info(f"Image URL will be: {file_url}")
+    
+    # Update user profile with the new image URL
+    current_user.update(profile_picture=file_url)
+    
     return make_response({
-        'message': 'Successfuly uploaded picture',
-        'data': {'url': hostname + '/pictures/' + filename}
+        'message': 'Successfully uploaded picture',
+        'data': {'url': file_url}
     })
-
-
-@user_router.route('/pictures/<filename>')
-def get_picture(filename: str):
-    upload_folder = os.environ.get('UPLOADS_FOLDER', '/uploads')
-    return send_from_directory(upload_folder, filename)
 
 
 @user_router.route('/search-user')

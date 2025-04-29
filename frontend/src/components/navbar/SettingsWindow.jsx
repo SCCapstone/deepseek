@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 
 import CustomButton from '../input/CustomButton';
-
+import { useNavigate } from 'react-router-dom';
 import Modal from '../utility/Modal';
 import Loading from '../utility/Loading';
 import Alert from '../utility/Alert';
@@ -18,6 +18,7 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
     const [alertMessage, setAlertMessage] = useState(null);
     const [settingsData, setSettingsData] = useState(null);
     const context = useAppContext();
+    const navigate = useNavigate();
 
     const [isLinkHovered, setIsLinkHovered] = useState(false);
     const [isLogoutHovered, setIsLogoutHovered] = useState(false);
@@ -55,19 +56,29 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
         try {
             setLoading(true);
             setAlertMessage(null);
-            const { data, error: apiError } = await api.post('/logout');
+            // Still call the backend logout to clear the cookie server-side
+            const { error: apiError } = await api.post('/logout');
             
             if (apiError) {
-                setAlertMessage(apiError);
-                setLoading(false);
-                return;
+                // Log error but proceed with client-side logout anyway
+                console.error("Logout API call failed:", apiError);
+                // setAlertMessage(apiError); // Optional: show error to user
             }
             
-            context.setUser(null);
-            window.location.href = '/login';
+            // Use clearAuthData to clear user and token from context/localStorage
+            context.clearAuthData();
+            
+            const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || '';
+            window.location.href = `${FRONTEND_URL}/login`;
         } catch (err) {
+            console.error("Logout failed:", err); // Log unexpected errors
             setAlertMessage('Failed to log out');
-            setLoading(false);
+            // Still attempt to clear client-side data in case of unexpected error
+            context.clearAuthData(); 
+            const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || '';
+            window.location.href = `${FRONTEND_URL}/login`; // Redirect anyway
+        } finally {
+            setLoading(false); // Ensure loading state is reset
         }
     };
 
@@ -76,8 +87,32 @@ export default function SettingsWindow({ showWindow, hideWindow }) {
             setLoading(true);
             setAlertMessage(null);
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            window.location.href = `${API_URL}/googlelogin`;
+            const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || '';
+            
+            // Get the current auth token FROM CONTEXT
+            const token = context.authToken; // Use token from context
+            
+            console.log("Raw document.cookie:", document.cookie); // Keep this for now
+            console.log("Auth Token Retrieved from context:", token ? `${token.substring(0, 5)}...` : 'None'); // Log token from context
+
+            if (!token) {
+                // Handle case where token is somehow missing from context
+                setAlertMessage('Authentication token not found. Please log in again.');
+                setLoading(false);
+                // Optionally redirect to login
+                // window.location.href = `${FRONTEND_URL}/login`;
+                return;
+            }
+            
+            // Store the current URL for redirect after Google auth
+            localStorage.setItem('returnTo', `${FRONTEND_URL}/calendar`);
+            
+            const googleLoginUrl = `${API_URL}/googlelogin?auth_token=${token}&return_to=${encodeURIComponent(`${FRONTEND_URL}/calendar`)}`;
+            console.log("Attempting to redirect to Google Login URL:", googleLoginUrl);
+            
+            window.location.href = googleLoginUrl;
         } catch (err) {
+            console.error("Link with Google failed:", err); // Log error
             setAlertMessage('Failed to link with Google');
             setLoading(false);
         }

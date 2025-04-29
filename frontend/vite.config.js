@@ -7,10 +7,10 @@ export default defineConfig({
         react(),
     ],
     test: {
-        globals: true, // This enables global `describe`, `it`, `expect` functions
-        environment: 'jsdom', // Use jsdom for DOM testing
+        globals: true,
+        environment: 'jsdom',
         coverage: {
-          provider: 'c8', // Optional: code coverage support
+          provider: 'c8',
         },
     },
     server: {

@@ -1,7 +1,7 @@
 // this is the home page component
 // it displays the calendar and the sidebar
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import Calendar from '../components/calendar/Calendar';
 import Sidebar from '../components/utility/Sidebar';
@@ -23,59 +23,105 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [tab, setTab] = useState('selected-date');
     const context = useAppContext();
+    const isMounted = useRef(false);
 
-    async function getData() {
-        // getData is called on each time a day is selected
-        // however do not show the refresh
-        setError(null); // Clear previous errors
+    async function getData(isInitialLoad = false) {
+        if (isInitialLoad) {
+            console.log("getData (Initial): Fetching events...");
+        } else {
+            console.log(`getData (Date Change): Fetching events for ${selectedDate.toDateString()}...`);
+        }
+        setError(null);
+        setLoading(false);
         try {
-            // Fetch user's events and friends' events concurrently
+            if (!context.authToken || !context.user) {
+                throw new Error('Not authenticated');
+            }
+
+            console.log("getData: Fetching events...");
             const [userEventsResponse, friendEventsResponse] = await Promise.all([
                 api.get('/get-events'),
                 api.get('/get-friends-events')
             ]);
 
-            // Check for errors in user events response
             if (userEventsResponse.error) {
                 throw new Error(`Failed to load your events: ${userEventsResponse.error}`);
             }
-            // Check for errors in friend events response
             if (friendEventsResponse.error) {
                 throw new Error(`Failed to load friends' events: ${friendEventsResponse.error}`);
             }
 
-            // Add flag to distinguish user's events
             const userEvents = (userEventsResponse.data || []).map(event => ({ 
                 ...event, 
                 isOwnEvent: true 
             }));
             
-            // Add flag to distinguish friends' events
             const friendEvents = (friendEventsResponse.data || []).map(event => ({ 
                 ...event, 
                 isOwnEvent: false 
             }));
 
-            // Combine events, maybe filter duplicates if necessary (e.g., if an event could appear in both lists)
-            // Simple concatenation for now
             const allEvents = [...userEvents, ...friendEvents];
             
+            if (isInitialLoad) {
+                console.log("getData (Initial): Events received, updating state.");
+            } else {
+                console.log(`getData (Date Change): Events received for ${selectedDate.toDateString()}, updating state.`);
+            }
             setEvents(allEvents);
 
         } catch (err) {
             console.error("Error fetching events:", err);
             setError(err.message || 'Could not load all event data.');
+            setEvents([]);
         } finally {
-            setLoading(false);
+            if (isMounted.current) {
+                setLoading(false);
+                if (isInitialLoad) {
+                     console.log("getData (Initial): Fetch complete.");
+                } else {
+                     console.log(`getData (Date Change): Fetch complete for ${selectedDate.toDateString()}.`);
+                }
+            }
         }
     }
 
     useEffect(() => {
-        getData();
-    }, [selectedDate]);
-  
+        console.log(`useEffect [Auth]: Running. Context token: ${context.authToken ? context.authToken.substring(0,5)+'...' : 'None'}`);
+        
+        isMounted.current = true;
+
+        if (context.authToken && context.user) {
+            console.log(`useEffect [Auth]: Context token found. Running initial getData...`);
+            getData(true);
+        } else {
+            console.log("useEffect [Auth]: No token in context. Clearing data.");
+            setEvents([]);
+            setLoading(false);
+        }
+
+        return () => {
+            isMounted.current = false;
+            console.log("useEffect [Auth]: Cleanup - component unmounting");
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [context.authToken, context.user]);
+
     const handleDateChange = (date) => {
-        setSelectedDate(date);
+        console.log(`handleDateChange: Date selected - ${date.toDateString()}`);
+        const newDate = new Date(date);
+        newDate.setHours(0, 0, 0, 0);
+        
+        setSelectedDate(newDate);
+        setLoading(true);
+
+        if (context.authToken && context.user) {
+            console.log(`handleDateChange: Triggering getData for new date.`);
+            getData(false);
+        } else {
+            console.log(`handleDateChange: User not authenticated, not fetching data.`);
+            setLoading(false);
+        }
     }
     
     const handleEventSelect = (event) => {
@@ -83,7 +129,6 @@ export default function Home() {
         setTab('selected-date');
     }
 
-    // something is off with the date
     const isSameDay = (date1, date2) => {
         const d1 = new Date(date1);
         d1.setDate(d1.getDate() + 1);
@@ -97,20 +142,23 @@ export default function Home() {
         );
     };
   
-    if (error) return <Alert message={error} hideAlert={() => setError(null)}/>
-    if (loading) return <Loading/>
-
     return (
         <>
             <NavBar onEventCreated={getData} /> 
             <div className='w-100 flex-grow-1 flex-shrink-1 d-flex flex-row' style={{backgroundColor: context.colorScheme.backgroundColor, color: context.colorScheme.textColor}}>
                 <div className="flex-grow-1 d-flex flex-column" style={{ overflowY: 'auto', height: 'calc(100vh - 56px)', width: '100%' }}>
-                    <Calendar
-                        onChange={handleDateChange}
-                        selectedDate={selectedDate}
-                        events={events}
-                        onEventSelect={handleEventSelect}
-                    />
+                    {loading ? (
+                        <Loading /> 
+                    ) : error ? (
+                        <Alert message={error} hideAlert={() => setError(null)}/>
+                    ) : (
+                        <Calendar
+                            onChange={handleDateChange}
+                            selectedDate={selectedDate}
+                            events={events}
+                            onEventSelect={handleEventSelect}
+                        />
+                    )}
                 </div>
                 <Sidebar>
                     <div className='d-flex flex-row justify-content-between w-100 border-bottom' style={{backgroundColor: context.colorScheme.secondaryBackground, color: context.colorScheme.textColor}}>
