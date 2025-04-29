@@ -9,6 +9,8 @@ import Alert from '../utility/Alert';
 export default function PictureUpload({ url, setUrl, className }) {
     const [tab, setTab] = useState('url');
     const [file, setFile] = useState(null);
+    const [error, setError] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
     const context = useAppContext();
 
     const handleUpdateFile = (event) => {
@@ -16,20 +18,41 @@ export default function PictureUpload({ url, setUrl, className }) {
     }
 
     const handleUploadFile = async () => {
-        const formData = new FormData();
-        formData.append('file', file);
-        const { data, error: apiError } = await api.post('/upload-picture', formData);
-        if (apiError) {
-            <Alert
-                message='Upload failed'
-                hideAlert={() => {}}
-            />
+        if (!file) return;
+        
+        setError(null);
+        setShowAlert(false);
+        
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const { data, error: apiError } = await api.post('/upload-picture', formData);
+            
+            if (apiError) {
+                console.error("Upload error:", apiError);
+                setError(apiError);
+                setShowAlert(true);
+            }
+            else if (data && data.url) {
+                console.log("Image uploaded successfully, URL:", data.url);
+                setUrl(data.url);
+                setTab('url');
+                setFile(null);
+            } else {
+                console.error("Invalid response from server:", data);
+                setError("Invalid response from server");
+                setShowAlert(true);
+            }
+        } catch (err) {
+            console.error("Error uploading image:", err);
+            setError("Error uploading image. Please try again.");
+            setShowAlert(true);
         }
-        else {
-            setUrl(data.url);
-            setTab('url');
-            setFile(null);
-        }
+    }
+
+    const hideAlert = () => {
+        setShowAlert(false);
+        setError(null);
     }
 
     const tabStyle = (isActive) => ({
@@ -47,16 +70,26 @@ export default function PictureUpload({ url, setUrl, className }) {
         ? 'rgba(255, 255, 255, 0.1)' 
         : 'rgba(0, 0, 0, 0.05)';
 
+    // Handle image error
+    const handleImageError = (e) => {
+        console.error("Image failed to load:", url);
+        e.target.onerror = null;
+        e.target.src = DefaultPFP;
+    };
+
     return (
         <div 
             className={`d-flex flex-row justify-content-start align-items-stretch rounded-lg overflow-hidden ${className || ''}`}
             style={{ border: `1px solid ${context.colorScheme.borderColor}`, backgroundColor: context.colorScheme.secondaryBackground }}
         >
+            {showAlert && <Alert message={error} hideAlert={hideAlert} />}
+            
             <img
                 className='p-2 align-self-center'
                 style={{width: '180px', height: '180px', objectFit: 'cover'}}
                 src={url || DefaultPFP}
                 alt="Profile Preview"
+                onError={handleImageError}
             />
             <div className='flex-grow-1 d-flex flex-column justify-content-start' style={{ borderLeft: `1px solid ${context.colorScheme.borderColor}` }}>
                 <div className='d-flex flex-row justify-content-between align-items-center'>
@@ -84,6 +117,11 @@ export default function PictureUpload({ url, setUrl, className }) {
                                 onChange={text => setUrl(text)}
                                 placeholder='Paste image URL here'
                             />
+                            {url && (
+                                <div className='mt-2 text-muted' style={{fontSize: '0.8rem'}}>
+                                    Current URL: {url}
+                                </div>
+                            )}
                         </>
                     :
                         <div className='d-flex flex-column align-items-center'>

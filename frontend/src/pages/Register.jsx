@@ -27,7 +27,16 @@ export default function RegisterPage() {
             setError(apiError || 'An unexpected error occurred.');
             setShowAlert(true);
         } else {
-            context.setUser(data.user);
+            // Save token to localStorage immediately
+            localStorage.setItem('authToken', data.auth_token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            
+            // Then update context
+            context.setAuthData(data.user, data.auth_token);
+            
+            // Small delay to ensure state updates
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
             navigate('/calendar');
         }
     }

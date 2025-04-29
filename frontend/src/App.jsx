@@ -8,6 +8,7 @@ import Event from './pages/Event';
 import { useEffect } from 'react';
 import Home from './pages/Home';
 import NavBar from './components/navbar/NavBar';
+import ProtectedRoute from './components/utility/ProtectedRoute';
 
 function AppContent() {
     const context = useAppContext();
@@ -39,10 +40,38 @@ function AppContent() {
                     <Route path='/' element={<Landing />} /> 
                     <Route path='/login' element={<Login />} />
                     <Route path='/register' element={<Register />} />
-                    <Route path='/profile' element={<Profile/>} />
-                    <Route path='/profile/:username' element={<Profile/>} />
-                    <Route path='/calendar' element={<Home/>} />
-                    <Route path='/events/:id' element={<Event/>} />
+                    <Route 
+                        path='/profile' 
+                        element={
+                            <ProtectedRoute>
+                                <Profile/>
+                            </ProtectedRoute>
+                        } 
+                    />
+                    <Route 
+                        path='/profile/:username' 
+                        element={
+                            <ProtectedRoute>
+                                <Profile/>
+                            </ProtectedRoute>
+                        } 
+                    />
+                    <Route 
+                        path='/calendar' 
+                        element={
+                            <ProtectedRoute>
+                                <Home/>
+                            </ProtectedRoute>
+                        } 
+                    />
+                    <Route 
+                        path='/events/:id' 
+                        element={
+                            <ProtectedRoute>
+                                <Event/>
+                            </ProtectedRoute>
+                        } 
+                    />
                 </Routes>
             </div>
         </div>

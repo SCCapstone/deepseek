@@ -14,6 +14,8 @@ DEFAULT_MONGO_HOST = 'mongo'
 DEFAULT_MONGO_PORT = 27017
 DEFAULT_MONGO_DB = 'appdb'
 DEFAULT_MONGO_TIMEOUT_MS = 5000
+DEFAULT_MONGO_USERNAME = None
+DEFAULT_MONGO_PASSWORD = None
 
 
 class Database:
@@ -30,11 +32,18 @@ class Database:
         # getting connections params from environment
         env = os.environ
         host = env.get('MONGO_HOST', DEFAULT_MONGO_HOST)
-        port = env.get('MONGO_PORT', DEFAULT_MONGO_PORT)
         database = env.get('MONGO_DATABASE', DEFAULT_MONGO_DB)
+        username = env.get('MONGO_USERNAME', DEFAULT_MONGO_USERNAME)
+        password = env.get('MONGO_PASSWORD', DEFAULT_MONGO_PASSWORD)
+
+        # constructing MongoDB URI for Atlas
+        if username and password:
+            mongo_uri = f'mongodb+srv://{username}:{password}@{host}/?retryWrites=true&w=majority'
+        else:
+            mongo_uri = f'mongodb://{host}:{DEFAULT_MONGO_PORT}'
 
         # attempting to connect to database
-        client = pymongo.MongoClient(host, port, timeoutMS=DEFAULT_MONGO_TIMEOUT_MS)
+        client = pymongo.MongoClient(mongo_uri, timeoutMS=DEFAULT_MONGO_TIMEOUT_MS)
         self._db = client[database]
 
     @handle_database_error

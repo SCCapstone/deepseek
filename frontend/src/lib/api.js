@@ -5,6 +5,12 @@ const api = async (method, url, variables = null) => {
         headers: {},
     }
 
+    // Retrieve token from localStorage
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        options.headers['Authorization'] = `Bearer ${token}`;
+    }
+
     // Add Content-Type header and body for methods that send data
     if (method === 'POST') {
         // if the data is already FormData, no need to convert to JSON
@@ -33,8 +39,16 @@ const api = async (method, url, variables = null) => {
         if (res.ok) {
             return { data: data?.data || null, message: data?.message, error: null };
         } else {
+            // Return auth error but don't redirect automatically
+            // Let the components handle auth errors appropriately
             if (res.status === 401) {
-                window.location.href = '/login';
+                console.log('API request returned 401 Unauthorized:', url);
+                return { 
+                    error: data?.message || 'Authentication failed', 
+                    data: null, 
+                    message: null,
+                    status: 401
+                };
             }
             return { error: data?.message || 'An error occurred', data: null, message: null };
         }
