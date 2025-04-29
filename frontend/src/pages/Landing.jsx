@@ -17,7 +17,7 @@ export default function Landing() {
     const context = useAppContext();
     const navigate = useNavigate();
 
-    const videoId = "dQw4w9WgXcQ"; 
+    const videoId = "ffFrVpsBZxc"; 
     const githubRepoUrl = "https://github.com/SCCapstone/deepseek";
 
     const jacobLinkedinUrl = "https://www.linkedin.com/in/jacob-robertson-067086334/";
